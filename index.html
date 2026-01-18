@@ -62,134 +62,190 @@
     <script src="data.js"></script>
 
     <script type="text/babel">
-        const { useState, useEffect } = React;
+        const { useState, useEffect, useMemo } = React;
 
-        // --- Constants ---
-        const GENRE_CATEGORIES = [
+        // --- Translations (AI Generated) ---
+        const TRANSLATIONS = {
+            ko: {
+                subtitle: "My Pick Toon",
+                process: "분석 프로세스",
+                step: "단계",
+                of: "/",
+                share: "공유하기",
+                step1_title: "취향을 골라주세요.",
+                step1_desc: "다양한 장르 중 1개 이상 선택이 필수입니다.",
+                cat_status: "연재 상태",
+                cat_genre: "메인 장르",
+                cat_topic: "인기 소재",
+                cat_feature: "스토리 특징",
+                next: "다음 단계",
+                step2_title: "선호 테마 설정",
+                back: "이전",
+                continue: "계속하기",
+                step3_title: "가장 재미있게 보신\n웹툰은 무엇인가요?",
+                step3_placeholder: "정확한 제목을 입력해 주세요",
+                start_analysis: "분석 시작",
+                computing: "결과 계산 중...",
+                result_title: "AI 추천 결과",
+                result_desc: "사용자의 고유 취향을 분석한 결과입니다.",
+                exclude: "추천제외",
+                view_now: "바로보기",
+                new_analysis: "새로운 분석",
+                exclude_msg: "앞으로 이 웹툰은 추천되지 않습니다.",
+                share_copy: "분석 결과가 클립보드에 복사되었습니다!",
+                share_fail: "복사가 차단되었습니다.",
+                share_tpl_title: "[AI 추천 네이버 웹툰]",
+                share_tpl_link: "나도 해보기"
+            },
+            en: {
+                subtitle: "My Pick Toon",
+                process: "Analysis Process",
+                step: "Step",
+                of: "of",
+                share: "SHARE",
+                step1_title: "Choose Your Taste",
+                step1_desc: "Please select at least one genre.",
+                cat_status: "Status",
+                cat_genre: "Main Genre",
+                cat_topic: "Popular Topics",
+                cat_feature: "Story Features",
+                next: "Next Step",
+                step2_title: "Preference Settings",
+                back: "Back",
+                continue: "Continue",
+                step3_title: "What is your\nfavorite webtoon?",
+                step3_placeholder: "Enter the exact title",
+                start_analysis: "Start Analysis",
+                computing: "Computing Result...",
+                result_title: "AI Best Recommendations",
+                result_desc: "Analyzed based on your unique preferences.",
+                exclude: "Exclude",
+                view_now: "View Now",
+                new_analysis: "New Analysis",
+                exclude_msg: "This webtoon will no longer be recommended.",
+                share_copy: "Results copied to clipboard!",
+                share_fail: "Copy failed due to security settings.",
+                share_tpl_title: "[AI Recommended Webtoons]",
+                share_tpl_link: "Try it yourself"
+            },
+            zh: {
+                subtitle: "My Pick Toon",
+                process: "分析进度",
+                step: "第",
+                of: "步 / 共",
+                share: "分享",
+                step1_title: "请选择您的喜好",
+                step1_desc: "请至少选择一个类别。",
+                cat_status: "连载状态",
+                cat_genre: "主打类型",
+                cat_topic: "热门素材",
+                cat_feature: "剧情特点",
+                next: "下一步",
+                step2_title: "偏好设置",
+                back: "返回",
+                continue: "继续",
+                step3_title: "您最喜欢的\n漫画是什么？",
+                step3_placeholder: "请输入准确的标题",
+                start_analysis: "开始分析",
+                computing: "正在计算结果...",
+                result_title: "AI 最佳推荐",
+                result_desc: "根据您的独特偏好分析得出。",
+                exclude: "不再推荐",
+                view_now: "立即阅读",
+                new_analysis: "重新分析",
+                exclude_msg: "今后将不再推荐此漫画。",
+                share_copy: "结果已复制到剪贴板！",
+                share_fail: "由于安全设置，复制失败。",
+                share_tpl_title: "[AI 推荐 Naver 漫画]",
+                share_tpl_link: "我也要试试"
+            },
+            ja: {
+                subtitle: "My Pick Toon",
+                process: "分析プロセス",
+                step: "ステップ",
+                of: "/",
+                share: "共有",
+                step1_title: "好みのジャンルを選んでください",
+                step1_desc: "1つ以上の選択が必須です。",
+                cat_status: "連載状態",
+                cat_genre: "メインジャンル",
+                cat_topic: "人気の素材",
+                cat_feature: "ストーリーの特徴",
+                next: "次へ",
+                step2_title: "好みのテーマ設定",
+                back: "戻る",
+                continue: "続ける",
+                step3_title: "一番面白かった\nウェブトゥーンは何ですか？",
+                step3_placeholder: "正確なタイトルを入力してください",
+                start_analysis: "分析開始",
+                computing: "結果を計算中...",
+                result_title: "AI おすすめ結果",
+                result_desc: "あなたの好みを分析した結果です。",
+                exclude: "おすすめ除外",
+                view_now: "今すぐ見る",
+                new_analysis: "新しい分析",
+                exclude_msg: "今後、この作品はおすすめされません。",
+                share_copy: "結果がクリップボードにコピーされました！",
+                share_fail: "コピーがブロックされました。",
+                share_tpl_title: "[AI おすすめ Naver ウェブトゥーン]",
+                share_tpl_link: "やってみる"
+            }
+        };
+
+        // --- Data constants with localized names ---
+        const getGenreCategories = (t) => [
+            { name: t.cat_status, genres: ["연재중", "완결"], en: ["Ongoing", "Finished"], zh: ["连载中", "已完结"], ja: ["連載中", "完結"] },
             {
-                name: "연재 상태",
-                genres: ["연재중", "완결"]
+                name: t.cat_genre,
+                genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
+                en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
+                zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "スポーツ"]
             },
             {
-                name: "메인 장르",
-                genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"]
+                name: t.cat_topic,
+                genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"],
+                en: ["Regression", "Possession", "Munchkin", "Idol", "Game Fantasy", "Revenge", "School", "Office", "Rom-Fantasy", "Isekai"],
+                zh: ["回归", "附身", "龙傲天", "偶像", "游改", "复仇", "校园", "职场", "罗曼奇幻", "异世界"],
+                ja: ["回帰", "憑依", "最強", "アイドル", "ゲームファンタジー", "復讐", "学園物", "オフィス", "ロパン", "異世界"]
             },
             {
-                name: "인기 소재",
-                genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"]
-            },
-            {
-                name: "스토리 특징",
-                genres: ["사이다", "힐링", "성장물", "두뇌싸움", "서스펜스"]
+                name: t.cat_feature,
+                genres: ["사이다", "힐링", "성장물", "두뇌싸움", "서스펜스"],
+                en: ["Satisfying", "Healing", "Growth", "Brain Battle", "Suspense"],
+                zh: ["爽文", "治愈", "成长", "脑力战", "悬疑"],
+                ja: ["スカッと", "ヒーリング", "成長物", "頭脳戦", "サスペンス"]
             }
         ];
 
-        const PREFERENCES = [
-            { id: 'romance', label: '달달한 로맨스/연애물' },
-            { id: 'action', label: '화끈한 액션과 타격감' },
-            { id: 'brain', label: '심리전과 고도의 두뇌싸움' },
-            { id: 'growth', label: '주인공의 성장과 감동 서사' },
-            { id: 'horror', label: '공포/그로테스크' }
+        const getPreferences = (t) => [
+            { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
+            { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
+            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
+            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
+            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテスク' }
         ];
 
-        // --- Mock Data (10 Results) ---
+        // --- Mock Data ---
         const MOCK_WEBTOONS = [
-            {
-                id: "641253",
-                title: "외모지상주의",
-                tags: ["에피소드", "액션", "박태준", "금요웹툰"],
-                description: "어느 날 그에게 일어난 기적 같은 일! 뚱뚱하고 못생겨 고통받던 주인공이 완벽한 몸을 갖게 되며 벌어지는 리얼 액션물.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_d894f11f-668a-4046-8692-730a961f7743.jpg",
-                match: 98
-            },
-            {
-                id: "183559",
-                title: "신의 탑",
-                tags: ["판타지", "먼치킨", "장대한서사"],
-                description: "자신의 모든 것이었던 소녀 라헬을 쫓아 탑에 들어온 밤. 탑을 올라가는 이들의 거대한 모험과 운명.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/183559/thumbnail/thumbnail_IMAG21_56133031-69f8-45a7-96a9-858348b4e720.jpg",
-                match: 96
-            },
-            {
-                id: "769209",
-                title: "화산귀환",
-                tags: ["무협", "회귀", "청명"],
-                description: "대 화산파 13대 제자 가 아이의 몸으로 깨어나 멸문한 화산파를 다시 일으키는 천하제일 사이다 무협.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/769209/thumbnail/thumbnail_IMAG21_3511196346743900380.jpg",
-                match: 95
-            },
-            {
-                id: "747269",
-                title: "전지적 독자 시점",
-                tags: ["성좌물", "판타지", "김독자"],
-                description: "멸망한 세상의 유일한 독자만이 아는 소설의 결말. 평범한 회사원이 소설 속 세계의 주인공이 되어 살아남는 법.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/747269/thumbnail/thumbnail_IMAG21_28122349fd894f11.jpg",
-                match: 94
-            },
-            {
-                id: "761722",
-                title: "세기말 풋사과 보습학원",
-                tags: ["90년대", "청춘물", "순정"],
-                description: "치열하게 고민하고 사랑하며 성장하는 90년대 중학생들의 이야기. 순수함과 풋풋함이 가득 담긴 청춘 로맨스.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/773379/thumbnail/thumbnail_IMAG21_edc03472-a08b-494b-9f93-518420e11893.jpg",
-                match: 92
-            },
-            {
-                id: "783060",
-                title: "내 남편과 결혼해줘",
-                tags: ["회귀", "복수", "로코"],
-                description: "믿었던 사람들에게 배신당하고 죽음을 맞이한 강지원. 10년 전으로 돌아가 운명을 개척하고 복수하는 통쾌한 이야기.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/781191/thumbnail/thumbnail_IMAG21_51a37c0f-04e4-4638-8c10-e7f5e8f3b25f.jpg",
-                match: 91
-            },
-            {
-                id: "735661",
-                title: "재혼 황후",
-                tags: ["로판", "사이다", "황궁"],
-                description: "명망 높은 가문의 완벽한 황후였지만, 황제의 배신으로 이혼을 선택하고 당당하게 재혼을 발표하는 걸크러시 로판.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/735661/thumbnail/thumbnail_IMAG21_k735661.jpg",
-                match: 89
-            },
-            {
-                id: "703844",
-                title: "가비지타임",
-                tags: ["스포츠", "농구", "고교생활"],
-                description: "최하위 농구부 지상고의 뜨거운 반란. 한국 고교 농구의 현실과 성장을 생생하게 담아낸 걸작.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/703844/thumbnail/thumbnail_IMAG21_k703844.jpg",
-                match: 87
-            },
-            {
-                id: "710751",
-                title: "약한영웅",
-                tags: ["학원액션", "연시은", "두뇌"],
-                description: "왜소한 체구지만 압도적인 두뇌와 도구로 일진들을 압살하는 소년 연시은의 치열한 생존 액션.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/710751/thumbnail/thumbnail_IMAG21_k710751.jpg",
-                match: 85
-            },
-            {
-                id: "651673",
-                title: "유미의 세포들",
-                tags: ["일상", "심리묘사", "로코"],
-                description: "유미의 머릿속 세포들이 만들어 나가는 유칭찬 연애와 성장 이야기. 세포들의 귀여운 반란.",
-                thumbnail: "https://image-comic.pstatic.net/webtoon/653866/thumbnail/thumbnail_IMAG21_0920420f-0a15-46f9-aa2f-3d606f7535b4.jpg",
-                match: 84
-            }
+            { id: "641253", title: "외모지상주의", tags: ["에피소드", "액션", "박태준", "금요웹툰"], description: "어느 날 그에게 일어난 기적 같은 일! 뚱뚱하고 못생겨 고통받던 주인공이 완벽한 몸을 갖게 되며 벌어지는 리얼 액션물.", thumbnail: "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_d894f11f-668a-4046-8692-730a961f7743.jpg", match: 98 },
+            { id: "183559", title: "신의 탑", tags: ["판타지", "먼치킨", "장대한서사"], description: "자신의 모든 것이었던 소녀 라헬을 쫓아 탑에 들어온 밤. 탑을 올라가는 이들의 거대한 모험과 운명.", thumbnail: "https://image-comic.pstatic.net/webtoon/183559/thumbnail/thumbnail_IMAG21_56133031-69f8-45a7-96a9-858348b4e720.jpg", match: 96 }
         ];
 
         // --- UI Components ---
-        const ProgressBar = ({ step }) => (
+        const ProgressBar = ({ step, t }) => (
             <div className="mb-10 max-w-2xl mx-auto px-6">
                 <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                     <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${(step / 4) * 100}%` }}></div>
                 </div>
                 <div className="mt-4 flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest">
-                    <span>Analysis Process</span>
-                    <span className="text-primary">Step {step} of 4</span>
+                    <span>{t.process}</span>
+                    <span className="text-primary">{t.step} {step} {t.of} 4</span>
                 </div>
             </div>
         );
 
-        const WebtoonCard = ({ item, rank, onExclude }) => {
+        const WebtoonCard = ({ item, rank, onExclude, t }) => {
             const getRankDisplay = (r) => {
                 if (r === 1) return <span className="text-lg mr-1.5 drop-shadow-sm">🥇</span>;
                 if (r === 2) return <span className="text-lg mr-1.5 drop-shadow-sm">🥈</span>;
@@ -199,61 +255,36 @@
 
             return (
                 <div className="bg-white rounded-[32px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
-
-                    {/* 썸네일 */}
                     <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                         <img
                             src={item.thumbnail}
                             referrerPolicy="no-referrer"
-                            alt={item.title}
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=이미지없음"; }}
+                            onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
                         />
-                        {/* 매칭 점수 뱃지: 우측 하단 모서리 밀착 */}
                         <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">
                             {item.match}%
                         </div>
                     </div>
-
-                    {/* 콘텐츠 */}
                     <div className="p-4 flex flex-col flex-grow">
-                        {/* 태그 영역: 높이 5.5rem, 여백 mb-2 */}
                         <div className="flex flex-wrap gap-1 mb-2 h-[5.5rem] content-start overflow-hidden">
-                            {item.tags.slice(0, 10).map((tag, idx) => (
+                            {(item.tags || []).slice(0, 8).map((tag, idx) => (
                                 <span key={idx} className="text-[9px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded-md tracking-tighter">#{tag}</span>
                             ))}
                         </div>
-
-                        {/* 랭킹 + 제목 영역 */}
                         <div className="flex items-start mb-2 h-[2.5rem]">
-                            <div className="flex-shrink-0 flex items-center h-full pt-0.5">
-                                {getRankDisplay(rank)}
-                            </div>
+                            <div className="flex-shrink-0 flex items-center h-full pt-0.5">{getRankDisplay(rank)}</div>
                             <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2 self-center">{item.title}</h3>
                         </div>
-
-                        {/* 하단 영역 */}
                         <div className="mt-auto w-full">
                             <div className="flex items-center justify-between mb-2">
-                                {item.starScore && (
-                                    <div className="text-[10px] font-bold text-yellow-500 text-left">
-                                        ★ {item.starScore.toFixed(2)}
-                                    </div>
-                                )}
-                                <button
-                                    onClick={() => onExclude(item.id)}
-                                    className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200 hover:border-red-200"
-                                >
-                                    추천제외
+                                {item.starScore && <div className="text-[10px] font-bold text-yellow-500 text-left">★ {item.starScore.toFixed(2)}</div>}
+                                <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200 hover:border-red-200">
+                                    {t.exclude}
                                 </button>
                             </div>
-
-                            <a
-                                href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`}
-                                target="_blank"
-                                className="block w-full py-2.5 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-xs"
-                            >
-                                바로보기
+                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-xs">
+                                {t.view_now}
                             </a>
                         </div>
                     </div>
@@ -263,50 +294,36 @@
 
         // --- Main App ---
         const App = () => {
+            const [lang, setLang] = useState('ko');
             const [step, setStep] = useState(1);
             const [selectedG, setSelectedG] = useState([]);
             const [prefSettings, setPrefSettings] = useState({});
             const [favTitle, setFavTitle] = useState("");
             const [loading, setLoading] = useState(false);
             const [results, setResults] = useState([]);
-            const [scoredPool, setScoredPool] = useState([]); // 전체 매칭 데이터 보관
-
+            const [scoredPool, setScoredPool] = useState([]);
             const [excludedIds, setExcludedIds] = useState(() => {
-                try {
-                    return JSON.parse(localStorage.getItem('excludedWebtoons')) || [];
-                } catch (e) {
-                    return [];
-                }
+                try { return JSON.parse(localStorage.getItem('excludedWebtoons')) || []; } catch (e) { return []; }
             });
             const [showExcludePopup, setShowExcludePopup] = useState(false);
 
-            const nextStep = () => setStep(step + 1);
-            const prevStep = () => setStep(step - 1);
+            const t = TRANSLATIONS[lang];
+            const categories = useMemo(() => getGenreCategories(t), [lang]);
+            const preferencesList = useMemo(() => getPreferences(t), [lang]);
+
+            const nextStep = () => { setStep(step + 1); window.scrollTo(0, 0); };
+            const prevStep = () => { setStep(step - 1); window.scrollTo(0, 0); };
             const reset = () => {
-                setStep(1);
-                setSelectedG([]);
-                setPrefSettings({});
-                setFavTitle("");
-                setScoredPool([]);
-                window.scrollTo(0, 0);
+                setStep(1); setSelectedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo(0, 0);
             };
 
             const handleExclude = (id) => {
                 const newExcludes = [...excludedIds, id];
                 setExcludedIds(newExcludes);
                 localStorage.setItem('excludedWebtoons', JSON.stringify(newExcludes));
-
-                // 전체 풀(scoredPool)에서 제외 대상을 거르고 항상 상위 10개를 다시 뽑아 results를 갱신합니다.
-                if (scoredPool && scoredPool.length > 0) {
-                    const replenished = scoredPool
-                        .filter(w => !newExcludes.includes(w.id))
-                        .slice(0, 10);
-                    setResults(replenished);
-                } else {
-                    // 분석 데이터 풀이 없는 경우에 대비한 기본 로직
-                    setResults(prev => prev.filter(w => w.id !== id));
+                if (scoredPool.length > 0) {
+                    setResults(scoredPool.filter(w => !newExcludes.includes(w.id)).slice(0, 10));
                 }
-
                 setShowExcludePopup(true);
                 setTimeout(() => setShowExcludePopup(false), 2000);
             };
@@ -314,128 +331,60 @@
             const handleAnalyze = async () => {
                 setLoading(true); setStep(4);
                 await new Promise(r => setTimeout(r, 1500));
-
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                const userSelections = selectedG;
+                const statusFilters = selectedG.filter(s => ["연재중", "완결"].includes(s));
+                const genrePreferences = selectedG.filter(s => !["연재중", "완결"].includes(s));
 
-                // 1. Separate Status Filter and Preferences
-                const statusFilters = userSelections.filter(s => ["연재중", "완결"].includes(s));
-                const genrePreferences = userSelections.filter(s => !["연재중", "완결"].includes(s));
-
-                // 2. Identify Favorite Webtoon & Extract its Tags (Fuzzy Match)
                 let favTags = [];
                 let favAuthor = "";
                 if (favTitle.trim()) {
                     const search = favTitle.toLowerCase().replace(/\s+/g, '');
                     const found = rawData.find(w => {
-                        const t = (w.titleName || w.title || "").toLowerCase().replace(/\s+/g, '');
-                        return t.includes(search) || search.includes(t);
+                        const title = (w.titleName || w.title || "").toLowerCase().replace(/\s+/g, '');
+                        return title.includes(search) || search.includes(title);
                     });
-                    if (found) {
-                        favTags = found.tags || [];
-                        favAuthor = found.author || "";
-                    }
+                    if (found) { favTags = found.tags || []; favAuthor = found.author || ""; }
                 }
 
-                // 3. Data Normalization
-                const dataset = rawData.map(item => ({
-                    id: item.titleId || item.id,
-                    title: item.titleName || item.title,
-                    thumbnail: item.thumbnailUrl || item.thumbnail,
-                    tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? '완결' : '연재중', item.author].filter(Boolean),
-                    author: item.author,
-                    status: item.status,
-                    starScore: item.starScore || 9.0
-                }));
-
-                // 4. Scoring Algorithm
-                const scoredData = dataset.map(webtoon => {
+                const scoredData = rawData.map(item => {
+                    const webtoon = {
+                        id: item.titleId || item.id,
+                        title: item.titleName || item.title,
+                        thumbnail: item.thumbnailUrl || item.thumbnail,
+                        tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? '완결' : '연재중', item.author].filter(Boolean),
+                        author: item.author,
+                        status: item.status,
+                        starScore: item.starScore || 9.0
+                    };
                     let score = 50;
-                    let matches = 0;
-                    let isStatusMatch = true;
-
-                    // A. Status Check
                     if (statusFilters.length > 0) {
-                        const statusMap = { 'FINISHED': '완결', 'ONGOING': '연재중' };
-                        const myStatus = statusMap[webtoon.status] || webtoon.status;
-                        const hasStatusTag = webtoon.tags && webtoon.tags.some(t => statusFilters.includes(t));
-                        if (!statusFilters.includes(myStatus) && !hasStatusTag) isStatusMatch = false;
+                        const myStatus = webtoon.status === 'FINISHED' ? '완결' : '연재중';
+                        if (!statusFilters.includes(myStatus)) return { ...webtoon, match: 0 };
                     }
-                    if (!isStatusMatch) return { ...webtoon, match: 0 };
-
-                    // B. Genre Preferences
                     genrePreferences.forEach(pref => {
-                        let keywords = [pref];
-                        if (pref.includes('/')) keywords = pref.split('/');
-                        const hasMatch = keywords.some(k =>
-                            (webtoon.tags && webtoon.tags.some(t => String(t).includes(k))) ||
-                            (webtoon.title && webtoon.title.includes(k))
-                        );
-                        if (hasMatch) { score += 20; matches++; }
+                        const keywords = pref.includes('/') ? pref.split('/') : [pref];
+                        if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) score += 20;
                     });
-
-                    // C. Favorite Webtoon Similarity
-                    if (favTags.length > 0) {
-                        const sharedTags = webtoon.tags.filter(t => favTags.includes(t));
-                        score += (sharedTags.length * 3);
-                    }
+                    if (favTags.length > 0) score += (webtoon.tags.filter(tag => favTags.includes(tag)).length * 5);
                     if (favAuthor && webtoon.author === favAuthor) score += 10;
-
                     if (favTitle && webtoon.title.replace(/\s+/g, '') === favTitle.replace(/\s+/g, '')) score = 0;
-
-                    score += Math.floor(Math.random() * 5); // Variance
-                    return { ...webtoon, match: Math.min(99, score) };
+                    return { ...webtoon, match: Math.min(99, score + Math.floor(Math.random() * 5)) };
                 });
 
-                const allMatches = scoredData
-                    .filter(w => w.match > 0)
-                    .sort((a, b) => b.match - a.match);
-
-                setScoredPool(allMatches);
-                setResults(allMatches.filter(w => !excludedIds.includes(w.id)).slice(0, 10));
+                const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => b.match - a.match);
+                setScoredPool(sorted);
+                setResults(sorted.filter(w => !excludedIds.includes(w.id)).slice(0, 10));
                 setLoading(false);
             };
 
+            const handleShare = () => {
+                const shareText = `${t.share_tpl_title}\n\n` +
+                    results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n') +
+                    `\n\n🔗 ${t.share_tpl_link}: https://comic.naver.com (AIR.NW)`;
 
-            const handleShare = (e) => {
-                if (e) e.preventDefault();
-                if (results.length === 0) {
-                    alert("공유할 추천 결과가 없습니다. 먼저 분석을 시작해주세요!");
-                    return;
-                }
-
-                const shareText = `[AI 추천 네이버 웹툰]\n\n` +
-                    results.map((w, i) => {
-                        const isFinished = w.status === 'FINISHED' || (w.tags && w.tags.includes('완결'));
-                        return `${i + 1}. ${w.title} (${isFinished ? '완결' : '연재중'})`;
-                    }).join('\n') +
-                    `\n\n🔗 나도 해보기: https://comic.naver.com/index (AIR.NW)`;
-
-                const textArea = document.createElement("textarea");
-                textArea.value = shareText;
-                textArea.style.position = "fixed";
-                textArea.style.left = "-9999px";
-                textArea.style.top = "0";
-                document.body.appendChild(textArea);
-                textArea.select();
-
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        alert("분석 결과가 클립보드에 복사되었습니다!\n원하는 곳에 붙여넣기(Ctrl+V) 하세요.");
-                    } else {
-                        throw new Error("execCommand failed");
-                    }
-                } catch (err) {
-                    if (navigator.clipboard) {
-                        navigator.clipboard.writeText(shareText)
-                            .then(() => alert("결과가 클립보드에 복사되었습니다!"))
-                            .catch(() => alert("보안 설정으로 인해 복사가 차단되었습니다."));
-                    } else {
-                        alert("복사 기능을 지원하지 않는 브라우저입니다.");
-                    }
-                }
-                document.body.removeChild(textArea);
+                navigator.clipboard.writeText(shareText)
+                    .then(() => alert(t.share_copy))
+                    .catch(() => alert(t.share_fail));
             };
 
             return (
@@ -447,68 +396,77 @@
                                 <h1 className="text-xl font-black text-gray-900 tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
                             </div>
 
-                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic">My Pick Toon</h1>
+                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-[70%] text-center">
+                                <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic leading-none">{t.subtitle}</h1>
+                                {/* Language Selector */}
+                                <div className="mt-2 flex justify-center gap-1.5">
+                                    {['ko', 'en', 'zh', 'ja'].map(l => (
+                                        <button
+                                            key={l}
+                                            onClick={() => setLang(l)}
+                                            className={`text-[9px] font-black px-2 py-0.5 rounded-full border transition-all ${lang === l ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
+                                        >
+                                            {l.toUpperCase()}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
 
                             {step === 4 && !loading && (
-                                <button onClick={handleShare} className="animate-pulse text-[10px] font-bold text-primary hover:text-white transition-all uppercase tracking-widest border-2 border-primary hover:bg-primary px-4 py-2 rounded-full bg-white shadow-lg flex items-center gap-2">
-                                    <span>SHARE</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-                                    </svg>
+                                <button onClick={handleShare} className="text-[10px] font-bold text-primary border-2 border-primary hover:bg-primary hover:text-white px-4 py-2 rounded-full transition-all flex items-center gap-2">
+                                    <span>{t.share}</span>
                                 </button>
                             )}
                         </div>
                     </header>
 
                     <main className="max-w-6xl mx-auto px-8 py-12">
-                        <ProgressBar step={step} />
+                        <ProgressBar step={step} t={t} />
 
                         {step === 1 && (
                             <div className="animate-up max-w-4xl mx-auto">
                                 <div className="text-center mb-14">
-                                    <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">취향을 골라주세요.</h2>
-                                    <p className="text-gray-400 font-medium italic">다양한 장르 중 1개 이상 선택이 필수입니다.</p>
+                                    <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">{t.step1_title}</h2>
+                                    <p className="text-gray-400 font-medium italic">{t.step1_desc}</p>
                                 </div>
                                 <div className="space-y-10">
-                                    {GENRE_CATEGORIES.map(cat => (
+                                    {categories.map(cat => (
                                         <div key={cat.name} className="space-y-5">
                                             <h3 className="text-sm font-bold text-gray-800 flex items-center gap-3">
                                                 <span className="w-1.5 h-4 bg-primary rounded-full"></span>
                                                 {cat.name}
                                             </h3>
                                             <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                                                {cat.genres.map(g => (
-                                                    <button
-                                                        key={g}
-                                                        onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])}
-                                                        className={`py-4 px-5 rounded-[20px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl shadow-gray-200 scale-[0.97]' : 'bg-white border-gray-100 text-gray-500 hover:border-gray-200'}`}
-                                                    >#{g}</button>
-                                                ))}
+                                                {cat.genres.map((g, idx) => {
+                                                    const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g;
+                                                    return (
+                                                        <button
+                                                            key={g}
+                                                            onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])}
+                                                            className={`py-4 px-5 rounded-[20px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.97]' : 'bg-white border-gray-100 text-gray-500 hover:border-gray-200'}`}
+                                                        >#{label}</button>
+                                                    );
+                                                })}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                                 <div className="mt-20 text-center">
-                                    <button
-                                        disabled={selectedG.length === 0}
-                                        onClick={nextStep}
-                                        className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl shadow-gray-300 disabled:opacity-20 hover:scale-105 hover:bg-[#3E2723] active:scale-95 transition-all text-lg"
-                                    >Next Step</button>
+                                    <button disabled={selectedG.length === 0} onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 hover:scale-105 transition-all text-lg">{t.next}</button>
                                 </div>
                             </div>
                         )}
 
                         {step === 2 && (
                             <div className="animate-up max-w-lg mx-auto py-10">
-                                <h2 className="text-3xl font-black text-center mb-12">선호 테마 설정</h2>
+                                <h2 className="text-3xl font-black text-center mb-12">{t.step2_title}</h2>
                                 <div className="space-y-3 bg-white p-2 rounded-[40px] shadow-soft border border-gray-50">
-                                    {PREFERENCES.map(p => {
+                                    {preferencesList.map(p => {
+                                        const label = p[`label_${lang}`];
                                         return (
                                             <div key={p.id} className="flex items-center justify-between p-7 border-b last:border-0 border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors"
                                                 onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))}>
-                                                <span className={`font-bold transition-colors ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p.label}</span>
+                                                <span className={`font-bold transition-colors ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{label}</span>
                                                 <div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}>
                                                     <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div>
                                                 </div>
@@ -517,25 +475,22 @@
                                     })}
                                 </div>
                                 <div className="mt-14 flex justify-center gap-4">
-                                    <button onClick={prevStep} className="px-8 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">Back</button>
-                                    <button onClick={nextStep} className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl shadow-gray-300">Continue</button>
+                                    <button onClick={prevStep} className="px-8 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">{t.back}</button>
+                                    <button onClick={nextStep} className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl">{t.continue}</button>
                                 </div>
                             </div>
                         )}
 
                         {step === 3 && (
                             <div className="animate-up max-w-lg mx-auto py-10">
-                                <h2 className="text-3xl font-black text-center mb-10 leading-tight">가장 재미있게 보신<br />웹툰은 무엇인가요?</h2>
+                                <h2 className="text-3xl font-black text-center mb-10 leading-tight whitespace-pre-line">{t.step3_title}</h2>
                                 <input
-                                    type="text"
-                                    value={favTitle}
-                                    onChange={e => setFavTitle(e.target.value)}
-                                    placeholder="정확한 제목을 입력해 주세요"
+                                    type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder}
                                     className="w-full py-6 px-10 rounded-full bg-white border-4 border-gray-50 focus:border-primary outline-none transition-all font-bold text-lg shadow-inner text-center"
                                 />
                                 <div className="mt-14 flex justify-center gap-4">
-                                    <button onClick={prevStep} className="px-8 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">Back</button>
-                                    <button onClick={handleAnalyze} className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl shadow-blue-200">Start Analysis</button>
+                                    <button onClick={prevStep} className="px-8 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">{t.back}</button>
+                                    <button onClick={handleAnalyze} className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl">{t.start_analysis}</button>
                                 </div>
                             </div>
                         )}
@@ -545,28 +500,21 @@
                                 {loading ? (
                                     <div className="flex flex-col items-center justify-center py-32">
                                         <div className="w-16 h-16 border-[10px] border-gray-200 border-t-primary rounded-full animate-spin mb-10"></div>
-                                        <p className="text-gray-400 font-black tracking-widest uppercase animate-pulse">Computing Result...</p>
+                                        <p className="text-gray-400 font-black tracking-widest uppercase animate-pulse">{t.computing}</p>
                                     </div>
                                 ) : (
                                     <div className="animate-up">
-                                        <div className="sticky top-[80px] z-40 bg-white/95 backdrop-blur-sm -mx-8 px-8 py-10 mb-6 border-b border-gray-50 shadow-sm">
-                                            <div className="text-center">
-                                                <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight italic">AI Best Recommendations</h2>
-                                                <p className="text-gray-400 font-medium">사용자의 고유 취향을 분석한 결과입니다.</p>
-                                            </div>
+                                        <div className="sticky top-[80px] z-40 bg-white/95 backdrop-blur-sm -mx-8 px-8 py-10 mb-6 border-b border-gray-50 shadow-sm text-center">
+                                            <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight italic">{t.result_title}</h2>
+                                            <p className="text-gray-400 font-medium">{t.result_desc}</p>
                                         </div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
                                             {results.map((w, idx) => (
-                                                <WebtoonCard
-                                                    key={w.id}
-                                                    item={w}
-                                                    rank={idx + 1}
-                                                    onExclude={handleExclude}
-                                                />
+                                                <WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={handleExclude} t={t} />
                                             ))}
                                         </div>
                                         <div className="text-center mt-24">
-                                            <button onClick={reset} className="px-12 py-5 border-4 border-gray-100 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase tracking-tighter">New Analysis</button>
+                                            <button onClick={reset} className="px-12 py-5 border-4 border-gray-100 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase tracking-tighter">{t.new_analysis}</button>
                                         </div>
                                     </div>
                                 )}
@@ -574,12 +522,11 @@
                         )}
                     </main>
 
-                    {/* 추천 제외 팝업 */}
                     {showExcludePopup && (
                         <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[100] animate-up">
                             <div className="bg-gray-900/90 backdrop-blur-md text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
                                 <span className="text-xl">🚫</span>
-                                <p className="font-bold text-sm">앞으로 이 웹툰은 추천되지 않습니다.</p>
+                                <p className="font-bold text-sm">{t.exclude_msg}</p>
                             </div>
                         </div>
                     )}
@@ -589,6 +536,7 @@
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
+
     </script>
 </body>
 

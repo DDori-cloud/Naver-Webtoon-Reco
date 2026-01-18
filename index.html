@@ -56,7 +56,7 @@
         }
 
         .share-btn-shadow {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
     </style>
 </head>
@@ -105,10 +105,12 @@
                 share_fail: "복사가 차단되었습니다.",
                 share_tpl_title: "[AI 추천 네이버 웹툰]",
                 share_tpl_link: "나도 해보기",
-                share_modal_title: "결과 공유하기",
+                share_modal_title: "분석 결과 공유하기",
                 share_to_kakao: "카카오톡",
-                share_to_text: "전체 텍스트 복사",
-                share_to_system: "더보기 (인스타/메시지)"
+                share_to_line: "라인",
+                share_to_tiktok: "틱톡용 복사",
+                share_to_text: "전체 복사",
+                share_to_system: "기타 공유"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -142,8 +144,10 @@
                 share_tpl_link: "Try it yourself",
                 share_modal_title: "Share Results",
                 share_to_kakao: "KakaoTalk",
-                share_to_text: "Copy Full Text",
-                share_to_system: "Others (Insta/DM)"
+                share_to_line: "LINE",
+                share_to_tiktok: "Copy for TikTok",
+                share_to_text: "Copy All",
+                share_to_system: "Others"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -177,6 +181,8 @@
                 share_tpl_link: "我也要试试",
                 share_modal_title: "分享结果",
                 share_to_kakao: "KakaoTalk",
+                share_to_line: "LINE",
+                share_to_tiktok: "抖音/TikTok",
                 share_to_text: "复制文本",
                 share_to_system: "其他"
             },
@@ -199,19 +205,21 @@
                 step3_title: "一番面白かった\n웹툰은 무엇인가요?",
                 step3_placeholder: "正確なタイトルを入力してください",
                 start_analysis: "分析開始",
-                computing: "結果를 계산 중...",
+                computing: "結果を計算中...",
                 result_title: "AI おすすめ結果",
                 result_desc: "あなたの好みを分析した結果입니다.",
-                exclude: "おすすめ除外",
+                exclude: "おすすめ除외",
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
                 exclude_msg: "今後、この作品はおすすめされません.",
-                share_copy: "結果이 클립보드에 복사되었습니다!",
+                share_copy: "結果がクリップボード에 복사되었습니다!",
                 share_fail: "복사가 차단되었습니다.",
                 share_tpl_title: "[AI おすすめ Naver 웹툰]",
                 share_tpl_link: "やってみる",
                 share_modal_title: "結果を共有",
                 share_to_kakao: "KakaoTalk",
+                share_to_line: "LINE",
+                share_to_tiktok: "TikTok用",
                 share_to_text: "テキストコピー",
                 share_to_system: "その他"
             }
@@ -232,7 +240,7 @@
                 genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"],
                 en: ["Regression", "Possession", "Munchkin", "Idol", "Game Fantasy", "Revenge", "School", "Office", "Rom-Fantasy", "Isekai"],
                 zh: ["回归", "附身", "龙傲天", "偶像", "游改", "复仇", "校园", "职场", "罗曼奇幻", "异世界"],
-                ja: ["回帰", "憑依", "最強", "アイドル", "ゲームファンタジー", "복수", "학원물", "오피스", "로판", "이세계"]
+                ja: ["回帰", "憑依", "最強", "アイドル", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"]
             },
             {
                 name: t.cat_feature,
@@ -246,8 +254,8 @@
         const getPreferences = (t) => [
             { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
             { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
-            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
-            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角의 成长与感动', label_ja: '主人公の成長と感動' },
+            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较량', label_ja: '心理戦と頭脳戦' },
+            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
             { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロ테스크' }
         ];
 
@@ -320,90 +328,91 @@
         const ShareModal = ({ isOpen, onClose, t, results }) => {
             if (!isOpen) return null;
 
-            const shareText = `${t.share_tpl_title}\n\n` +
-                results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n') +
-                `\n\n🔗 ${t.share_tpl_link}: ${window.location.href} (AIR.NW)`;
+            const url = window.location.href;
+            const shareTextRaw = results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n');
+            const shareText = `${t.share_tpl_title}\n\n${shareTextRaw}\n\n🔗 ${t.share_tpl_link}: ${url} (AIR.NW)`;
 
             const systemShare = () => {
                 if (navigator.share) {
-                    navigator.share({
-                        title: t.share_tpl_title,
-                        text: shareText,
-                        url: window.location.href,
-                    }).catch(console.error);
+                    navigator.share({ title: t.share_tpl_title, text: shareText, url }).catch(() => { });
                 } else {
                     copyToClipboard();
                 }
             };
 
-            const shareToX = () => {
-                const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-                window.open(url, '_blank');
-            };
-
-            const shareToFacebook = () => {
-                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
-                window.open(url, '_blank');
-            };
+            const shareToX = () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank');
+            const shareToFacebook = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+            const shareToLine = () => window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`, '_blank');
 
             const copyToClipboard = () => {
-                navigator.clipboard.writeText(shareText)
-                    .then(() => { alert(t.share_copy); onClose(); })
-                    .catch(() => alert(t.share_fail));
+                const textArea = document.createElement("textarea");
+                textArea.value = shareText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert(t.share_copy);
+                    onClose();
+                } catch (err) {
+                    alert(t.share_fail);
+                }
+                document.body.removeChild(textArea);
             };
 
             return (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-                    <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-custom" onClick={onClose}></div>
-                    <div className="bg-white w-full max-w-md rounded-[48px] shadow-2xl relative z-10 animate-up overflow-hidden">
-                        <div className="pt-10 pb-12 px-8">
-                            <h3 className="text-2xl font-black text-gray-900 text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
+                    <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-custom" onClick={onClose}></div>
+                    <div className="bg-white w-full max-w-lg rounded-[56px] shadow-2xl relative z-10 animate-up overflow-hidden border border-white/20">
+                        <div className="pt-12 pb-14 px-10">
+                            <h3 className="text-3xl font-black text-gray-900 text-center mb-12 tracking-tight">{t.share_modal_title}</h3>
 
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                {/* Kakao - Using System Share as it triggers Kakao on Korea mobiles */}
-                                <button onClick={systemShare} className="flex items-center gap-4 p-5 bg-[#FEE500] rounded-3xl group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow">
-                                    <div className="w-12 h-12 flex items-center justify-center bg-black/5 rounded-xl">
-                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg>
+                            <div className="grid grid-cols-2 gap-5 mb-10">
+                                {/* Kakao */}
+                                <button onClick={systemShare} className="flex items-center gap-5 p-6 bg-[#FEE500] rounded-[32px] group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow">
+                                    <div className="w-14 h-14 flex items-center justify-center bg-black/5 rounded-2xl">
+                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg>
                                     </div>
-                                    <span className="text-base font-black text-[#3C1E1E]">{t.share_to_kakao}</span>
+                                    <span className="text-lg font-black text-[#3C1E1E]">{t.share_to_kakao}</span>
                                 </button>
 
-                                {/* System Share Others */}
-                                <button onClick={systemShare} className="flex items-center gap-4 p-5 bg-primary rounded-3xl group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow">
-                                    <div className="w-12 h-12 flex items-center justify-center bg-white/20 rounded-xl">
-                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12s-.04-.47-.09-.7L16.04 7.15c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.91 9.3c-.52-.47-1.2-.77-1.96-.77-1.66 0-3 1.34-3 3s1.34 3 3 3c.76 0 1.44-.3 1.96-.77L16.04 16.85c-.05.23-.09.46-.09.7 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></svg>
+                                {/* LINE */}
+                                <button onClick={shareToLine} className="flex items-center gap-5 p-6 bg-[#06C755] rounded-[32px] group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow text-white">
+                                    <div className="w-14 h-14 flex items-center justify-center bg-white/20 rounded-2xl">
+                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.052.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.571-3.943 2.571-6.042zm-15.825 3.193h-2.113c-.229 0-.417-.188-.417-.417v-4.144c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v3.561h1.53c.229 0 .417.188.417.417v.167c0 .229-.188.416-.418.416zm3.012 0h-.166c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.166c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm5.541 0h-.167c-.23 0-.417-.188-.417-.417v-2.316l-1.742-2.34c-.052-.072-.1-.084-.131-.084-.131.026-.131.2-.131.303v2.854c0 .229-.188.417-.417.417h-.167c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417l2.064 2.766c.036.052.122.181.122.064V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm3.179 0h-2.112c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h2.112c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.809h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.842h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.416-.417.416z"></path></svg>
                                     </div>
-                                    <span className="text-sm font-black text-white">{lang === 'ko' ? '기타 공유' : 'More'}</span>
+                                    <span className="text-lg font-black">{t.share_to_line}</span>
                                 </button>
                             </div>
 
-                            <div className="flex justify-center gap-6 mb-10">
+                            <div className="flex justify-between gap-4 mb-12">
+                                {/* TikTok */}
+                                <button onClick={copyToClipboard} className="flex flex-col items-center gap-3 group flex-1">
+                                    <div className="w-20 h-20 bg-black rounded-[28px] flex items-center justify-center transition-all group-hover:scale-110 shadow-xl overflow-hidden relative">
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <svg viewBox="0 0 24 24" className="w-10 h-10 fill-white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.31a8.6 8.6 0 01-1.87-1.39v7.11c.02 1.83-.54 3.73-1.63 5.17-1.5 2.05-4.11 3.12-6.57 2.78-2.61-.29-4.9-2.31-5.65-4.83-.93-2.92.1-6.36 2.5-8.23 1.25-.99 2.87-1.55 4.47-1.49 1.19.01 2.37.28 3.47.76V.02zm-3.48 9.3c-1.56.03-3.13.88-3.99 2.19-.85 1.25-.97 2.94-.48 4.38.5 1.65 2 2.97 3.73 3.25 1.57.26 3.29-.21 4.38-1.37a5.55 5.55 0 001.37-3.69V7.58c-1.12-.6-2.39-1-3.69-1.15-.36-.04-.73-.06-1.1-.06-.01 1-.01 1.99-.02 2.95z"></path></svg>
+                                        </div>
+                                    </div>
+                                    <span className="text-sm font-bold text-gray-500">{t.share_to_tiktok}</span>
+                                </button>
+
                                 {/* X */}
-                                <button onClick={shareToX} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg">
-                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
+                                <button onClick={shareToX} className="flex flex-col items-center gap-3 group flex-1">
+                                    <div className="w-20 h-20 bg-black rounded-[28px] flex items-center justify-center transition-all group-hover:scale-110 shadow-xl">
+                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
                                     </div>
-                                    <span className="text-xs font-bold text-gray-500">X</span>
+                                    <span className="text-sm font-bold text-gray-500">X</span>
                                 </button>
 
-                                {/* Facebook */}
-                                <button onClick={shareToFacebook} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-16 h-16 bg-[#1877F2] rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg">
-                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.248h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+                                {/* System Share / Others */}
+                                <button onClick={systemShare} className="flex flex-col items-center gap-3 group flex-1">
+                                    <div className="w-20 h-20 bg-primary/20 rounded-[28px] flex items-center justify-center transition-all group-hover:scale-110 shadow-xl">
+                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-primary"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12s-.04-.47-.09-.7L16.04 7.15c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.91 9.3c-.52-.47-1.2-.77-1.96-.77-1.66 0-3 1.34-3 3s1.34 3 3 3c.76 0 1.44-.3 1.96-.77L16.04 16.85c-.05.23-.09.46-.09.7 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></svg>
                                     </div>
-                                    <span className="text-xs font-bold text-gray-500">Facebook</span>
-                                </button>
-
-                                {/* Copy */}
-                                <button onClick={copyToClipboard} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg">
-                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-gray-600"><path d="M19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21ZM5 5V19H19V5H5ZM7 7H17V9H7V7ZM7 11H17V13H7V11ZM7 15H13V17H7V15Z"></path></svg>
-                                    </div>
-                                    <span className="text-xs font-bold text-gray-500">{lang === 'ko' ? '텍스트 복사' : 'Copy'}</span>
+                                    <span className="text-sm font-bold text-gray-500">{t.share_to_system}</span>
                                 </button>
                             </div>
 
-                            <button onClick={onClose} className="w-full py-5 bg-gray-50 text-gray-500 font-black rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">
+                            <button onClick={onClose} className="w-full py-6 bg-gray-50 text-gray-500 font-extrabold rounded-3xl hover:bg-gray-100 transition-all uppercase tracking-widest text-base shadow-sm">
                                 {lang === 'ko' ? '닫기' : 'Close'}
                             </button>
                         </div>
@@ -511,10 +520,10 @@
                                 <h1 className="text-xl font-black text-gray-900 tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
                             </div>
 
-                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-[70%] text-center">
+                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
                                 <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic leading-none">{t.subtitle}</h1>
                                 {/* Language Selector */}
-                                <div className="mt-2 flex justify-center gap-1.5">
+                                <div className="mt-2.5 flex justify-center gap-1.5">
                                     {[
                                         { code: 'ko', label: '한국어' },
                                         { code: 'en', label: 'English' },
@@ -524,7 +533,7 @@
                                         <button
                                             key={l.code}
                                             onClick={() => setLang(l.code)}
-                                            className={`text-[9px] font-black px-2 py-0.5 rounded-full border transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
+                                            className={`text-[9px] font-black px-2.5 py-1 rounded-full border transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
                                         >
                                             {l.label}
                                         </button>
@@ -533,7 +542,7 @@
                             </div>
 
                             {step === 4 && !loading && (
-                                <button onClick={handleShare} className="text-[10px] font-bold text-primary border-2 border-primary hover:bg-primary hover:text-white px-4 py-2 rounded-full transition-all flex items-center gap-2">
+                                <button onClick={handleShare} className="text-[11px] font-black text-primary border-2 border-primary hover:bg-primary hover:text-white px-5 py-2.5 rounded-full transition-all flex items-center gap-2 share-btn-shadow">
                                     <span>{t.share}</span>
                                 </button>
                             )}

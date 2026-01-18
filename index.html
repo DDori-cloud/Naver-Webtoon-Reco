@@ -108,8 +108,8 @@
                 share_modal_title: "분석 결과 공유하기",
                 share_to_kakao: "카카오톡",
                 share_to_line: "라인",
-                share_to_tiktok: "틱톡용 복사",
-                share_to_text: "전체 복사",
+                share_to_tiktok: "틱톡",
+                share_to_text: "전체 텍스트 복사",
                 share_to_system: "기타 공유"
             },
             en: {
@@ -145,8 +145,8 @@
                 share_modal_title: "Share Results",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
-                share_to_tiktok: "Copy for TikTok",
-                share_to_text: "Copy All",
+                share_to_tiktok: "TikTok",
+                share_to_text: "Copy Full Text",
                 share_to_system: "Others"
             },
             zh: {
@@ -182,7 +182,7 @@
                 share_modal_title: "分享结果",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
-                share_to_tiktok: "抖音/TikTok",
+                share_to_tiktok: "TikTok",
                 share_to_text: "复制文本",
                 share_to_system: "其他"
             },
@@ -208,18 +208,18 @@
                 computing: "結果を計算中...",
                 result_title: "AI おすすめ結果",
                 result_desc: "あなたの好みを分析した結果입니다.",
-                exclude: "おすすめ除외",
+                exclude: "おすすめ除外",
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
                 exclude_msg: "今後、この作品はおすすめされません.",
-                share_copy: "結果がクリップボード에 복사되었습니다!",
+                share_copy: "結果がクリップ보드에 복사되었습니다!",
                 share_fail: "복사가 차단되었습니다.",
                 share_tpl_title: "[AI おすすめ Naver 웹툰]",
                 share_tpl_link: "やってみる",
                 share_modal_title: "結果を共有",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
-                share_to_tiktok: "TikTok用",
+                share_to_tiktok: "TikTok",
                 share_to_text: "テキストコピー",
                 share_to_system: "その他"
             }
@@ -233,7 +233,7 @@
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリ러", "武侠", "ギャグ", "日常", "感性", "スポーツ"]
+                ja: ["ロマンス", "ファン타ジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "스포츠"]
             },
             {
                 name: t.cat_topic,
@@ -254,7 +254,7 @@
         const getPreferences = (t) => [
             { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
             { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
-            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较량', label_ja: '心理戦と頭脳戦' },
+            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
             { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
             { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロ테스크' }
         ];
@@ -326,6 +326,15 @@
         };
 
         const ShareModal = ({ isOpen, onClose, t, results }) => {
+            useEffect(() => {
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = 'unset';
+                }
+                return () => { document.body.style.overflow = 'unset'; };
+            }, [isOpen]);
+
             if (!isOpen) return null;
 
             const url = window.location.href;
@@ -360,11 +369,11 @@
             };
 
             return (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
-                    <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-custom" onClick={onClose}></div>
-                    <div className="bg-white w-full max-w-lg rounded-[56px] shadow-2xl relative z-10 animate-up overflow-hidden border border-white/20">
+                <div className="fixed inset-0 z-[10000] flex items-center justify-center px-4" onClick={onClose}>
+                    <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-custom"></div>
+                    <div className="bg-white w-full max-w-lg rounded-[56px] shadow-2xl relative z-[10001] animate-up overflow-hidden border border-white/20" onClick={e => e.stopPropagation()}>
                         <div className="pt-12 pb-14 px-10">
-                            <h3 className="text-3xl font-black text-gray-900 text-center mb-12 tracking-tight">{t.share_modal_title}</h3>
+                            <h3 className="text-3xl font-black text-gray-900 text-center mb-12 tracking-tight italic">{t.share_modal_title}</h3>
 
                             <div className="grid grid-cols-2 gap-5 mb-10">
                                 {/* Kakao */}
@@ -507,45 +516,55 @@
                 setLoading(false);
             };
 
-            const handleShare = () => {
+            const handleShare = (e) => {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
                 setShowShareModal(true);
             };
 
             return (
                 <div className="min-h-screen">
-                    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-                        <div className="max-w-6xl mx-auto px-8 h-20 flex items-center justify-between relative">
-                            <div className="flex items-center gap-2 cursor-pointer" onClick={reset}>
-                                <span className="text-2xl drop-shadow-md">📖</span>
+                    <header className="sticky top-0 z-[1000] bg-white/80 backdrop-blur-md border-b border-gray-100">
+                        <div className="max-w-6xl mx-auto px-8 h-24 flex items-center justify-between relative">
+                            {/* Left: Logo */}
+                            <div className="flex items-center gap-3 cursor-pointer z-10" onClick={reset}>
+                                <span className="text-3xl drop-shadow-md">📖</span>
                                 <h1 className="text-xl font-black text-gray-900 tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
                             </div>
 
-                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                                <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic leading-none">{t.subtitle}</h1>
-                                {/* Language Selector */}
-                                <div className="mt-2.5 flex justify-center gap-1.5">
-                                    {[
-                                        { code: 'ko', label: '한국어' },
-                                        { code: 'en', label: 'English' },
-                                        { code: 'zh', label: '中文' },
-                                        { code: 'ja', label: '日本語' }
-                                    ].map(l => (
-                                        <button
-                                            key={l.code}
-                                            onClick={() => setLang(l.code)}
-                                            className={`text-[9px] font-black px-2.5 py-1 rounded-full border transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
-                                        >
-                                            {l.label}
-                                        </button>
-                                    ))}
+                            {/* Center: Title & Language Selector (Unified Control) */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                <div className="pointer-events-auto flex flex-col items-center">
+                                    <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic leading-none mb-3">{t.subtitle}</h1>
+                                    <div className="flex justify-center gap-1.5">
+                                        {[
+                                            { code: 'ko', label: '한국어' },
+                                            { code: 'en', label: 'English' },
+                                            { code: 'zh', label: '中文' },
+                                            { code: 'ja', label: '日本語' }
+                                        ].map(l => (
+                                            <button
+                                                key={l.code}
+                                                onClick={() => setLang(l.code)}
+                                                className={`text-[9px] font-black px-2.5 py-1 rounded-full border transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
+                                            >
+                                                {l.label}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
 
-                            {step === 4 && !loading && (
-                                <button onClick={handleShare} className="text-[11px] font-black text-primary border-2 border-primary hover:bg-primary hover:text-white px-5 py-2.5 rounded-full transition-all flex items-center gap-2 share-btn-shadow">
-                                    <span>{t.share}</span>
-                                </button>
-                            )}
+                            {/* Right: Share Button */}
+                            <div className="z-10 w-32 flex justify-end">
+                                {step === 4 && !loading && (
+                                    <button
+                                        onClick={handleShare}
+                                        className="text-[11px] font-black text-primary border-2 border-primary hover:bg-primary hover:text-white px-5 py-2.5 rounded-full transition-all flex items-center gap-2 share-btn-shadow bg-white pointer-events-auto"
+                                    >
+                                        <span>{t.share}</span>
+                                    </button>
+                                )}
+                            </div>
                         </div>
                     </header>
 
@@ -633,7 +652,7 @@
                                     </div>
                                 ) : (
                                     <div className="animate-up">
-                                        <div className="sticky top-[80px] z-40 bg-white/95 backdrop-blur-sm -mx-8 px-8 py-10 mb-6 border-b border-gray-50 shadow-sm text-center">
+                                        <div className="sticky top-[96px] z-40 bg-white/95 backdrop-blur-sm -mx-8 px-8 py-10 mb-6 border-b border-gray-50 shadow-sm text-center">
                                             <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight italic">{t.result_title}</h2>
                                             <p className="text-gray-400 font-medium">{t.result_desc}</p>
                                         </div>

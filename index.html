@@ -311,23 +311,25 @@
                         <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{item.match}%</div>
                     </div>
                     <div className="p-5 flex flex-col flex-grow">
-                        <div className="flex flex-wrap gap-1.5 mb-2 min-h-[5.5rem] content-start overflow-hidden">
+                        {/* Fixed height for tags to align titles perfectly */}
+                        <div className="flex flex-wrap gap-1.5 mb-3 h-[5.2rem] content-start overflow-hidden">
                             {(item.tags || []).slice(0, 8).map((tag, idx) => (
                                 <span key={idx} className="text-[11px] font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-md tracking-tighter">#{tag}</span>
                             ))}
                         </div>
-                        <div className="flex items-start mb-2 h-[2.5rem]">
-                            <div className="flex-shrink-0 flex items-center h-full">{getRankDisplay(rank)}</div>
-                            <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2 self-center">{item.title}</h3>
+                        {/* Title section starts at the same line for all cards */}
+                        <div className="flex items-start mb-4 h-[2.6rem]">
+                            <div className="flex-shrink-0 flex items-center pt-0.5">{getRankDisplay(rank)}</div>
+                            <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2">{item.title}</h3>
                         </div>
                         <div className="mt-auto w-full">
-                            <div className="flex items-center justify-between mb-2">
+                            <div className="flex items-center justify-between mb-3 px-0.5">
                                 {item.starScore && <div className="text-[10px] font-bold text-yellow-500 text-left">★ {item.starScore.toFixed(2)}</div>}
                                 <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200">{t.exclude}</button>
                             </div>
-                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-xs flex items-center justify-center gap-1.5">
+                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[15px] flex items-center justify-center gap-2 shadow-sm">
                                 <span>{t.view_now}</span>
-                                <span className="text-[10px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재중'})</span>
+                                <span className="text-[11px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재중'})</span>
                             </a>
                         </div>
                     </div>

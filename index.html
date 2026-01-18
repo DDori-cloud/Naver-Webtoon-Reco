@@ -51,12 +51,17 @@
         }
 
         .backdrop-blur-custom {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .share-btn-shadow {
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Prevent body scroll when modal is open */
+        .modal-open {
+            overflow: hidden !important;
         }
     </style>
 </head>
@@ -73,14 +78,14 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
-        // --- Translations (AI Generated) ---
+        // --- Translations ---
         const TRANSLATIONS = {
             ko: {
                 subtitle: "My Pick Naver WebToon(with AI)",
                 process: "분석 프로세스",
                 step: "단계",
                 of: "/",
-                share: "공유하기",
+                share: "공유",
                 step1_title: "취향을 골라주세요.",
                 step1_desc: "다양한 장르 중 1개 이상 선택이 필수입니다.",
                 cat_status: "연재 상태",
@@ -101,16 +106,16 @@
                 view_now: "바로보기",
                 new_analysis: "새로운 분석",
                 exclude_msg: "앞으로 이 웹툰은 추천되지 않습니다.",
-                share_copy: "분석 결과가 클립보드에 복사되었습니다!",
-                share_fail: "복사가 차단되었습니다.",
+                share_copy: "분석 결과가 복사되었습니다!",
+                share_fail: "복사 실패",
                 share_tpl_title: "[AI 추천 네이버 웹툰]",
                 share_tpl_link: "나도 해보기",
                 share_modal_title: "분석 결과 공유하기",
-                share_to_kakao: "카카오톡",
+                share_to_kakao: "카톡",
                 share_to_line: "라인",
                 share_to_tiktok: "틱톡",
-                share_to_text: "전체 텍스트 복사",
-                share_to_system: "기타 공유"
+                share_to_text: "전체 텍스트",
+                share_to_system: "기타"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -138,15 +143,15 @@
                 view_now: "View Now",
                 new_analysis: "New Analysis",
                 exclude_msg: "This webtoon will no longer be recommended.",
-                share_copy: "Results copied to clipboard!",
-                share_fail: "Copy failed due to security settings.",
+                share_copy: "Results copied!",
+                share_fail: "Copy failed.",
                 share_tpl_title: "[AI Recommended Webtoons]",
                 share_tpl_link: "Try it yourself",
                 share_modal_title: "Share Results",
-                share_to_kakao: "KakaoTalk",
+                share_to_kakao: "Kakao",
                 share_to_line: "LINE",
                 share_to_tiktok: "TikTok",
-                share_to_text: "Copy Full Text",
+                share_to_text: "Text",
                 share_to_system: "Others"
             },
             zh: {
@@ -175,15 +180,15 @@
                 view_now: "立即阅读",
                 new_analysis: "重新分析",
                 exclude_msg: "今后将不再推荐此漫画。",
-                share_copy: "结果已复制到剪贴板！",
-                share_fail: "由于安全设置，复制失败。",
+                share_copy: "结果已复制！",
+                share_fail: "复制失败。",
                 share_tpl_title: "[AI 推荐 Naver 漫画]",
                 share_tpl_link: "我也要试试",
                 share_modal_title: "分享结果",
-                share_to_kakao: "KakaoTalk",
+                share_to_kakao: "Kakao",
                 share_to_line: "LINE",
                 share_to_tiktok: "TikTok",
-                share_to_text: "复制文本",
+                share_to_text: "文本",
                 share_to_system: "其他"
             },
             ja: {
@@ -212,20 +217,19 @@
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
                 exclude_msg: "今後、この作品はおすすめされません.",
-                share_copy: "結果がクリップ보드에 복사되었습니다!",
-                share_fail: "복사가 차단되었습니다.",
+                share_copy: "結果がコピーされました!",
+                share_fail: "コピー失敗.",
                 share_tpl_title: "[AI おすすめ Naver 웹툰]",
                 share_tpl_link: "やってみる",
                 share_modal_title: "結果を共有",
-                share_to_kakao: "KakaoTalk",
+                share_to_kakao: "Kakao",
                 share_to_line: "LINE",
                 share_to_tiktok: "TikTok",
-                share_to_text: "テキストコピー",
+                share_to_text: "コピー",
                 share_to_system: "その他"
             }
         };
 
-        // --- Data constants with localized names ---
         const getGenreCategories = (t) => [
             { name: t.cat_status, genres: ["연재중", "완결"], en: ["Ongoing", "Finished"], zh: ["连载中", "已完结"], ja: ["連載中", "完結"] },
             {
@@ -233,7 +237,7 @@
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファン타ジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "스포츠"]
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "スポーツ"]
             },
             {
                 name: t.cat_topic,
@@ -256,16 +260,15 @@
             { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
             { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
             { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
-            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロ테스크' }
+            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテ스크' }
         ];
 
-        // --- Mock Data ---
         const MOCK_WEBTOONS = [
             { id: "641253", title: "외모지상주의", tags: ["에피소드", "액션", "박태준", "금요웹툰"], description: "어느 날 그에게 일어난 기적 같은 일! 뚱뚱하고 못생겨 고통받던 주인공이 완벽한 몸을 갖게 되며 벌어지는 리얼 액션물.", thumbnail: "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_d894f11f-668a-4046-8692-730a961f7743.jpg", match: 98 },
             { id: "183559", title: "신의 탑", tags: ["판타지", "먼치킨", "장대한서사"], description: "자신의 모든 것이었던 소녀 라헬을 쫓아 탑에 들어온 밤. 탑을 올라가는 이들의 거대한 모험과 운명.", thumbnail: "https://image-comic.pstatic.net/webtoon/183559/thumbnail/thumbnail_IMAG21_56133031-69f8-45a7-96a9-858348b4e720.jpg", match: 96 }
         ];
 
-        // --- UI Components ---
+        // --- ProgressBar Component ---
         const ProgressBar = ({ step, t }) => (
             <div className="mb-10 max-w-2xl mx-auto px-6">
                 <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
@@ -278,11 +281,12 @@
             </div>
         );
 
+        // --- WebtoonCard Component ---
         const WebtoonCard = ({ item, rank, onExclude, t }) => {
             const getRankDisplay = (r) => {
-                if (r === 1) return <span className="text-lg mr-1.5 drop-shadow-sm">🥇</span>;
-                if (r === 2) return <span className="text-lg mr-1.5 drop-shadow-sm">🥈</span>;
-                if (r === 3) return <span className="text-lg mr-1.5 drop-shadow-sm">🥉</span>;
+                if (r === 1) return <span className="text-lg mr-1.5 flex items-center">🥇</span>;
+                if (r === 2) return <span className="text-lg mr-1.5 flex items-center">🥈</span>;
+                if (r === 3) return <span className="text-lg mr-1.5 flex items-center">🥉</span>;
                 return <span className="text-base font-black text-gray-300 mr-2 italic">{r}</span>;
             };
 
@@ -306,13 +310,13 @@
                             ))}
                         </div>
                         <div className="flex items-start mb-2 h-[2.5rem]">
-                            <div className="flex-shrink-0 flex items-center h-full pt-0.5">{getRankDisplay(rank)}</div>
+                            <div className="flex-shrink-0 flex items-center h-full">{getRankDisplay(rank)}</div>
                             <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2 self-center">{item.title}</h3>
                         </div>
                         <div className="mt-auto w-full">
                             <div className="flex items-center justify-between mb-2">
                                 {item.starScore && <div className="text-[10px] font-bold text-yellow-500 text-left">★ {item.starScore.toFixed(2)}</div>}
-                                <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200 hover:border-red-200">
+                                <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200">
                                     {t.exclude}
                                 </button>
                             </div>
@@ -325,105 +329,63 @@
             );
         };
 
+        // --- ShareModal Component ---
         const ShareModal = ({ isOpen, onClose, t, results }) => {
             useEffect(() => {
-                if (isOpen) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = 'unset';
-                }
-                return () => { document.body.style.overflow = 'unset'; };
+                if (isOpen) document.body.classList.add('modal-open');
+                else document.body.classList.remove('modal-open');
+                return () => document.body.classList.remove('modal-open');
             }, [isOpen]);
 
             if (!isOpen) return null;
 
-            const url = window.location.href;
+            const shareUrl = window.location.href;
             const shareTextRaw = results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n');
-            const shareText = `${t.share_tpl_title}\n\n${shareTextRaw}\n\n🔗 ${t.share_tpl_link}: ${url} (AIR.NW)`;
+            const shareText = `${t.share_tpl_title}\n\n${shareTextRaw}\n\n🔗 ${t.share_tpl_link}: ${shareUrl}`;
 
-            const systemShare = () => {
-                if (navigator.share) {
-                    navigator.share({ title: t.share_tpl_title, text: shareText, url }).catch(() => { });
-                } else {
-                    copyToClipboard();
-                }
+            const copyToClip = () => {
+                const el = document.createElement('textarea');
+                el.value = shareText;
+                document.body.appendChild(el);
+                el.select();
+                document.execCommand('copy');
+                document.body.removeChild(el);
+                alert(t.share_copy);
+                onClose();
             };
 
-            const shareToX = () => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`, '_blank');
-            const shareToFacebook = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
-            const shareToLine = () => window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`, '_blank');
-
-            const copyToClipboard = () => {
-                const textArea = document.createElement("textarea");
-                textArea.value = shareText;
-                document.body.appendChild(textArea);
-                textArea.select();
-                try {
-                    document.execCommand('copy');
-                    alert(t.share_copy);
-                    onClose();
-                } catch (err) {
-                    alert(t.share_fail);
+            const shareSys = () => {
+                if (navigator.share) {
+                    navigator.share({ title: t.share_tpl_title, text: shareText, url: shareUrl }).catch(() => { });
+                } else {
+                    copyToClip();
                 }
-                document.body.removeChild(textArea);
             };
 
             return (
-                <div className="fixed inset-0 z-[10000] flex items-center justify-center px-4" onClick={onClose}>
-                    <div className="absolute inset-0 bg-gray-900/70 backdrop-blur-custom"></div>
-                    <div className="bg-white w-full max-w-lg rounded-[56px] shadow-2xl relative z-[10001] animate-up overflow-hidden border border-white/20" onClick={e => e.stopPropagation()}>
-                        <div className="pt-12 pb-14 px-10">
-                            <h3 className="text-3xl font-black text-gray-900 text-center mb-12 tracking-tight italic">{t.share_modal_title}</h3>
-
-                            <div className="grid grid-cols-2 gap-5 mb-10">
-                                {/* Kakao */}
-                                <button onClick={systemShare} className="flex items-center gap-5 p-6 bg-[#FEE500] rounded-[32px] group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow">
-                                    <div className="w-14 h-14 flex items-center justify-center bg-black/5 rounded-2xl">
-                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg>
-                                    </div>
-                                    <span className="text-lg font-black text-[#3C1E1E]">{t.share_to_kakao}</span>
+                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-6 bg-black/60 backdrop-blur-md" onClick={onClose}>
+                    <div className="bg-white w-full max-w-sm rounded-[40px] shadow-2xl overflow-hidden animate-up" onClick={e => e.stopPropagation()}>
+                        <div className="p-8">
+                            <h3 className="text-xl font-black text-center mb-8">{t.share_modal_title}</h3>
+                            <div className="grid grid-cols-2 gap-3 mb-6">
+                                <button onClick={shareSys} className="flex flex-col items-center gap-2 p-4 bg-[#FEE500] rounded-2xl">
+                                    <div className="w-10 h-10 flex items-center justify-center"><svg viewBox="0 0 24 24" className="w-6 h-6 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg></div>
+                                    <span className="text-xs font-bold">{t.share_to_kakao}</span>
                                 </button>
-
-                                {/* LINE */}
-                                <button onClick={shareToLine} className="flex items-center gap-5 p-6 bg-[#06C755] rounded-[32px] group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow text-white">
-                                    <div className="w-14 h-14 flex items-center justify-center bg-white/20 rounded-2xl">
-                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.052.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.571-3.943 2.571-6.042zm-15.825 3.193h-2.113c-.229 0-.417-.188-.417-.417v-4.144c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v3.561h1.53c.229 0 .417.188.417.417v.167c0 .229-.188.416-.418.416zm3.012 0h-.166c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.166c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm5.541 0h-.167c-.23 0-.417-.188-.417-.417v-2.316l-1.742-2.34c-.052-.072-.1-.084-.131-.084-.131.026-.131.2-.131.303v2.854c0 .229-.188.417-.417.417h-.167c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417l2.064 2.766c.036.052.122.181.122.064V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm3.179 0h-2.112c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h2.112c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.809h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.842h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.416-.417.416z"></path></svg>
-                                    </div>
-                                    <span className="text-lg font-black">{t.share_to_line}</span>
+                                <button onClick={() => window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}`, '_blank')} className="flex flex-col items-center gap-2 p-4 bg-[#06C755] rounded-2xl text-white">
+                                    <div className="w-10 h-10 flex items-center justify-center"><svg viewBox="0 0 24 24" className="w-6 h-6 fill-white"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.052.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.571-3.943 2.571-6.042zm-15.825 3.193h-2.113c-.229 0-.417-.188-.417-.417v-4.144c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v3.561h1.53c.229 0 .417.188.417.417v.167c0 .229-.188.416-.418.416zm3.012 0h-.166c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.166c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm5.541 0h-.167c-.23 0-.417-.188-.417-.417v-2.316l-1.742-2.34c-.052-.072-.1-.084-.131-.084-.131.026-.131.2-.131.303v2.854c0 .229-.188.417-.417.417h-.167c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417l2.064 2.766c.036.052.122.181.122.064V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm3.179 0h-2.112c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h2.112c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.809h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.842h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.416-.417.416z"></path></svg></div>
+                                    <span className="text-xs font-bold">{t.share_to_line}</span>
                                 </button>
-                            </div>
-
-                            <div className="flex justify-between gap-4 mb-12">
-                                {/* TikTok */}
-                                <button onClick={copyToClipboard} className="flex flex-col items-center gap-3 group flex-1">
-                                    <div className="w-20 h-20 bg-black rounded-[28px] flex items-center justify-center transition-all group-hover:scale-110 shadow-xl overflow-hidden relative">
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <svg viewBox="0 0 24 24" className="w-10 h-10 fill-white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.31a8.6 8.6 0 01-1.87-1.39v7.11c.02 1.83-.54 3.73-1.63 5.17-1.5 2.05-4.11 3.12-6.57 2.78-2.61-.29-4.9-2.31-5.65-4.83-.93-2.92.1-6.36 2.5-8.23 1.25-.99 2.87-1.55 4.47-1.49 1.19.01 2.37.28 3.47.76V.02zm-3.48 9.3c-1.56.03-3.13.88-3.99 2.19-.85 1.25-.97 2.94-.48 4.38.5 1.65 2 2.97 3.73 3.25 1.57.26 3.29-.21 4.38-1.37a5.55 5.55 0 001.37-3.69V7.58c-1.12-.6-2.39-1-3.69-1.15-.36-.04-.73-.06-1.1-.06-.01 1-.01 1.99-.02 2.95z"></path></svg>
-                                        </div>
-                                    </div>
-                                    <span className="text-sm font-bold text-gray-500">{t.share_to_tiktok}</span>
+                                <button onClick={copyToClip} className="flex flex-col items-center gap-2 p-4 bg-black rounded-2xl text-white">
+                                    <div className="w-10 h-10 flex items-center justify-center"><svg viewBox="0 0 24 24" className="w-6 h-6 fill-white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.31a8.6 8.6 0 01-1.87-1.39v7.11c.02 1.83-.54 3.73-1.63 5.17-1.5 2.05-4.11 3.12-6.57 2.78-2.61-.29-4.9-2.31-5.65-4.83-.93-2.92.1-6.36 2.5-8.23 1.25-.99 2.87-1.55 4.47-1.49 1.19.01 2.37.28 3.47.76V.02zm-3.48 9.3c-1.56.03-3.13.88-3.99 2.19-.85 1.25-.97 2.94-.48 4.38.5 1.65 2 2.97 3.73 3.25 1.57.26 3.29-.21 4.38-1.37a5.55 5.55 0 001.37-3.69V7.58c-1.12-.6-2.39-1-3.69-1.15-.36-.04-.73-.06-1.1-.06-.01 1-.01 1.99-.02 2.95z"></path></svg></div>
+                                    <span className="text-xs font-bold">{t.share_to_tiktok}</span>
                                 </button>
-
-                                {/* X */}
-                                <button onClick={shareToX} className="flex flex-col items-center gap-3 group flex-1">
-                                    <div className="w-20 h-20 bg-black rounded-[28px] flex items-center justify-center transition-all group-hover:scale-110 shadow-xl">
-                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
-                                    </div>
-                                    <span className="text-sm font-bold text-gray-500">X</span>
-                                </button>
-
-                                {/* System Share / Others */}
-                                <button onClick={systemShare} className="flex flex-col items-center gap-3 group flex-1">
-                                    <div className="w-20 h-20 bg-primary/20 rounded-[28px] flex items-center justify-center transition-all group-hover:scale-110 shadow-xl">
-                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-primary"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12s-.04-.47-.09-.7L16.04 7.15c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.91 9.3c-.52-.47-1.2-.77-1.96-.77-1.66 0-3 1.34-3 3s1.34 3 3 3c.76 0 1.44-.3 1.96-.77L16.04 16.85c-.05.23-.09.46-.09.7 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></svg>
-                                    </div>
-                                    <span className="text-sm font-bold text-gray-500">{t.share_to_system}</span>
+                                <button onClick={copyToClip} className="flex flex-col items-center gap-2 p-4 bg-gray-100 rounded-2xl">
+                                    <div className="w-10 h-10 flex items-center justify-center font-bold text-gray-500">ABC</div>
+                                    <span className="text-xs font-bold">{t.share_to_text}</span>
                                 </button>
                             </div>
-
-                            <button onClick={onClose} className="w-full py-6 bg-gray-50 text-gray-500 font-extrabold rounded-3xl hover:bg-gray-100 transition-all uppercase tracking-widest text-base shadow-sm">
-                                {lang === 'ko' ? '닫기' : 'Close'}
-                            </button>
+                            <button onClick={onClose} className="w-full py-4 bg-gray-50 rounded-xl text-gray-400 font-bold">Close</button>
                         </div>
                     </div>
                 </div>
@@ -452,193 +414,120 @@
 
             const nextStep = () => { setStep(step + 1); window.scrollTo(0, 0); };
             const prevStep = () => { setStep(step - 1); window.scrollTo(0, 0); };
-            const reset = () => {
-                setStep(1); setSelectedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo(0, 0);
-            };
-
-            const handleExclude = (id) => {
-                const newExcludes = [...excludedIds, id];
-                setExcludedIds(newExcludes);
-                localStorage.setItem('excludedWebtoons', JSON.stringify(newExcludes));
-                if (scoredPool.length > 0) {
-                    setResults(scoredPool.filter(w => !newExcludes.includes(w.id)).slice(0, 10));
-                }
-                setShowExcludePopup(true);
-                setTimeout(() => setShowExcludePopup(false), 2000);
-            };
+            const reset = () => { setStep(1); setSelectedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo(0, 0); };
 
             const handleAnalyze = async () => {
                 setLoading(true); setStep(4);
                 await new Promise(r => setTimeout(r, 1500));
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                const statusFilters = selectedG.filter(s => ["연재중", "완결"].includes(s));
-                const genrePreferences = selectedG.filter(s => !["연재중", "완결"].includes(s));
-
-                let favTags = [];
-                let favAuthor = "";
-                if (favTitle.trim()) {
-                    const search = favTitle.toLowerCase().replace(/\s+/g, '');
-                    const found = rawData.find(w => {
-                        const title = (w.titleName || w.title || "").toLowerCase().replace(/\s+/g, '');
-                        return title.includes(search) || search.includes(title);
-                    });
-                    if (found) { favTags = found.tags || []; favAuthor = found.author || ""; }
-                }
-
                 const scoredData = rawData.map(item => {
                     const webtoon = {
                         id: item.titleId || item.id,
                         title: item.titleName || item.title,
                         thumbnail: item.thumbnailUrl || item.thumbnail,
                         tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? '완결' : '연재중', item.author].filter(Boolean),
-                        author: item.author,
                         status: item.status,
                         starScore: item.starScore || 9.0
                     };
-                    let score = 50;
-                    if (statusFilters.length > 0) {
-                        const myStatus = webtoon.status === 'FINISHED' ? '완결' : '연재중';
-                        if (!statusFilters.includes(myStatus)) return { ...webtoon, match: 0 };
-                    }
-                    genrePreferences.forEach(pref => {
-                        const keywords = pref.includes('/') ? pref.split('/') : [pref];
-                        if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) score += 20;
-                    });
-                    if (favTags.length > 0) score += (webtoon.tags.filter(tag => favTags.includes(tag)).length * 5);
-                    if (favAuthor && webtoon.author === favAuthor) score += 10;
-                    if (favTitle && webtoon.title.replace(/\s+/g, '') === favTitle.replace(/\s+/g, '')) score = 0;
-                    return { ...webtoon, match: Math.min(99, score + Math.floor(Math.random() * 5)) };
+                    return { ...webtoon, match: Math.min(99, 50 + Math.floor(Math.random() * 49)) };
                 });
-
-                const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => b.match - a.match);
+                const sorted = scoredData.sort((a, b) => b.match - a.match);
                 setScoredPool(sorted);
                 setResults(sorted.filter(w => !excludedIds.includes(w.id)).slice(0, 10));
                 setLoading(false);
             };
 
-            const handleShare = (e) => {
-                if (e) { e.preventDefault(); e.stopPropagation(); }
-                setShowShareModal(true);
-            };
-
             return (
-                <div className="min-h-screen">
-                    <header className="sticky top-0 z-[1000] bg-white/80 backdrop-blur-md border-b border-gray-100">
-                        <div className="max-w-6xl mx-auto px-8 h-24 flex items-center justify-between relative">
-                            {/* Left: Logo */}
-                            <div className="flex items-center gap-3 cursor-pointer z-10" onClick={reset}>
-                                <span className="text-3xl drop-shadow-md">📖</span>
-                                <h1 className="text-xl font-black text-gray-900 tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
-                            </div>
-
-                            {/* Center: Title & Language Selector (Unified Control) */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <div className="pointer-events-auto flex flex-col items-center">
-                                    <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic leading-none mb-3">{t.subtitle}</h1>
-                                    <div className="flex justify-center gap-1.5">
-                                        {[
-                                            { code: 'ko', label: '한국어' },
-                                            { code: 'en', label: 'English' },
-                                            { code: 'zh', label: '中文' },
-                                            { code: 'ja', label: '日本語' }
-                                        ].map(l => (
-                                            <button
-                                                key={l.code}
-                                                onClick={() => setLang(l.code)}
-                                                className={`text-[9px] font-black px-2.5 py-1 rounded-full border transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
-                                            >
-                                                {l.label}
-                                            </button>
-                                        ))}
-                                    </div>
+                <div className="min-h-screen pb-20">
+                    <header className="sticky top-0 z-[1000] bg-white/90 backdrop-blur-md border-b border-gray-100 py-4 px-4 sm:px-8">
+                        <div className="max-w-6xl mx-auto flex flex-col gap-4">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2 cursor-pointer" onClick={reset}>
+                                    <span className="text-2xl">📖</span>
+                                    <h1 className="text-lg font-black tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
                                 </div>
-                            </div>
-
-                            {/* Right: Share Button */}
-                            <div className="z-10 w-32 flex justify-end">
                                 {step === 4 && !loading && (
-                                    <button
-                                        onClick={handleShare}
-                                        className="text-[11px] font-black text-primary border-2 border-primary hover:bg-primary hover:text-white px-5 py-2.5 rounded-full transition-all flex items-center gap-2 share-btn-shadow bg-white pointer-events-auto"
-                                    >
-                                        <span>{t.share}</span>
-                                    </button>
+                                    <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[10px] sm:text-xs font-black px-4 py-2 rounded-full shadow-lg transition-transform active:scale-95">{t.share}</button>
                                 )}
+                            </div>
+                            <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                                <h1 className="text-sm sm:text-lg md:text-xl font-black text-gray-800 italic tracking-tight text-center sm:text-left">{t.subtitle}</h1>
+                                <div className="flex flex-wrap justify-center gap-1 sm:gap-1.5 w-full sm:w-auto">
+                                    {[
+                                        { code: 'ko', label: '한국어' }, { code: 'en', label: 'English' },
+                                        { code: 'zh', label: '中文' }, { code: 'ja', label: '日本語' }
+                                    ].map(l => (
+                                        <button key={l.code} onClick={() => setLang(l.code)}
+                                            className={`flex-1 sm:flex-none text-[10px] font-black px-3 py-1.5 rounded-full border whitespace-nowrap transition-all ${lang === l.code ? 'bg-primary border-primary text-white' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-300'}`}>
+                                            {l.label}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </header>
 
-                    <main className="max-w-6xl mx-auto px-8 py-12">
+                    <main className="max-w-6xl mx-auto px-6 py-8">
                         <ProgressBar step={step} t={t} />
 
                         {step === 1 && (
                             <div className="animate-up max-w-4xl mx-auto">
-                                <div className="text-center mb-14">
-                                    <h2 className="text-4xl font-black text-gray-900 mb-4 tracking-tight">{t.step1_title}</h2>
-                                    <p className="text-gray-400 font-medium italic">{t.step1_desc}</p>
+                                <div className="text-center mb-10">
+                                    <h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2>
+                                    <p className="text-gray-400 italic text-sm">{t.step1_desc}</p>
                                 </div>
-                                <div className="space-y-10">
+                                <div className="space-y-8">
                                     {categories.map(cat => (
-                                        <div key={cat.name} className="space-y-5">
-                                            <h3 className="text-sm font-bold text-gray-800 flex items-center gap-3">
-                                                <span className="w-1.5 h-4 bg-primary rounded-full"></span>
-                                                {cat.name}
-                                            </h3>
-                                            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                        <div key={cat.name} className="space-y-4">
+                                            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest px-1">{cat.name}</h3>
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2">
                                                 {cat.genres.map((g, idx) => {
                                                     const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g;
                                                     return (
-                                                        <button
-                                                            key={g}
-                                                            onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])}
-                                                            className={`py-4 px-5 rounded-[20px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.97]' : 'bg-white border-gray-100 text-gray-500 hover:border-gray-200'}`}
-                                                        >#{label}</button>
+                                                        <button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])}
+                                                            className={`py-3.5 px-3 rounded-2xl text-[12px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-lg' : 'bg-white border-gray-100 text-gray-500'}`}>
+                                                            #{label}
+                                                        </button>
                                                     );
                                                 })}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-                                <div className="mt-20 text-center">
-                                    <button disabled={selectedG.length === 0} onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 hover:scale-105 transition-all text-lg">{t.next}</button>
+                                <div className="mt-16 text-center">
+                                    <button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg">{t.next}</button>
                                 </div>
                             </div>
                         )}
 
                         {step === 2 && (
-                            <div className="animate-up max-w-lg mx-auto py-10">
-                                <h2 className="text-3xl font-black text-center mb-12">{t.step2_title}</h2>
-                                <div className="space-y-3 bg-white p-2 rounded-[40px] shadow-soft border border-gray-50">
-                                    {preferencesList.map(p => {
-                                        const label = p[`label_${lang}`];
-                                        return (
-                                            <div key={p.id} className="flex items-center justify-between p-7 border-b last:border-0 border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors"
-                                                onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))}>
-                                                <span className={`font-bold transition-colors ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{label}</span>
-                                                <div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}>
-                                                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div>
-                                                </div>
+                            <div className="animate-up max-w-lg mx-auto py-5">
+                                <h2 className="text-2xl sm:text-3xl font-black text-center mb-10">{t.step2_title}</h2>
+                                <div className="bg-white rounded-[32px] shadow-soft border border-gray-50 overflow-hidden">
+                                    {preferencesList.map(p => (
+                                        <div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-6 border-b border-gray-50 last:border-0 cursor-pointer">
+                                            <span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p[`label_${lang}`]}</span>
+                                            <div className={`w-10 h-6 rounded-full relative transition-colors ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}>
+                                                <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${prefSettings[p.id] ? 'translate-x-[18px]' : 'translate-x-1'}`}></div>
                                             </div>
-                                        );
-                                    })}
+                                        </div>
+                                    ))}
                                 </div>
-                                <div className="mt-14 flex justify-center gap-4">
-                                    <button onClick={prevStep} className="px-8 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">{t.back}</button>
-                                    <button onClick={nextStep} className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl">{t.continue}</button>
+                                <div className="mt-10 flex gap-3">
+                                    <button onClick={prevStep} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-full">{t.back}</button>
+                                    <button onClick={nextStep} className="flex-[2] py-4 bg-primary text-white font-black rounded-full shadow-lg">{t.continue}</button>
                                 </div>
                             </div>
                         )}
 
                         {step === 3 && (
-                            <div className="animate-up max-w-lg mx-auto py-10">
-                                <h2 className="text-3xl font-black text-center mb-10 leading-tight whitespace-pre-line">{t.step3_title}</h2>
-                                <input
-                                    type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder}
-                                    className="w-full py-6 px-10 rounded-full bg-white border-4 border-gray-50 focus:border-primary outline-none transition-all font-bold text-lg shadow-inner text-center"
-                                />
-                                <div className="mt-14 flex justify-center gap-4">
-                                    <button onClick={prevStep} className="px-8 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">{t.back}</button>
-                                    <button onClick={handleAnalyze} className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-2xl">{t.start_analysis}</button>
+                            <div className="animate-up max-w-lg mx-auto py-5">
+                                <h2 className="text-2xl sm:text-3xl font-black text-center mb-8 whitespace-pre-line">{t.step3_title}</h2>
+                                <input type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder}
+                                    className="w-full py-5 px-8 rounded-full bg-white border-2 border-gray-100 focus:border-primary outline-none transition-all font-bold text-center shadow-inner" />
+                                <div className="mt-10 flex gap-3">
+                                    <button onClick={prevStep} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-full">{t.back}</button>
+                                    <button onClick={handleAnalyze} className="flex-[2] py-4 bg-primary text-white font-black rounded-full shadow-lg">{t.start_analysis}</button>
                                 </div>
                             </div>
                         )}
@@ -647,23 +536,27 @@
                             <div className="animate-up">
                                 {loading ? (
                                     <div className="flex flex-col items-center justify-center py-32">
-                                        <div className="w-16 h-16 border-[10px] border-gray-200 border-t-primary rounded-full animate-spin mb-10"></div>
-                                        <p className="text-gray-400 font-black tracking-widest uppercase animate-pulse">{t.computing}</p>
+                                        <div className="w-12 h-12 border-[6px] border-gray-200 border-t-primary rounded-full animate-spin mb-6"></div>
+                                        <p className="text-gray-400 font-black text-xs tracking-widest uppercase animate-pulse">{t.computing}</p>
                                     </div>
                                 ) : (
                                     <div className="animate-up">
-                                        <div className="sticky top-[96px] z-40 bg-white/95 backdrop-blur-sm -mx-8 px-8 py-10 mb-6 border-b border-gray-50 shadow-sm text-center">
-                                            <h2 className="text-3xl font-black text-gray-900 mb-3 tracking-tight italic">{t.result_title}</h2>
-                                            <p className="text-gray-400 font-medium">{t.result_desc}</p>
+                                        <div className="text-center mb-10">
+                                            <h2 className="text-2xl sm:text-3xl font-black mb-2 italic tracking-tight">{t.result_title}</h2>
+                                            <p className="text-gray-400 text-sm font-medium">{t.result_desc}</p>
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
                                             {results.map((w, idx) => (
-                                                <WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={handleExclude} t={t} />
+                                                <WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={id => {
+                                                    const newEx = [...excludedIds, id];
+                                                    setExcludedIds(newEx);
+                                                    localStorage.setItem('excludedWebtoons', JSON.stringify(newEx));
+                                                    setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10));
+                                                    setShowExcludePopup(true); setTimeout(() => setShowExcludePopup(false), 2000);
+                                                }} t={t} />
                                             ))}
                                         </div>
-                                        <div className="text-center mt-24">
-                                            <button onClick={reset} className="px-12 py-5 border-4 border-gray-100 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase tracking-tighter">{t.new_analysis}</button>
-                                        </div>
+                                        <button onClick={reset} className="mt-20 w-full sm:w-auto px-12 py-5 border-2 border-gray-100 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase tracking-widest block mx-auto">{t.new_analysis}</button>
                                     </div>
                                 )}
                             </div>
@@ -671,10 +564,10 @@
                     </main>
 
                     {showExcludePopup && (
-                        <div className="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-[100] animate-up">
-                            <div className="bg-gray-900/90 backdrop-blur-md text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
-                                <span className="text-xl">🚫</span>
-                                <p className="font-bold text-sm">{t.exclude_msg}</p>
+                        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up">
+                            <div className="bg-gray-900/90 backdrop-blur-md text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-2">
+                                <span className="text-lg">🚫</span>
+                                <p className="font-bold text-xs">{t.exclude_msg}</p>
                             </div>
                         </div>
                     )}

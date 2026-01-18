@@ -327,7 +327,7 @@
                                 {item.starScore && <div className="text-[10px] font-bold text-yellow-500 text-left">★ {item.starScore.toFixed(2)}</div>}
                                 <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200">{t.exclude}</button>
                             </div>
-                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[15px] flex items-center justify-center gap-2 shadow-sm">
+                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[17px] flex items-center justify-center gap-1 shadow-sm">
                                 <span>{t.view_now}</span>
                                 <span className="text-[11px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재중'})</span>
                             </a>

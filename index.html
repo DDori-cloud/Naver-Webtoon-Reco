@@ -67,7 +67,7 @@
         // --- Translations (AI Generated) ---
         const TRANSLATIONS = {
             ko: {
-                subtitle: "My Pick Toon",
+                subtitle: "My Pick Naver WebToon(with AI)",
                 process: "분석 프로세스",
                 step: "단계",
                 of: "/",
@@ -98,7 +98,7 @@
                 share_tpl_link: "나도 해보기"
             },
             en: {
-                subtitle: "My Pick Toon",
+                subtitle: "My Pick Naver WebToon(with AI)",
                 process: "Analysis Process",
                 step: "Step",
                 of: "of",
@@ -129,7 +129,7 @@
                 share_tpl_link: "Try it yourself"
             },
             zh: {
-                subtitle: "My Pick Toon",
+                subtitle: "My Pick Naver WebToon(with AI)",
                 process: "分析进度",
                 step: "第",
                 of: "步 / 共",
@@ -160,13 +160,13 @@
                 share_tpl_link: "我也要试试"
             },
             ja: {
-                subtitle: "My Pick Toon",
+                subtitle: "My Pick Naver WebToon(with AI)",
                 process: "分析プロセス",
                 step: "ステップ",
                 of: "/",
                 share: "共有",
                 step1_title: "好みのジャンルを選んでください",
-                step1_desc: "1つ以上の選択が必須です。",
+                step1_desc: "1つ以上の選択が必須입니다.",
                 cat_status: "連載状態",
                 cat_genre: "メインジャンル",
                 cat_topic: "人気の素材",
@@ -175,19 +175,19 @@
                 step2_title: "好みのテーマ設定",
                 back: "戻る",
                 continue: "続ける",
-                step3_title: "一番面白かった\nウェブトゥーンは何ですか？",
+                step3_title: "一番面白かった\n웹툰은 무엇인가요?",
                 step3_placeholder: "正確なタイトルを入力してください",
                 start_analysis: "分析開始",
                 computing: "結果を計算中...",
                 result_title: "AI おすすめ結果",
-                result_desc: "あなたの好みを分析した結果です。",
+                result_desc: "あなたの好みを分析した結果입니다.",
                 exclude: "おすすめ除外",
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
-                exclude_msg: "今後、この作品はおすすめされません。",
-                share_copy: "結果がクリップボードにコピーされました！",
-                share_fail: "コピーがブロックされました。",
-                share_tpl_title: "[AI おすすめ Naver ウェブトゥーン]",
+                exclude_msg: "今後、この作品はおすすめされません.",
+                share_copy: "結果がクリップボード에 복사되었습니다!",
+                share_fail: "복사가 차단되었습니다.",
+                share_tpl_title: "[AI おすすめ Naver 웹툰]",
                 share_tpl_link: "やってみる"
             }
         };
@@ -200,14 +200,14 @@
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "スポーツ"]
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "스포츠"]
             },
             {
                 name: t.cat_topic,
                 genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"],
                 en: ["Regression", "Possession", "Munchkin", "Idol", "Game Fantasy", "Revenge", "School", "Office", "Rom-Fantasy", "Isekai"],
                 zh: ["回归", "附身", "龙傲天", "偶像", "游改", "复仇", "校园", "职场", "罗曼奇幻", "异世界"],
-                ja: ["回帰", "憑依", "最強", "アイドル", "ゲームファンタジー", "復讐", "学園物", "オフィス", "ロパン", "異世界"]
+                ja: ["回帰", "憑依", "最強", "アイドル", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"]
             },
             {
                 name: t.cat_feature,
@@ -223,7 +223,7 @@
             { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
             { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
             { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
-            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテスク' }
+            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロ테스크' }
         ];
 
         // --- Mock Data ---
@@ -400,13 +400,18 @@
                                 <h1 className="text-2xl font-black text-gray-800 tracking-tighter italic leading-none">{t.subtitle}</h1>
                                 {/* Language Selector */}
                                 <div className="mt-2 flex justify-center gap-1.5">
-                                    {['ko', 'en', 'zh', 'ja'].map(l => (
+                                    {[
+                                        { code: 'ko', label: '한국어' },
+                                        { code: 'en', label: 'English' },
+                                        { code: 'zh', label: '中文' },
+                                        { code: 'ja', label: '日本語' }
+                                    ].map(l => (
                                         <button
-                                            key={l}
-                                            onClick={() => setLang(l)}
-                                            className={`text-[9px] font-black px-2 py-0.5 rounded-full border transition-all ${lang === l ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
+                                            key={l.code}
+                                            onClick={() => setLang(l.code)}
+                                            className={`text-[9px] font-black px-2 py-0.5 rounded-full border transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white border-gray-100 text-gray-400 hover:border-gray-300'}`}
                                         >
-                                            {l.toUpperCase()}
+                                            {l.label}
                                         </button>
                                     ))}
                                 </div>

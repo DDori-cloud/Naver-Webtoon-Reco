@@ -353,7 +353,7 @@
                 <div className="bg-white rounded-[32px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
                     <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }} />
-                        <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{item.match}%</div>
+                        <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
                     </div>
                     <div className="p-5 flex flex-col flex-grow">
                         {/* Fixed height for tags to align titles perfectly */}
@@ -498,7 +498,10 @@
                         title: item.titleName || item.title,
                         thumbnail: item.thumbnailUrl || item.thumbnail,
                         tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? '완결' : '연재중', item.author].filter(Boolean),
-                        author: item.author, status: item.status, starScore: item.starScore || 9.0
+                        author: item.author,
+                        status: item.status,
+                        starScore: item.starScore || 0,
+                        viewCount: item.viewCount || 0
                     };
 
                     // 1. Check strict exclusion from Step 2 (Non-preferred)
@@ -518,9 +521,23 @@
                         const keywords = pref.includes('/') ? pref.split('/') : [pref];
                         if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) score += 20;
                     });
-                    return { ...webtoon, match: Math.min(99, score + Math.floor(Math.random() * 5)) };
+
+                    // Add small randomness to score for base variety, but keep it within range
+                    return { ...webtoon, match: Math.min(99, score + (Math.random() * 5)) };
                 });
-                const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => b.match - a.match);
+
+                const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => {
+                    // 1순위: 선호도 일치(%), 정수값만 고려
+                    const matchA = Math.floor(a.match);
+                    const matchB = Math.floor(b.match);
+                    if (matchB !== matchA) return matchB - matchA;
+
+                    // 2순위: 별점(점수), 소수점 모두 반영
+                    if (b.starScore !== a.starScore) return b.starScore - a.starScore;
+
+                    // 3순위: 조회수(인기순) 반영
+                    return b.viewCount - a.viewCount;
+                });
                 setScoredPool(sorted);
                 setResults(sorted.filter(w => !excludedIds.includes(w.id)).slice(0, 10));
                 setLoading(false);

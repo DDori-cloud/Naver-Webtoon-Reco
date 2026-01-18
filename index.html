@@ -70,21 +70,6 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
-
-        /* TikTok Glitch Effect Simulation */
-        .tiktok-icon-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .tiktok-note {
-            position: relative;
-            width: 36px;
-            height: 36px;
-            background: transparent;
-        }
     </style>
     <!-- Kakao SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
@@ -103,16 +88,11 @@
         const { useState, useEffect, useMemo } = React;
 
         // --- Kakao Key Management ---
-        // 사용자가 발급받은 실제 JavaScript 키를 여기에 넣어야 정식 연동이 작동합니다.
-        const KAKAO_JS_KEY = '7716eb056c6c408381180fb2987a0279'; // ← 실제 키를 여기에 입력해주세요.
+        const KAKAO_JS_KEY = '7716eb056c6c408381180fb2987a0279';
 
         const initKakao = () => {
             if (window.Kakao && !Kakao.isInitialized()) {
-                try {
-                    Kakao.init(KAKAO_JS_KEY);
-                } catch (e) {
-                    console.error("Kakao Init Failed:", e);
-                }
+                try { Kakao.init(KAKAO_JS_KEY); } catch (e) { console.error("Kakao Init Failed:", e); }
             }
         };
 
@@ -190,22 +170,119 @@
                 share_to_tiktok: "TikTok",
                 share_to_text: "Copy Results",
                 share_to_system: "Others"
+            },
+            zh: {
+                subtitle: "My Pick Naver WebToon(with AI)",
+                process: "分析进度",
+                step: "第",
+                of: "步 / 共",
+                share: "分享",
+                step1_title: "请选择您的喜好",
+                step1_desc: "请至少选择一个类别。",
+                cat_status: "连载状态",
+                cat_genre: "主打类型",
+                cat_topic: "热门素材",
+                cat_feature: "剧情特点",
+                next: "下一步",
+                step2_title: "偏好设置",
+                back: "返回",
+                continue: "继续",
+                step3_title: "您最喜欢的\n漫画是什么？",
+                step3_placeholder: "请输入准确的标题",
+                start_analysis: "开始分析",
+                computing: "正在计算结果...",
+                result_title: "AI 最佳推荐",
+                result_desc: "根据您的独特偏好分析得出。",
+                exclude: "不再推荐",
+                view_now: "立即阅读",
+                new_analysis: "重新分析",
+                exclude_msg: "今后将不再推荐此漫画。",
+                share_copy: "结果已复制到剪贴板！",
+                share_fail: "复制失败。",
+                share_tpl_title: "[AIR.NW] AI 推荐结果",
+                share_tpl_link: "我也要试试",
+                share_modal_title: "分享结果",
+                share_to_kakao: "KakaoTalk",
+                share_to_line: "LINE",
+                share_to_tiktok: "TikTok",
+                share_to_text: "复制结果",
+                share_to_system: "其他"
+            },
+            ja: {
+                subtitle: "My Pick Naver WebToon(with AI)",
+                process: "分析プロセス",
+                step: "ステップ",
+                of: "/",
+                share: "共有する",
+                step1_title: "好みのジャンルを選んでください",
+                step1_desc: "1つ以上の選択이 필수입니다.",
+                cat_status: "連載状態",
+                cat_genre: "メインジャンル",
+                cat_topic: "人気の素材",
+                cat_feature: "ストーリーの特徴",
+                next: "次へ",
+                step2_title: "好みのテーマ設定",
+                back: "戻る",
+                continue: "続ける",
+                step3_title: "一番面白かった\n웹툰은 무엇인가요?",
+                step3_placeholder: "正確なタイトルを入力してください",
+                start_analysis: "分析開始",
+                computing: "結果を計算中...",
+                result_title: "AI おすすめ結果",
+                result_desc: "あなたの好みを分析した結果입니다.",
+                exclude: "おすすめ除外",
+                view_now: "今すぐ見る",
+                new_analysis: "新しい分析",
+                exclude_msg: "今後、この作品은 추천되지 않습니다.",
+                share_copy: "結果이 복사되었습니다!",
+                share_fail: "복사가 차단되었습니다.",
+                share_tpl_title: "[AIR.NW] AI おすすめ結果",
+                share_tpl_link: "やってみる",
+                share_modal_title: "結果を共有",
+                share_to_kakao: "KakaoTalk",
+                share_to_line: "LINE",
+                share_to_tiktok: "TikTok",
+                share_to_text: "結果コピー",
+                share_to_system: "その他"
             }
         };
 
         const getGenreCategories = (t) => [
-            { name: t.cat_status, genres: ["연재중", "완결"] },
-            { name: t.cat_genre, genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"] },
-            { name: t.cat_topic, genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"] },
-            { name: t.cat_feature, genres: ["사이다", "힐링", "성장물", "두뇌싸움", "서스펜스"] }
+            { name: t.cat_status, genres: ["연재중", "완결"], en: ["Ongoing", "Finished"], zh: ["连载中", "已完结"], ja: ["連載中", "完結"] },
+            {
+                name: t.cat_genre,
+                genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
+                en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
+                zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリ러", "武侠", "ギャグ", "日常", "感性", "스포츠"]
+            },
+            {
+                name: t.cat_topic,
+                genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"],
+                en: ["Regression", "Possession", "Munchkin", "Idol", "Game Fantasy", "Revenge", "School", "Office", "Rom-Fantasy", "Isekai"],
+                zh: ["回归", "附身", "龙傲天", "偶像", "游改", "复仇", "校园", "职场", "罗曼奇幻", "异世界"],
+                ja: ["回帰", "憑依", "最強", "アイドル", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"]
+            },
+            {
+                name: t.cat_feature,
+                genres: ["사이다", "힐링", "성장물", "두뇌싸움", "서스펜스"],
+                en: ["Satisfying", "Healing", "Growth", "Brain Battle", "Suspense"],
+                zh: ["爽文", "治愈", "成长", "脑力战", "悬疑"],
+                ja: ["スカッと", "ヒーリング", "成長物", "頭脳戦", "サスペンス"]
+            }
         ];
 
-        const getPreferences = (t, lang) => [
-            { id: 'romance', label: lang === 'ko' ? '달달한 로맨스/연애물' : 'Sweet Romance' },
-            { id: 'action', label: lang === 'ko' ? '화끈한 액션과 타격감' : 'Hot Action' },
-            { id: 'brain', label: lang === 'ko' ? '심리전과 고도의 두뇌싸움' : 'Psychological Brain Battle' },
-            { id: 'growth', label: lang === 'ko' ? '주인공의 성장과 감동 서사' : 'Protagonist Growth & Emotion' },
-            { id: 'horror', label: lang === 'ko' ? '공포/그로테스크' : 'Horror / Grotesque' }
+        const getPreferences = (t) => [
+            { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
+            { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
+            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑력較量', label_ja: '心理戦と頭脳戦' },
+            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
+            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテスク' }
+        ];
+
+        const MOCK_WEBTOONS = [
+            { id: "641253", title: "외모지상주의", tags: ["에피소드", "액션", "박태준", "금요웹툰"], thumbnail: "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_d894f11f-668a-4046-8692-730a961f7743.jpg", match: 98, status: 'ONGOING' },
+            { id: "183559", title: "신의 탑", tags: ["판타지", "먼치킨", "장대한서사"], thumbnail: "https://image-comic.pstatic.net/webtoon/183559/thumbnail/thumbnail_IMAG21_56133031-69f8-45a7-96a9-858348b4e720.jpg", match: 96, status: 'ONGOING' }
         ];
 
         const ProgressBar = ({ step, t }) => (
@@ -260,9 +337,7 @@
                 if (isOpen) {
                     document.body.classList.add('modal-open');
                     initKakao();
-                } else {
-                    document.body.classList.remove('modal-open');
-                }
+                } else { document.body.classList.remove('modal-open'); }
                 return () => document.body.classList.remove('modal-open');
             }, [isOpen]);
 
@@ -277,16 +352,12 @@
                 el.value = shareText;
                 document.body.appendChild(el);
                 el.select();
-                try {
-                    document.execCommand('copy');
-                    alert(t.share_copy);
-                } catch (e) { alert(t.share_fail); }
+                try { document.execCommand('copy'); alert(t.share_copy); } catch (e) { alert(t.share_fail); }
                 document.body.removeChild(el);
                 onClose();
             };
 
             const shareToKakao = () => {
-                // Try Official SDK first
                 if (window.Kakao && Kakao.isInitialized()) {
                     try {
                         Kakao.Share.sendDefault({
@@ -302,18 +373,11 @@
                         return;
                     } catch (e) { console.error(e); }
                 }
-
-                // Fallback to Web Share API (System Share)
-                if (navigator.share) {
-                    navigator.share({ title: t.share_tpl_title, text: shareText, url: shareUrl }).catch(() => { });
-                } else {
-                    copyToClip();
-                }
+                if (navigator.share) { navigator.share({ title: t.share_tpl_title, text: shareText, url: shareUrl }).catch(() => { }); }
+                else copyToClip();
             };
 
-            const shareToLine = () => {
-                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
-            };
+            const shareToLine = () => { window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank'); };
 
             return (
                 <div className="fixed inset-0 z-[99999] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={onClose}>
@@ -321,32 +385,20 @@
                         <div className="pt-12 pb-10 px-8">
                             <h3 className="text-2xl font-black text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
                             <div className="grid grid-cols-2 gap-4 mb-8">
-                                {/* Kakao */}
                                 <button onClick={shareToKakao} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[24px] shadow-sm overflow-hidden">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" className="w-10 h-10 object-contain" alt="Kakao" />
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[24px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" className="w-10 h-10 object-contain" alt="Kakao" /></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_kakao}</span>
                                 </button>
-                                {/* LINE */}
                                 <button onClick={shareToLine} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm overflow-hidden">
-                                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" className="w-10 h-10 object-contain" alt="LINE" />
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" className="w-10 h-10 object-contain" alt="LINE" /></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_line}</span>
                                 </button>
-                                {/* TikTok */}
                                 <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm overflow-hidden">
-                                        <img src="https://www.logo.wine/a/logo/TikTok/TikTok-Icon-Logo.wine.svg" className="w-[85%] h-[85%] object-contain" alt="TikTok" style={{ filter: 'brightness(1.5)' }} />
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm overflow-hidden"><img src="https://www.logo.wine/a/logo/TikTok/TikTok-Icon-Logo.wine.svg" className="w-[85%] h-[85%] object-contain" alt="TikTok" style={{ filter: 'brightness(1.5)' }} /></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_tiktok}</span>
                                 </button>
-                                {/* Copy Results */}
                                 <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm overflow-hidden text-slate-600">
-                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-current"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg>
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm overflow-hidden text-slate-600"><svg viewBox="0 0 24 24" className="w-8 h-8 fill-current"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_text}</span>
                                 </button>
                             </div>
@@ -374,7 +426,7 @@
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
             const categories = useMemo(() => getGenreCategories(t), [t]);
-            const preferencesList = useMemo(() => getPreferences(t, lang), [t, lang]);
+            const preferencesList = useMemo(() => getPreferences(t), [t]);
 
             const nextStep = () => { setStep(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
             const prevStep = () => { setStep(prev => prev - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -423,9 +475,9 @@
                             <div className="flex flex-col items-center order-2 md:w-2/4 w-full">
                                 <h1 className="text-sm sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none mb-3 sm:mb-4 text-center">{t.subtitle}</h1>
                                 <div className="flex justify-center gap-1 w-full max-w-[340px] sm:max-w-none px-2">
-                                    {[{ code: 'ko', label: '한국어' }, { code: 'en', label: 'English' }].map(l => (
+                                    {[{ code: 'ko', label: '한국어' }, { code: 'en', label: 'English' }, { code: 'zh', label: '中文' }, { code: 'ja', label: '日本語' }].map(l => (
                                         <button key={l.code} onClick={() => setLang(l.code)}
-                                            className={`flex-1 sm:flex-none text-[9px] sm:text-[11px] font-black py-2.5 rounded-xl border transition-all whitespace-nowrap min-w-0 sm:px-8 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
+                                            className={`flex-1 sm:flex-none text-[8px] min-[360px]:text-[9px] sm:text-[11px] font-black py-2 sm:py-2.5 rounded-xl border transition-all whitespace-nowrap min-w-0 sm:px-5 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
                                             {l.label}
                                         </button>
                                     ))}
@@ -446,14 +498,14 @@
                         {step === 1 && (
                             <div className="animate-up max-w-4xl mx-auto">
                                 <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-600 italic font-bold">{t.step1_desc}</p></div>
-                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{g}</button>))}</div></div>))}</div>
+                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
                                 <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase tracking-widest">NEXT</button></div>
                             </div>
                         )}
                         {step === 2 && (
                             <div className="animate-up max-w-lg mx-auto py-5">
                                 <h2 className="text-3xl font-black text-center mb-10">{t.step2_title}</h2>
-                                <div className="bg-white rounded-[40px] shadow-soft border border-gray-50 overflow-hidden p-2">{preferencesList.map(p => (<div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-7 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors"><span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p.label}</span><div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}><div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div></div></div>))}</div>
+                                <div className="bg-white rounded-[40px] shadow-soft border border-gray-50 overflow-hidden p-2">{preferencesList.map(p => (<div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-7 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors"><span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p[`label_${lang}`] || p.label_ko}</span><div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}><div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div></div></div>))}</div>
                                 <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
                             </div>
                         )}

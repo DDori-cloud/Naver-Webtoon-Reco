@@ -310,10 +310,10 @@
                         <img src={item.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }} />
                         <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{item.match}%</div>
                     </div>
-                    <div className="p-4 flex flex-col flex-grow">
-                        <div className="flex flex-wrap gap-1 mb-2 h-[5.5rem] content-start overflow-hidden">
+                    <div className="p-5 flex flex-col flex-grow">
+                        <div className="flex flex-wrap gap-1.5 mb-2 min-h-[5.5rem] content-start overflow-hidden">
                             {(item.tags || []).slice(0, 8).map((tag, idx) => (
-                                <span key={idx} className="text-[11px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded-md tracking-tighter">#{tag}</span>
+                                <span key={idx} className="text-[11px] font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-md tracking-tighter">#{tag}</span>
                             ))}
                         </div>
                         <div className="flex items-start mb-2 h-[2.5rem]">
@@ -327,7 +327,7 @@
                             </div>
                             <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-xs flex items-center justify-center gap-1.5">
                                 <span>{t.view_now}</span>
-                                <span className="text-[10px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재'})</span>
+                                <span className="text-[10px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재중'})</span>
                             </a>
                         </div>
                     </div>

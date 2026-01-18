@@ -71,20 +71,6 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
     </style>
-    <!-- Kakao SDK -->
-    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"
-        integrity="sha384-l6899E09G960XkvO0G3m43nOn03+O4b8+6T60J9A7j8fK4T55jD7W5O/Xm5H5K5T"
-        crossorigin="anonymous"></script>
-    <script>
-        // Kakao SDK Init (Temporary Key - Usually user provides this, but we'll try to use a placeholder or handle gracefully)
-        try {
-            if (!Kakao.isInitialized()) {
-                // This key is a placeholder. For actual usage, the user would need their own key from Kakao Developers.
-                // However, without a valid key, many features won't work. We'll fallback to Web Share / Clipboard.
-                Kakao.init('YOUR_KAKAO_APP_KEY');
-            }
-        } catch (e) { }
-    </script>
 </head>
 
 <body>
@@ -129,7 +115,7 @@
                 share_copy: "분석 결과가 복사되었습니다!",
                 share_fail: "복사 실패",
                 share_tpl_title: "[AIR.NW] AI 추천 결과",
-                share_tpl_link: "추천 결과 보러가기",
+                share_tpl_link: "나도 해보기",
                 share_modal_title: "공유하기",
                 share_to_kakao: "카카오톡",
                 share_to_line: "라인",
@@ -166,7 +152,7 @@
                 share_copy: "Results copied to clipboard!",
                 share_fail: "Copy failed.",
                 share_tpl_title: "[AIR.NW] AI Recommended Results",
-                share_tpl_link: "View Results",
+                share_tpl_link: "Try it yourself",
                 share_modal_title: "Share Results",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
@@ -203,7 +189,7 @@
                 share_copy: "结果已复制到剪贴板！",
                 share_fail: "复制失败。",
                 share_tpl_title: "[AIR.NW] AI 推荐结果",
-                share_tpl_link: "查看推荐",
+                share_tpl_link: "我也要试试",
                 share_modal_title: "分享结果",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
@@ -229,10 +215,10 @@
                 continue: "続ける",
                 step3_title: "一番面白かった\n웹툰은 무엇인가요?",
                 step3_placeholder: "正確なタイトルを入力してください",
-                start_analysis: "분석 시작",
-                computing: "결과 계산 중...",
-                result_title: "AI 추천 결과",
-                result_desc: "사용자의 고유 취향을 분석한 결과입니다.",
+                start_analysis: "分析開始",
+                computing: "結果を計算中...",
+                result_title: "AI おすすめ結果",
+                result_desc: "あなたの好みを分析した結果입니다.",
                 exclude: "おすすめ除外",
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
@@ -240,7 +226,7 @@
                 share_copy: "結果がコピー되었습니다!",
                 share_fail: "복사가 차단되었습니다.",
                 share_tpl_title: "[AIR.NW] AI おすすめ結果",
-                share_tpl_link: "おすすめを見る",
+                share_tpl_link: "やってみる",
                 share_modal_title: "結果を共有",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
@@ -251,13 +237,13 @@
         };
 
         const getGenreCategories = (t) => [
-            { name: t.cat_status, genres: ["연재중", "완결"], en: ["Ongoing", "Finished"], zh: ["连载中", "已完结"], ja: ["連載中", "完結"] },
+            { name: t.cat_status, genres: ["연재중", "완결"], en: ["Ongoing", "Finished"], zh: ["连载中", "已完结"], ja: ["連載중", "完結"] },
             {
                 name: t.cat_genre,
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファン타지", "アクション", "ドラマ", "スリ러", "武侠", "ギャグ", "日常", "感性", "스포츠"]
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリ러", "武侠", "ギャグ", "日常", "感性", "스포츠"]
             },
             {
                 name: t.cat_topic,
@@ -278,9 +264,9 @@
         const getPreferences = (t) => [
             { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
             { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
-            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
-            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長와 感動' },
-            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテ스크' }
+            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战과 고도의 두뇌싸움', label_ja: '心理戦と頭脳戦' },
+            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
+            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グろ테스크' }
         ];
 
         const MOCK_WEBTOONS = [
@@ -348,48 +334,30 @@
             if (!isOpen) return null;
 
             const shareUrl = window.location.href;
-            const topTitles = results.slice(0, 3).map((w, i) => `${i + 1}. ${w.title}`).join('\n');
-            const shareText = `${t.share_tpl_title}\n\n${topTitles}\n\n${t.share_tpl_link}:\n${shareUrl}`;
+            const fullRankText = results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n');
+            const shareText = `${t.share_tpl_title}\n\n${fullRankText}\n\n🔗 ${t.share_tpl_link}: ${shareUrl}`;
 
             const copyToClip = () => {
                 const el = document.createElement('textarea');
                 el.value = shareText;
                 document.body.appendChild(el);
                 el.select();
-                document.execCommand('copy');
+                try {
+                    document.execCommand('copy');
+                    alert(t.share_copy);
+                } catch (e) { alert(t.share_fail); }
                 document.body.removeChild(el);
-                alert(t.share_copy);
                 onClose();
             };
 
-            const shareToKakao = () => {
-                // Try Kakao SDK Share
-                try {
-                    if (window.Kakao && Kakao.isInitialized()) {
-                        Kakao.Share.sendDefault({
-                            objectType: 'feed',
-                            content: {
-                                title: t.share_tpl_title,
-                                description: topTitles,
-                                imageUrl: results[0]?.thumbnail || 'https://comic.naver.com/static/img/common/naver_shared.png',
-                                link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
-                            },
-                            buttons: [{ title: t.share_tpl_link, link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
-                        });
-                        return;
-                    }
-                } catch (e) { }
-
-                // Fallback to native share or clipboard
-                if (navigator.share) {
-                    navigator.share({ title: t.share_tpl_title, text: shareText, url: shareUrl }).catch(() => { });
-                } else {
-                    copyToClip();
+            const shareSys = (platform) => {
+                if (platform === 'kakao' || platform === 'system') {
+                    if (navigator.share) {
+                        navigator.share({ title: t.share_tpl_title, text: shareText, url: shareUrl }).catch(() => { });
+                    } else copyToClip();
+                } else if (platform === 'line') {
+                    window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
                 }
-            };
-
-            const shareToLine = () => {
-                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank');
             };
 
             return (
@@ -398,20 +366,28 @@
                         <div className="pt-12 pb-10 px-8">
                             <h3 className="text-2xl font-black text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
                             <div className="grid grid-cols-2 gap-4 mb-8">
-                                <button onClick={shareToKakao} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-9 h-9 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg></div>
+                                <button onClick={() => shareSys('kakao')} className="premium-gray-btn flex flex-col items-center gap-4 p-7 rounded-[36px]">
+                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[24px] shadow-sm overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" className="w-10 h-10 object-contain" alt="Kakao" />
+                                    </div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_kakao}</span>
                                 </button>
-                                <button onClick={shareToLine} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.052.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.571-3.943 2.571-6.042zm-15.825 3.193h-2.113c-.229 0-.417-.188-.417-.417v-4.144c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v3.561h1.53c.229 0 .417.188.417.417v.167c0 .229-.188.416-.418.416zm3.012 0h-.166c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.166c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm5.541 0h-.167c-.23 0-.417-.188-.417-.417v-2.316l-1.742-2.34c-.052-.072-.1-.084-.131-.084-.131.026-.131.2-.131.303v2.854c0 .229-.188.417-.417.417h-.167c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417l2.064 2.766c.036.052.122.181.122.064V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm3.179 0h-2.112c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h2.112c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.809h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.842h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.416-.417.416z"></path></svg></div>
+                                <button onClick={() => shareSys('line')} className="premium-gray-btn flex flex-col items-center gap-4 p-7 rounded-[36px]">
+                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm overflow-hidden">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" className="w-10 h-10 object-contain" alt="LINE" />
+                                    </div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_line}</span>
                                 </button>
-                                <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.31a8.6 8.6 0 01-1.87-1.39v7.11c.02 1.83-.54 3.73-1.63 5.17-1.5 2.05-4.11 3.12-6.57 2.78-2.61-.29-4.9-2.31-5.65-4.83-.93-2.92.1-6.36 2.5-8.23 1.25-.99 2.87-1.55 4.47-1.49 1.19.01 2.37.28 3.47.76V.02zm-3.48 9.3c-1.56.03-3.13.88-3.99 2.19-.85 1.25-.97 2.94-.48 4.38.5 1.65 2 2.97 3.73 3.25 1.57.26 3.29-.21 4.38-1.37a5.55 5.55 0 001.37-3.69V7.58c-1.12-.6-2.39-1-3.69-1.15-.36-.04-.73-.06-1.1-.06-.01 1-.01 1.99-.02 2.95z"></path></svg></div>
+                                <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-7 rounded-[36px]">
+                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm overflow-hidden">
+                                        <img src="https://static-00.iconduck.com/assets.00/tiktok-icon-512x512-u8p0p8u7.png" className="w-9 h-9 object-contain invert" alt="TikTok" />
+                                    </div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_tiktok}</span>
                                 </button>
-                                <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-8 h-8 fill-slate-600"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg></div>
+                                <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-7 rounded-[36px]">
+                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm overflow-hidden">
+                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-slate-600"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg>
+                                    </div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_text}</span>
                                 </button>
                             </div>
@@ -490,7 +466,7 @@
                                 <div className="flex justify-center gap-1 w-full max-w-[340px] sm:max-w-none px-2">
                                     {[{ code: 'ko', label: '한국어' }, { code: 'en', label: 'English' }, { code: 'zh', label: '中文' }, { code: 'ja', label: '日本語' }].map(l => (
                                         <button key={l.code} onClick={() => setLang(l.code)}
-                                            className={`flex-1 sm:flex-none text-[8px] min-[360px]:text-[9px] sm:text-[11px] font-black py-2 sm:py-2.5 rounded-full border transition-all whitespace-nowrap min-w-0 sm:px-5 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
+                                            className={`flex-1 sm:flex-none text-[8px] min-[360px]:text-[9px] sm:text-[11px] font-black py-2.5 rounded-xl border transition-all whitespace-nowrap min-w-0 sm:px-6 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
                                             {l.label}
                                         </button>
                                     ))}
@@ -498,7 +474,7 @@
                             </div>
                             <div className="order-3 md:w-1/4 flex justify-end">
                                 {step === 4 && !loading && (
-                                    <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-5 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
+                                    <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
                                         <span>{t.share}</span>
                                         <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path></svg>
                                     </button>
@@ -512,7 +488,7 @@
                             <div className="animate-up max-w-4xl mx-auto">
                                 <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-600 italic font-bold">{t.step1_desc}</p></div>
                                 <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
-                                <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase">NEXT</button></div>
+                                <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase tracking-widest">NEXT</button></div>
                             </div>
                         )}
                         {step === 2 && (

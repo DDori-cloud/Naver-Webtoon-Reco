@@ -159,7 +159,9 @@
                 conflict_msg: "단계 1에서 선택한 선호 태그입니다.\n비선호로 바꾸시겠습니까?",
                 yes: "예",
                 no: "아니오",
-                main: "메인"
+                main: "메인",
+                ongoing: "연재중",
+                finished: "완결"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -202,7 +204,9 @@
                 conflict_msg: "This is a preferred tag from Step 1.\nChange it to non-preferred?",
                 yes: "Yes",
                 no: "No",
-                main: "Main"
+                main: "Main",
+                ongoing: "Ongoing",
+                finished: "Finished"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -245,7 +249,9 @@
                 conflict_msg: "这是您在第1步选择的喜好标签。\n要改为不喜欢的吗？",
                 yes: "是",
                 no: "否",
-                main: "主页"
+                main: "主页",
+                ongoing: "连载中",
+                finished: "已完结"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -254,7 +260,7 @@
                 of: "/",
                 share: "共有する",
                 step1_title: "お好みのタイプを選んでください",
-                step1_desc: "1つ以上の選択이 필수입니다.",
+                step1_desc: "1つ以上の選択が必須です。",
                 cat_status: "連載状態",
                 cat_genre: "メインジャンル",
                 cat_topic: "人気の素材",
@@ -265,18 +271,18 @@
                 step3_title: "好みのテーマ設定",
                 back: "戻る",
                 continue: "続ける",
-                step4_title: "一番面白かった\n웹툰은 무엇인가요?",
-                step3_placeholder: "正確한 タイトルを入力してください",
+                step4_title: "一番面白かった\nウェブトゥーンは何ですか？",
+                step3_placeholder: "正確なタイトルを入力してください",
                 start_analysis: "分析開始",
                 computing: "結果を計算中...",
                 result_title: "AI おすすめ結果",
-                result_desc: "あなたの好みを分析した結果입니다.",
+                result_desc: "あなたの好みを分析した結果です。",
                 exclude: "おすすめ除外",
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
-                exclude_msg: "今後、この作品은 추천되지 않습니다.",
-                share_copy: "結果이 복사되었습니다!",
-                share_fail: "복사가 차단되었습니다.",
+                exclude_msg: "今後、この作品はおすすめされません。",
+                share_copy: "結果がコピーされました！",
+                share_fail: "コピーに失敗しました。",
                 share_tpl_title: "[AIR.NW] AI おすすめ結果",
                 share_tpl_link: "やってみる",
                 share_modal_title: "結果を共有",
@@ -288,7 +294,9 @@
                 conflict_msg: "ステップ1で選択した好みタグです。\n苦手なタイプに変更しますか？",
                 yes: "はい",
                 no: "いいえ",
-                main: "メイン"
+                main: "メイン",
+                ongoing: "連載中",
+                finished: "完結"
             }
         };
 
@@ -374,7 +382,7 @@
                             </div>
                             <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[17px] flex items-center justify-center gap-1 shadow-sm">
                                 <span>{t.view_now}</span>
-                                <span className="text-[11px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재중'})</span>
+                                <span className="text-[11px] opacity-80 font-medium">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
                             </a>
                         </div>
                     </div>
@@ -394,7 +402,7 @@
             if (!isOpen) return null;
 
             const shareUrl = window.location.href;
-            const fullRankText = results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n');
+            const fullRankText = results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? t.finished : t.ongoing})`).join('\n');
             const shareText = `${t.share_tpl_title}\n\n${fullRankText}\n\n🔗 ${t.share_tpl_link}: ${shareUrl}`;
 
             const copyToClip = () => {
@@ -497,7 +505,7 @@
                         id: item.titleId || item.id,
                         title: item.titleName || item.title,
                         thumbnail: item.thumbnailUrl || item.thumbnail,
-                        tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? '완결' : '연재중', item.author].filter(Boolean),
+                        tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? t.finished : t.ongoing, item.author].filter(Boolean),
                         author: item.author,
                         status: item.status,
                         starScore: item.starScore || 0,

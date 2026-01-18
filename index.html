@@ -70,6 +70,27 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
+
+        @keyframes blink {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(1.03);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animate-blink {
+            animation: blink 2s infinite ease-in-out;
+        }
     </style>
     <!-- Kakao SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
@@ -137,7 +158,8 @@
                 share_to_system: "기타 공유",
                 conflict_msg: "단계 1에서 선택한 선호 태그입니다.\n비선호로 바꾸시겠습니까?",
                 yes: "예",
-                no: "아니오"
+                no: "아니오",
+                main: "메인"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -179,7 +201,8 @@
                 share_to_system: "Others",
                 conflict_msg: "This is a preferred tag from Step 1.\nChange it to non-preferred?",
                 yes: "Yes",
-                no: "No"
+                no: "No",
+                main: "Main"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -221,7 +244,8 @@
                 share_to_system: "其他",
                 conflict_msg: "这是您在第1步选择的喜好标签。\n要改为不喜欢的吗？",
                 yes: "是",
-                no: "否"
+                no: "否",
+                main: "主页"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -263,7 +287,8 @@
                 share_to_system: "その他",
                 conflict_msg: "ステップ1で選択した好みタグです。\n苦手なタイプに変更しますか？",
                 yes: "はい",
-                no: "いいえ"
+                no: "いいえ",
+                main: "メイン"
             }
         };
 
@@ -521,11 +546,17 @@
                                 </div>
                             </div>
                             <div className="order-3 md:w-1/4 flex justify-end">
-                                {step === 5 && !loading && (
-                                    <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
-                                        <span>{t.share}</span>
-                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path></svg>
+                                {step < 5 ? (
+                                    <button onClick={reset} className="text-gray-400 font-black text-[11px] sm:text-xs px-5 py-2.5 rounded-full border border-gray-100 hover:bg-gray-50 transition-all">
+                                        {t.main}
                                     </button>
+                                ) : (
+                                    !loading && (
+                                        <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 animate-blink">
+                                            <span>{t.share}</span>
+                                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path></svg>
+                                        </button>
+                                    )
                                 )}
                             </div>
                         </div>

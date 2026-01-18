@@ -51,8 +51,12 @@
         }
 
         .backdrop-blur-custom {
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .share-btn-shadow {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -101,9 +105,10 @@
                 share_fail: "복사가 차단되었습니다.",
                 share_tpl_title: "[AI 추천 네이버 웹툰]",
                 share_tpl_link: "나도 해보기",
-                share_modal_title: "어디로 공유할까요?",
-                share_to_text: "텍스트 복사",
-                share_to_system: "기타 공유"
+                share_modal_title: "결과 공유하기",
+                share_to_kakao: "카카오톡",
+                share_to_text: "전체 텍스트 복사",
+                share_to_system: "더보기 (인스타/메시지)"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -135,9 +140,10 @@
                 share_fail: "Copy failed due to security settings.",
                 share_tpl_title: "[AI Recommended Webtoons]",
                 share_tpl_link: "Try it yourself",
-                share_modal_title: "Share via",
-                share_to_text: "Copy Text",
-                share_to_system: "Others"
+                share_modal_title: "Share Results",
+                share_to_kakao: "KakaoTalk",
+                share_to_text: "Copy Full Text",
+                share_to_system: "Others (Insta/DM)"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -169,7 +175,8 @@
                 share_fail: "由于安全设置，复制失败。",
                 share_tpl_title: "[AI 推荐 Naver 漫画]",
                 share_tpl_link: "我也要试试",
-                share_modal_title: "分享到",
+                share_modal_title: "分享结果",
+                share_to_kakao: "KakaoTalk",
                 share_to_text: "复制文本",
                 share_to_system: "其他"
             },
@@ -192,7 +199,7 @@
                 step3_title: "一番面白かった\n웹툰은 무엇인가요?",
                 step3_placeholder: "正確なタイトルを入力してください",
                 start_analysis: "分析開始",
-                computing: "結果を計算中...",
+                computing: "結果를 계산 중...",
                 result_title: "AI おすすめ結果",
                 result_desc: "あなたの好みを分析した結果입니다.",
                 exclude: "おすすめ除外",
@@ -203,7 +210,8 @@
                 share_fail: "복사가 차단되었습니다.",
                 share_tpl_title: "[AI おすすめ Naver 웹툰]",
                 share_tpl_link: "やってみる",
-                share_modal_title: "共有する",
+                share_modal_title: "結果を共有",
+                share_to_kakao: "KakaoTalk",
                 share_to_text: "テキストコピー",
                 share_to_system: "その他"
             }
@@ -217,14 +225,14 @@
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャ그", "日常", "感性", "スポーツ"]
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリ러", "武侠", "ギャグ", "日常", "感性", "スポーツ"]
             },
             {
                 name: t.cat_topic,
                 genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"],
                 en: ["Regression", "Possession", "Munchkin", "Idol", "Game Fantasy", "Revenge", "School", "Office", "Rom-Fantasy", "Isekai"],
                 zh: ["回归", "附身", "龙傲天", "偶像", "游改", "复仇", "校园", "职场", "罗曼奇幻", "异世界"],
-                ja: ["回帰", "憑依", "最強", "アイドル", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"]
+                ja: ["回帰", "憑依", "最強", "アイドル", "ゲームファンタジー", "복수", "학원물", "오피스", "로판", "이세계"]
             },
             {
                 name: t.cat_feature,
@@ -237,9 +245,9 @@
 
         const getPreferences = (t) => [
             { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
-            { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热의 动作画面', label_ja: '熱いアクション' },
+            { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
             { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
-            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
+            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角의 成长与感动', label_ja: '主人公の成長と感動' },
             { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロ테스크' }
         ];
 
@@ -316,27 +324,6 @@
                 results.map((w, i) => `${i + 1}. ${w.title} (${w.status === 'FINISHED' ? '완결' : '연재중'})`).join('\n') +
                 `\n\n🔗 ${t.share_tpl_link}: ${window.location.href} (AIR.NW)`;
 
-            const shareToX = () => {
-                const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
-                window.open(url, '_blank');
-            };
-
-            const shareToFacebook = () => {
-                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
-                window.open(url, '_blank');
-            };
-
-            const shareToThreads = () => {
-                const url = `https://www.threads.net/intent/post?text=${encodeURIComponent(shareText)}`;
-                window.open(url, '_blank');
-            };
-
-            const copyToClipboard = () => {
-                navigator.clipboard.writeText(shareText)
-                    .then(() => { alert(t.share_copy); onClose(); })
-                    .catch(() => alert(t.share_fail));
-            };
-
             const systemShare = () => {
                 if (navigator.share) {
                     navigator.share({
@@ -349,57 +336,77 @@
                 }
             };
 
+            const shareToX = () => {
+                const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}`;
+                window.open(url, '_blank');
+            };
+
+            const shareToFacebook = () => {
+                const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}&quote=${encodeURIComponent(shareText)}`;
+                window.open(url, '_blank');
+            };
+
+            const copyToClipboard = () => {
+                navigator.clipboard.writeText(shareText)
+                    .then(() => { alert(t.share_copy); onClose(); })
+                    .catch(() => alert(t.share_fail));
+            };
+
             return (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
-                    <div className="absolute inset-0 bg-gray-900/40 backdrop-blur-custom" onClick={onClose}></div>
-                    <div className="bg-white w-full max-w-sm rounded-[40px] shadow-2xl relative z-10 animate-up overflow-hidden">
-                        <div className="p-8">
-                            <h3 className="text-xl font-extrabold text-gray-900 text-center mb-8">{t.share_modal_title}</h3>
-                            <div className="grid grid-cols-3 gap-6">
-                                {/* X (Twitter) */}
-                                <button onClick={shareToX} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                                        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+                    <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-custom" onClick={onClose}></div>
+                    <div className="bg-white w-full max-w-md rounded-[48px] shadow-2xl relative z-10 animate-up overflow-hidden">
+                        <div className="pt-10 pb-12 px-8">
+                            <h3 className="text-2xl font-black text-gray-900 text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
+
+                            <div className="grid grid-cols-2 gap-4 mb-8">
+                                {/* Kakao - Using System Share as it triggers Kakao on Korea mobiles */}
+                                <button onClick={systemShare} className="flex items-center gap-4 p-5 bg-[#FEE500] rounded-3xl group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow">
+                                    <div className="w-12 h-12 flex items-center justify-center bg-black/5 rounded-xl">
+                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg>
                                     </div>
-                                    <span className="text-[10px] font-bold text-gray-500">X</span>
+                                    <span className="text-base font-black text-[#3C1E1E]">{t.share_to_kakao}</span>
+                                </button>
+
+                                {/* System Share Others */}
+                                <button onClick={systemShare} className="flex items-center gap-4 p-5 bg-primary rounded-3xl group transition-all hover:scale-[1.03] active:scale-95 share-btn-shadow">
+                                    <div className="w-12 h-12 flex items-center justify-center bg-white/20 rounded-xl">
+                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12s-.04-.47-.09-.7L16.04 7.15c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.91 9.3c-.52-.47-1.2-.77-1.96-.77-1.66 0-3 1.34-3 3s1.34 3 3 3c.76 0 1.44-.3 1.96-.77L16.04 16.85c-.05.23-.09.46-.09.7 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></svg>
+                                    </div>
+                                    <span className="text-sm font-black text-white">{lang === 'ko' ? '기타 공유' : 'More'}</span>
+                                </button>
+                            </div>
+
+                            <div className="flex justify-center gap-6 mb-10">
+                                {/* X */}
+                                <button onClick={shareToX} className="flex flex-col items-center gap-2 group">
+                                    <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg">
+                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"></path></svg>
+                                    </div>
+                                    <span className="text-xs font-bold text-gray-500">X</span>
                                 </button>
 
                                 {/* Facebook */}
                                 <button onClick={shareToFacebook} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-14 h-14 bg-[#1877F2] rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.248h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
+                                    <div className="w-16 h-16 bg-[#1877F2] rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg">
+                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.248h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"></path></svg>
                                     </div>
-                                    <span className="text-[10px] font-bold text-gray-500">Facebook</span>
+                                    <span className="text-xs font-bold text-gray-500">Facebook</span>
                                 </button>
 
-                                {/* Threads */}
-                                <button onClick={shareToThreads} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-14 h-14 bg-black rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-white"><path d="M14.88 11.53c0 .81-.13 1.48-.39 2-.26.51-.62.88-1.09 1.11a3.6 3.6 0 01-1.6.35 3.32 3.32 0 01-2.22-.72 2.62 2.62 0 01-.89-2c0-.79.13-1.48.39-2.07.27-.58.64-1.02 1.13-1.31a3.7 3.7 0 011.66-.43c.83 0 1.5.24 2 .71.51.46.85 1.15 1.01 2.36zm2.34-.14c-.1-.73-.28-1.39-.56-1.98a5.27 5.27 0 00-1.57-1.98 5.76 5.76 0 00-2.31-1.07 9.8 9.8 0 00-5.38.38 5.6 5.6 0 00-2.22 1.47c-.59.61-1.04 1.36-1.35 2.22a9.6 9.6 0 00-.47 3 9.6 9.6 0 00.47 3 5.37 5.37 0 001.35 2.2 5.6 5.6 0 002.22 1.48 9.57 9.57 0 005.38.38 5.7 5.7 0 002.31-1.07 5.25 5.25 0 001.57-2c.26-.54.45-1.15.56-1.84.15 0 .25.04.25.13v.01c0 .72-.1 1.43-.3 2.11a7.46 7.46 0 01-1.37 2.61 7.64 7.64 0 01-2.58 1.94 8.7 8.7 0 01-4 1c-1 0-1.95-.14-2.85-.43a10.05 10.05 0 01-4.63-2.9 10.05 10.05 0 01-2.9-4.63C.14 13.95 0 13 0 12s.14-1.95.43-2.85A10.05 10.05 0 013.33 4.52C4.54 3.3 6 2.36 7.7 1.76a14.2 14.2 0 018.6 0 9.86 9.86 0 012.85 1.43 9.17 9.17 0 012.35 2.5 10.88 10.88 0 011.37 3.44c.14.7.21 1.43.21 2.18 0 1.25-.2 2.45-.6 3.6s-1 2.15-1.78 3.03a8.88 8.88 0 01-2.82 2.16 8.5 8.5 0 01-3.69.8c-1.28 0-2.43-.25-3.45-.75a6.4 6.4 0 01-2.48-2.03 6.64 6.64 0 01-.15.82c-.08.38-.2.72-.37 1.03a1.44 1.44 0 01-.63.63 2 2 0 01-.88.2 1.32 1.32 0 01-1.31-1.31V9.45c0-.44.15-.82.46-1.13A1.55 1.55 0 019.5 7.86c.67 0 1.25.18 1.74.55a4.04 4.04 0 011.2 1.35c.42-.42.92-.75 1.5-.98.57-.23 1.21-.35 1.91-.35.91 0 1.74.2 2.49.59.75.4 1.34.97 1.78 1.74.45.76.67 1.67.67 2.73 0 .73-.1 1.43-.3 2.12-.2.68-.5 1.28-.9 1.8a5.2 5.2 0 01-1.6 1.39c-.66.36-1.42.55-2.27.55-.7 0-1.35-.14-1.92-.41a4.2 4.2 0 01-1.5-1.15c-.01 1.23-.32 2.18-.94 2.85a3.81 3.81 0 01-2.73 1c-1.11 0-2.13-.25-3.04-.75a7.33 7.33 0 01-2.3-2.07 8.32 8.32 0 01-1.47-3 10.43 10.43 0 010-4.43c.27-.99.76-1.89 1.47-2.7a7.27 7.27 0 012.3-2.06 7.4 7.4 0 013.04-.75c1.47 0 2.7.38 3.69 1.13a6.83 6.83 0 012.16 2.82c.4.92.6 1.9.6 2.94 0 .09-.1.13-.25.13h-.01z"></path></svg>
-                                    </div>
-                                    <span className="text-[10px] font-bold text-gray-500">Threads</span>
-                                </button>
-
-                                {/* Clipboard */}
+                                {/* Copy */}
                                 <button onClick={copyToClipboard} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                                        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-gray-600"><path d="M19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21ZM5 5V19H19V5H5ZM7 7H17V9H7V7ZM7 11H17V13H7V11ZM7 15H13V17H7V15Z"></path></svg>
+                                    <div className="w-16 h-16 bg-gray-100 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110 shadow-lg">
+                                        <svg viewBox="0 0 24 24" className="w-7 h-7 fill-gray-600"><path d="M19 21H5C3.89543 21 3 20.1046 3 19V5C3 3.89543 3.89543 3 5 3H19C20.1046 3 21 3.89543 21 5V19C21 20.1046 20.1046 21 19 21ZM5 5V19H19V5H5ZM7 7H17V9H7V7ZM7 11H17V13H7V11ZM7 15H13V17H7V15Z"></path></svg>
                                     </div>
-                                    <span className="text-[10px] font-bold text-gray-500">{t.share_to_text}</span>
-                                </button>
-
-                                {/* System Share (Kakao, Instagram etc) */}
-                                <button onClick={systemShare} className="flex flex-col items-center gap-2 group">
-                                    <div className="w-14 h-14 bg-primary/20 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110">
-                                        <svg viewBox="0 0 24 24" className="w-6 h-6 fill-primary"><path d="M18 16.08C17.24 16.08 16.56 16.38 16.04 16.85L8.91 12.7C8.96 12.47 9 12.24 9 12s-.04-.47-.09-.7L16.04 7.15c.52.47 1.2.77 1.96.77 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.91 9.3c-.52-.47-1.2-.77-1.96-.77-1.66 0-3 1.34-3 3s1.34 3 3 3c.76 0 1.44-.3 1.96-.77L16.04 16.85c-.05.23-.09.46-.09.7 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"></path></svg>
-                                    </div>
-                                    <span className="text-[10px] font-bold text-gray-500">{t.share_to_system}</span>
+                                    <span className="text-xs font-bold text-gray-500">{lang === 'ko' ? '텍스트 복사' : 'Copy'}</span>
                                 </button>
                             </div>
+
+                            <button onClick={onClose} className="w-full py-5 bg-gray-50 text-gray-500 font-black rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">
+                                {lang === 'ko' ? '닫기' : 'Close'}
+                            </button>
                         </div>
-                        <button onClick={onClose} className="w-full py-5 bg-gray-50 text-gray-400 font-bold hover:text-gray-600 transition-colors uppercase tracking-widest text-xs border-t border-gray-100 italic">
-                            Close
-                        </button>
                     </div>
                 </div>
             );

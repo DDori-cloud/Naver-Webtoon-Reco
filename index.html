@@ -103,17 +103,19 @@
                 step: "단계",
                 of: "/",
                 share: "공유하기",
-                step1_title: "취향을 골라주세요.",
+                step1_title: "선호취향을 골라주세요.",
                 step1_desc: "다양한 장르 중 1개 이상 선택이 필수입니다.",
                 cat_status: "연재 상태",
                 cat_genre: "메인 장르",
                 cat_topic: "인기 소재",
                 cat_feature: "스토리 특징",
                 next: "다음 단계",
-                step2_title: "선호 테마 설정",
+                step2_title: "비선호 취향을 골라주세요 (선택)",
+                step2_desc: "선택한 취향이 포함된 웹툰은 추천에서 제외됩니다.",
+                step3_title: "선호 테마 설정",
                 back: "이전",
                 continue: "계속하기",
-                step3_title: "가장 재미있게 보신\n웹툰은 무엇인가요?",
+                step4_title: "가장 재미있게 보신\n웹툰은 무엇인가요?",
                 step3_placeholder: "정확한 제목을 입력해 주세요",
                 start_analysis: "분석 시작",
                 computing: "결과 계산 중...",
@@ -140,17 +142,19 @@
                 step: "Step",
                 of: "of",
                 share: "Share",
-                step1_title: "Choose Your Taste",
+                step1_title: "Choose Preferred Tastes",
                 step1_desc: "Please select at least one genre.",
                 cat_status: "Status",
                 cat_genre: "Main Genre",
                 cat_topic: "Popular Topics",
                 cat_feature: "Story Features",
                 next: "Next Step",
-                step2_title: "Preference Settings",
+                step2_title: "Choose Non-preferred Tastes (Optional)",
+                step2_desc: "Webtoons with these tags will be strictly excluded.",
+                step3_title: "Preference Settings",
                 back: "Back",
                 continue: "Continue",
-                step3_title: "What is your\nfavorite webtoon?",
+                step4_title: "What is your\nfavorite webtoon?",
                 step3_placeholder: "Enter the exact title",
                 start_analysis: "Start Analysis",
                 computing: "Computing Result...",
@@ -177,17 +181,19 @@
                 step: "第",
                 of: "步 / 共",
                 share: "分享",
-                step1_title: "请选择您的喜好",
+                step1_title: "请选择您喜好的口味",
                 step1_desc: "请至少选择一个类别。",
                 cat_status: "连载状态",
                 cat_genre: "主打类型",
                 cat_topic: "热门素材",
                 cat_feature: "剧情特点",
                 next: "下一步",
-                step2_title: "偏好设置",
+                step2_title: "请选择不喜欢的口味 (可选)",
+                step2_desc: "包含所选标签的漫画将从推荐中排除。",
+                step3_title: "偏好设置",
                 back: "返回",
                 continue: "继续",
-                step3_title: "您最喜欢的\n漫画是什么？",
+                step4_title: "您最喜欢的\n漫画是什么？",
                 step3_placeholder: "请输入准确的标题",
                 start_analysis: "开始分析",
                 computing: "正在计算结果...",
@@ -214,18 +220,20 @@
                 step: "ステップ",
                 of: "/",
                 share: "共有する",
-                step1_title: "好みのジャンルを選んでください",
+                step1_title: "お好みのタイプを選んでください",
                 step1_desc: "1つ以上の選択이 필수입니다.",
                 cat_status: "連載状態",
                 cat_genre: "メインジャンル",
                 cat_topic: "人気の素材",
                 cat_feature: "ストーリーの特徴",
                 next: "次へ",
-                step2_title: "好みのテーマ設定",
+                step2_title: "苦手な好みを選んでください (任意)",
+                step2_desc: "選択したタグが含まれる作品はおすすめから除外されます。",
+                step3_title: "好みのテーマ設定",
                 back: "戻る",
                 continue: "続ける",
-                step3_title: "一番面白かった\n웹툰은 무엇인가요?",
-                step3_placeholder: "正確なタイトルを入力してください",
+                step4_title: "一番面白かった\n웹툰은 무엇인가요?",
+                step3_placeholder: "正確한 タイトルを入力してください",
                 start_analysis: "分析開始",
                 computing: "結果を計算中...",
                 result_title: "AI おすすめ結果",
@@ -288,11 +296,11 @@
         const ProgressBar = ({ step, t }) => (
             <div className="mb-10 max-w-2xl mx-auto px-6">
                 <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${(step / 4) * 100}%` }}></div>
+                    <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${(step / 5) * 100}%` }}></div>
                 </div>
                 <div className="mt-4 flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                     <span>{t.process}</span>
-                    <span className="text-primary">{t.step} {step} {t.of} 4</span>
+                    <span className="text-primary">{t.step} {step} {t.of} 5</span>
                 </div>
             </div>
         );
@@ -418,6 +426,7 @@
             const [lang, setLang] = useState('ko');
             const [step, setStep] = useState(1);
             const [selectedG, setSelectedG] = useState([]);
+            const [excludedG, setExcludedG] = useState([]); // Non-preferred tastes
             const [prefSettings, setPrefSettings] = useState({});
             const [favTitle, setFavTitle] = useState("");
             const [loading, setLoading] = useState(false);
@@ -435,15 +444,16 @@
 
             const nextStep = () => { setStep(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
             const prevStep = () => { setStep(prev => prev - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-            const reset = () => { setStep(1); setSelectedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const reset = () => { setStep(1); setSelectedG([]); setExcludedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
             const handleAnalyze = async () => {
-                setLoading(true); setStep(4);
+                setLoading(true); setStep(5);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 await new Promise(r => setTimeout(r, 1500));
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                 const statusFilters = selectedG.filter(s => ["연재중", "완결"].includes(s));
                 const genrePreferences = selectedG.filter(s => !["연재중", "완결"].includes(s));
+
                 const scoredData = rawData.map(item => {
                     const webtoon = {
                         id: item.titleId || item.id,
@@ -452,6 +462,15 @@
                         tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? '완결' : '연재중', item.author].filter(Boolean),
                         author: item.author, status: item.status, starScore: item.starScore || 9.0
                     };
+
+                    // 1. Check strict exclusion from Step 2 (Non-preferred)
+                    if (excludedG.length > 0) {
+                        const hasExcludedTag = excludedG.some(ex =>
+                            webtoon.tags.some(t => String(t).includes(ex)) || webtoon.title.includes(ex)
+                        );
+                        if (hasExcludedTag) return { ...webtoon, match: 0 };
+                    }
+
                     let score = 50;
                     if (statusFilters.length > 0) {
                         const myStatus = webtoon.status === 'FINISHED' ? '완결' : '연재중';
@@ -489,7 +508,7 @@
                                 </div>
                             </div>
                             <div className="order-3 md:w-1/4 flex justify-end">
-                                {step === 4 && !loading && (
+                                {step === 5 && !loading && (
                                     <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95">
                                         <span>{t.share}</span>
                                         <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path></svg>
@@ -508,20 +527,27 @@
                             </div>
                         )}
                         {step === 2 && (
-                            <div className="animate-up max-w-lg mx-auto py-5">
-                                <h2 className="text-3xl font-black text-center mb-10">{t.step2_title}</h2>
-                                <div className="bg-white rounded-[40px] shadow-soft border border-gray-50 overflow-hidden p-2">{preferencesList.map(p => (<div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-7 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors"><span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p[`label_${lang}`] || p.label_ko}</span><div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}><div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div></div></div>))}</div>
-                                <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
+                            <div className="animate-up max-w-4xl mx-auto">
+                                <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step2_title}</h2><p className="text-gray-600 italic font-bold">{t.step2_desc}</p></div>
+                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setExcludedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${excludedG.includes(g) ? 'bg-red-500 border-red-500 text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
+                                <div className="mt-20 flex gap-4 justify-center"><button onClick={prevStep} className="px-16 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
                             </div>
                         )}
                         {step === 3 && (
                             <div className="animate-up max-w-lg mx-auto py-5">
-                                <h2 className="text-3xl font-black text-center mb-10 leading-tight">{t.step3_title}</h2>
+                                <h2 className="text-3xl font-black text-center mb-10">{t.step3_title}</h2>
+                                <div className="bg-white rounded-[40px] shadow-soft border border-gray-50 overflow-hidden p-2">{preferencesList.map(p => (<div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-7 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors"><span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p[`label_${lang}`] || p.label_ko}</span><div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}><div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div></div></div>))}</div>
+                                <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
+                            </div>
+                        )}
+                        {step === 4 && (
+                            <div className="animate-up max-w-lg mx-auto py-5">
+                                <h2 className="text-3xl font-black text-center mb-10 leading-tight">{t.step4_title}</h2>
                                 <input type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder} className="w-full py-6 px-10 rounded-full bg-white border-2 border-gray-100 focus:border-primary outline-none text-center text-lg shadow-inner font-bold" />
                                 <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={handleAnalyze} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">ANALYZE</button></div>
                             </div>
                         )}
-                        {step === 4 && (
+                        {step === 5 && (
                             <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={id => { const newEx = [...excludedIds, id]; setExcludedIds(newEx); localStorage.setItem('excludedWebtoons', JSON.stringify(newEx)); setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10)); setShowExcludePopup(true); setTimeout(() => setShowExcludePopup(false), 2000); }} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest">NEW SEARCH</button></div>)}</div>
                         )}
                     </main>

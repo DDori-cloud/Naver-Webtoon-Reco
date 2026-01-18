@@ -134,7 +134,10 @@
                 share_to_line: "라인",
                 share_to_tiktok: "틱톡",
                 share_to_text: "결과 복사",
-                share_to_system: "기타 공유"
+                share_to_system: "기타 공유",
+                conflict_msg: "단계 1에서 선택한 선호 태그입니다.\n비선호로 바꾸시겠습니까?",
+                yes: "예",
+                no: "아니오"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -173,7 +176,10 @@
                 share_to_line: "LINE",
                 share_to_tiktok: "TikTok",
                 share_to_text: "Copy Results",
-                share_to_system: "Others"
+                share_to_system: "Others",
+                conflict_msg: "This is a preferred tag from Step 1.\nChange it to non-preferred?",
+                yes: "Yes",
+                no: "No"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -212,7 +218,10 @@
                 share_to_line: "LINE",
                 share_to_tiktok: "TikTok",
                 share_to_text: "复制结果",
-                share_to_system: "其他"
+                share_to_system: "其他",
+                conflict_msg: "这是您在第1步选择的喜好标签。\n要改为不喜欢的吗？",
+                yes: "是",
+                no: "否"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -251,7 +260,10 @@
                 share_to_line: "LINE",
                 share_to_tiktok: "TikTok",
                 share_to_text: "結果コピー",
-                share_to_system: "その他"
+                share_to_system: "その他",
+                conflict_msg: "ステップ1で選択した好みタグです。\n苦手なタイプに変更しますか？",
+                yes: "はい",
+                no: "いいえ"
             }
         };
 
@@ -437,6 +449,7 @@
             });
             const [showExcludePopup, setShowExcludePopup] = useState(false);
             const [showShareModal, setShowShareModal] = useState(false);
+            const [conflictTag, setConflictTag] = useState(null); // Tag causing conflict
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
             const categories = useMemo(() => getGenreCategories(t), [t]);
@@ -529,7 +542,34 @@
                         {step === 2 && (
                             <div className="animate-up max-w-4xl mx-auto">
                                 <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step2_title}</h2><p className="text-gray-600 italic font-bold">{t.step2_desc}</p></div>
-                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setExcludedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${excludedG.includes(g) ? 'bg-red-500 border-red-500 text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
+                                <div className="space-y-10">
+                                    {categories.map(cat => (
+                                        <div key={cat.name} className="space-y-5">
+                                            <h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3>
+                                            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                                                {cat.genres.map((g, idx) => {
+                                                    const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g;
+                                                    const isPreferred = selectedG.includes(g);
+                                                    return (
+                                                        <button
+                                                            key={g}
+                                                            onClick={() => {
+                                                                if (isPreferred) {
+                                                                    setConflictTag(g);
+                                                                } else {
+                                                                    setExcludedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g]);
+                                                                }
+                                                            }}
+                                                            className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${excludedG.includes(g) ? 'bg-red-500 border-red-500 text-white shadow-xl scale-[0.98]' : isPreferred ? 'bg-gray-100 border-gray-100 text-gray-300' : 'bg-white border-gray-100 text-gray-500'}`}
+                                                        >
+                                                            #{label}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                                 <div className="mt-20 flex gap-4 justify-center"><button onClick={prevStep} className="px-16 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
                             </div>
                         )}
@@ -552,6 +592,35 @@
                         )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
+
+                    {/* Conflict Confirmation Modal */}
+                    {conflictTag && (
+                        <div className="fixed inset-0 z-[110000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+                            <div className="bg-white w-full max-w-xs rounded-[40px] shadow-2xl overflow-hidden animate-up p-8 text-center">
+                                <span className="text-3xl mb-4 block">⚠️</span>
+                                <p className="text-gray-800 font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
+                                <div className="flex gap-3">
+                                    <button
+                                        onClick={() => {
+                                            setSelectedG(prev => prev.filter(it => it !== conflictTag));
+                                            setExcludedG(prev => [...prev, conflictTag]);
+                                            setConflictTag(null);
+                                        }}
+                                        className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
+                                    >
+                                        {t.yes}
+                                    </button>
+                                    <button
+                                        onClick={() => setConflictTag(null)}
+                                        className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-transform"
+                                    >
+                                        {t.no}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={results} />
                 </div>
             );

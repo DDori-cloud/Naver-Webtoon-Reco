@@ -313,7 +313,7 @@
                     <div className="p-4 flex flex-col flex-grow">
                         <div className="flex flex-wrap gap-1 mb-2 h-[5.5rem] content-start overflow-hidden">
                             {(item.tags || []).slice(0, 8).map((tag, idx) => (
-                                <span key={idx} className="text-[9px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded-md tracking-tighter">#{tag}</span>
+                                <span key={idx} className="text-[11px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded-md tracking-tighter">#{tag}</span>
                             ))}
                         </div>
                         <div className="flex items-start mb-2 h-[2.5rem]">
@@ -325,7 +325,10 @@
                                 {item.starScore && <div className="text-[10px] font-bold text-yellow-500 text-left">★ {item.starScore.toFixed(2)}</div>}
                                 <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200">{t.exclude}</button>
                             </div>
-                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-xs">{t.view_now}</a>
+                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-xs flex items-center justify-center gap-1.5">
+                                <span>{t.view_now}</span>
+                                <span className="text-[10px] opacity-80 font-medium">({item.status === 'FINISHED' ? '완결' : '연재'})</span>
+                            </a>
                         </div>
                     </div>
                 </div>

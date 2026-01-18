@@ -71,6 +71,20 @@
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
         }
     </style>
+    <!-- Kakao SDK -->
+    <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"
+        integrity="sha384-l6899E09G960XkvO0G3m43nOn03+O4b8+6T60J9A7j8fK4T55jD7W5O/Xm5H5K5T"
+        crossorigin="anonymous"></script>
+    <script>
+        // Kakao SDK Init (Temporary Key - Usually user provides this, but we'll try to use a placeholder or handle gracefully)
+        try {
+            if (!Kakao.isInitialized()) {
+                // This key is a placeholder. For actual usage, the user would need their own key from Kakao Developers.
+                // However, without a valid key, many features won't work. We'll fallback to Web Share / Clipboard.
+                Kakao.init('YOUR_KAKAO_APP_KEY');
+            }
+        } catch (e) { }
+    </script>
 </head>
 
 <body>
@@ -85,7 +99,6 @@
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
 
-        // --- Translations ---
         const TRANSLATIONS = {
             ko: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -153,7 +166,7 @@
                 share_copy: "Results copied to clipboard!",
                 share_fail: "Copy failed.",
                 share_tpl_title: "[AIR.NW] AI Recommended Results",
-                share_tpl_link: "View Recommendations",
+                share_tpl_link: "View Results",
                 share_modal_title: "Share Results",
                 share_to_kakao: "KakaoTalk",
                 share_to_line: "LINE",
@@ -216,10 +229,10 @@
                 continue: "続ける",
                 step3_title: "一番面白かった\n웹툰은 무엇인가요?",
                 step3_placeholder: "正確なタイトルを入力してください",
-                start_analysis: "分析開始",
-                computing: "結果を計算中...",
-                result_title: "AI おすすめ結果",
-                result_desc: "あなたの好みを分析した結果입니다.",
+                start_analysis: "분석 시작",
+                computing: "결과 계산 중...",
+                result_title: "AI 추천 결과",
+                result_desc: "사용자의 고유 취향을 분석한 결과입니다.",
                 exclude: "おすすめ除外",
                 view_now: "今すぐ見る",
                 new_analysis: "新しい分析",
@@ -244,7 +257,7 @@
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠", "ギャグ", "日常", "感性", "スポーツ"]
+                ja: ["ロマンス", "ファン타지", "アクション", "ドラマ", "スリ러", "武侠", "ギャグ", "日常", "感性", "스포츠"]
             },
             {
                 name: t.cat_topic,
@@ -266,8 +279,8 @@
             { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
             { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
             { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑力较量', label_ja: '心理戦と頭脳戦' },
-            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
-            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グ로테스크' }
+            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長와 感動' },
+            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテ스크' }
         ];
 
         const MOCK_WEBTOONS = [
@@ -350,13 +363,26 @@
             };
 
             const shareToKakao = () => {
-                // Native share is the best "standard level" experience for KakaoTalk on mobile
+                // Try Kakao SDK Share
+                try {
+                    if (window.Kakao && Kakao.isInitialized()) {
+                        Kakao.Share.sendDefault({
+                            objectType: 'feed',
+                            content: {
+                                title: t.share_tpl_title,
+                                description: topTitles,
+                                imageUrl: results[0]?.thumbnail || 'https://comic.naver.com/static/img/common/naver_shared.png',
+                                link: { mobileWebUrl: shareUrl, webUrl: shareUrl },
+                            },
+                            buttons: [{ title: t.share_tpl_link, link: { mobileWebUrl: shareUrl, webUrl: shareUrl } }],
+                        });
+                        return;
+                    }
+                } catch (e) { }
+
+                // Fallback to native share or clipboard
                 if (navigator.share) {
-                    navigator.share({
-                        title: t.share_tpl_title,
-                        text: shareText,
-                        url: shareUrl
-                    }).catch(() => { });
+                    navigator.share({ title: t.share_tpl_title, text: shareText, url: shareUrl }).catch(() => { });
                 } else {
                     copyToClip();
                 }
@@ -372,32 +398,20 @@
                         <div className="pt-12 pb-10 px-8">
                             <h3 className="text-2xl font-black text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
                             <div className="grid grid-cols-2 gap-4 mb-8">
-                                {/* Kakao */}
                                 <button onClick={shareToKakao} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[22px] shadow-sm">
-                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg>
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-9 h-9 fill-[#3C1E1E]"><path d="M12 3c-4.97 0-9 3.185-9 7.115 0 2.558 1.707 4.8 4.34 6.05-.18.667-.648 2.417-.74 2.75-.11.41.157.41.33.29.13-.09 2.15-1.46 3.01-2.05a10.6 10.6 0 002.06.205c4.97 0 9-3.185 9-7.115S16.97 3 12 3z"></path></svg></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_kakao}</span>
                                 </button>
-                                {/* LINE */}
                                 <button onClick={shareToLine} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm">
-                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.052.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.571-3.943 2.571-6.042zm-15.825 3.193h-2.113c-.229 0-.417-.188-.417-.417v-4.144c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v3.561h1.53c.229 0 .417.188.417.417v.167c0 .229-.188.416-.418.416zm3.012 0h-.166c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.166c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm5.541 0h-.167c-.23 0-.417-.188-.417-.417v-2.316l-1.742-2.34c-.052-.072-.1-.084-.131-.084-.131.026-.131.2-.131.303v2.854c0 .229-.188.417-.417.417h-.167c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417l2.064 2.766c.036.052.122.181.122.064V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm3.179 0h-2.112c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h2.112c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.809h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.842h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.416-.417.416z"></path></svg>
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M24 10.304c0-5.369-5.383-9.738-12-9.738-6.616 0-12 4.369-12 9.738 0 4.814 4.269 8.846 10.036 9.608.391.084.922.258 1.057.592.121.303.079.778.039 1.085l-.171 1.027c-.052.303-.242 1.186 1.039.647 1.281-.54 6.911-4.069 9.428-6.967 1.739-1.907 2.571-3.943 2.571-6.042zm-15.825 3.193h-2.113c-.229 0-.417-.188-.417-.417v-4.144c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v3.561h1.53c.229 0 .417.188.417.417v.167c0 .229-.188.416-.418.416zm3.012 0h-.166c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.166c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm5.541 0h-.167c-.23 0-.417-.188-.417-.417v-2.316l-1.742-2.34c-.052-.072-.1-.084-.131-.084-.131.026-.131.2-.131.303v2.854c0 .229-.188.417-.417.417h-.167c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417l2.064 2.766c.036.052.122.181.122.064V8.92c0-.229.188-.417.417-.417h.167c.229 0 .417.188.417.417v4.144c0 .229-.188.417-.417.417zm3.179 0h-2.112c-.229 0-.417-.188-.417-.417V8.92c0-.229.188-.417.417-.417h2.112c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.809h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.417-.417.417h-1.528v.842h1.528c.229 0 .417.188.417.417v.167c0 .229-.188.416-.417.416z"></path></svg></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_line}</span>
                                 </button>
-                                {/* TikTok */}
                                 <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm">
-                                        <svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.31a8.6 8.6 0 01-1.87-1.39v7.11c.02 1.83-.54 3.73-1.63 5.17-1.5 2.05-4.11 3.12-6.57 2.78-2.61-.29-4.9-2.31-5.65-4.83-.93-2.92.1-6.36 2.5-8.23 1.25-.99 2.87-1.55 4.47-1.49 1.19.01 2.37.28 3.47.76V.02zm-3.48 9.3c-1.56.03-3.13.88-3.99 2.19-.85 1.25-.97 2.94-.48 4.38.5 1.65 2 2.97 3.73 3.25 1.57.26 3.29-.21 4.38-1.37a5.55 5.55 0 001.37-3.69V7.58c-1.12-.6-2.39-1-3.69-1.15-.36-.04-.73-.06-1.1-.06-.01 1-.01 1.99-.02 2.95z"></path></svg>
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-9 h-9 fill-white"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.17-2.86-.6-4.12-1.31a8.6 8.6 0 01-1.87-1.39v7.11c.02 1.83-.54 3.73-1.63 5.17-1.5 2.05-4.11 3.12-6.57 2.78-2.61-.29-4.9-2.31-5.65-4.83-.93-2.92.1-6.36 2.5-8.23 1.25-.99 2.87-1.55 4.47-1.49 1.19.01 2.37.28 3.47.76V.02zm-3.48 9.3c-1.56.03-3.13.88-3.99 2.19-.85 1.25-.97 2.94-.48 4.38.5 1.65 2 2.97 3.73 3.25 1.57.26 3.29-.21 4.38-1.37a5.55 5.55 0 001.37-3.69V7.58c-1.12-.6-2.39-1-3.69-1.15-.36-.04-.73-.06-1.1-.06-.01 1-.01 1.99-.02 2.95z"></path></svg></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_tiktok}</span>
                                 </button>
-                                {/* Copy Results */}
                                 <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm">
-                                        <svg viewBox="0 0 24 24" className="w-8 h-8 fill-slate-600"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg>
-                                    </div>
+                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm"><svg viewBox="0 0 24 24" className="w-8 h-8 fill-slate-600"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg></div>
                                     <span className="text-sm font-black text-gray-700">{t.share_to_text}</span>
                                 </button>
                             </div>
@@ -427,12 +441,13 @@
             const categories = useMemo(() => getGenreCategories(t), [lang]);
             const preferencesList = useMemo(() => getPreferences(t), [lang]);
 
-            const nextStep = () => { setStep(step + 1); window.scrollTo(0, 0); };
-            const prevStep = () => { setStep(step - 1); window.scrollTo(0, 0); };
-            const reset = () => { setStep(1); setSelectedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo(0, 0); };
+            const nextStep = () => { setStep(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const prevStep = () => { setStep(prev => prev - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const reset = () => { setStep(1); setSelectedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
             const handleAnalyze = async () => {
                 setLoading(true); setStep(4);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 await new Promise(r => setTimeout(r, 1500));
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                 const statusFilters = selectedG.filter(s => ["연재중", "완결"].includes(s));
@@ -464,18 +479,18 @@
 
             return (
                 <div className="min-h-screen pb-20">
-                    <header className="sticky top-0 z-[1000] bg-white/90 backdrop-blur-md border-b border-gray-100 py-5 px-4 sm:px-10">
-                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-6 md:gap-0 justify-between">
+                    <header className="sticky top-0 z-[1000] bg-white/90 backdrop-blur-md border-b border-gray-100 py-4 px-4 sm:px-10">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 md:gap-0 justify-between">
                             <div className="flex items-center gap-2 cursor-pointer order-1 md:w-1/4" onClick={reset}>
                                 <span className="text-2xl">📖</span>
                                 <h1 className="text-xl font-black text-gray-900 tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
                             </div>
                             <div className="flex flex-col items-center order-2 md:w-2/4 w-full">
-                                <h1 className="text-base sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none mb-4 text-center">{t.subtitle}</h1>
+                                <h1 className="text-sm sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none mb-3 sm:mb-4 text-center">{t.subtitle}</h1>
                                 <div className="flex justify-center gap-1 w-full max-w-[340px] sm:max-w-none px-2">
                                     {[{ code: 'ko', label: '한국어' }, { code: 'en', label: 'English' }, { code: 'zh', label: '中文' }, { code: 'ja', label: '日本語' }].map(l => (
                                         <button key={l.code} onClick={() => setLang(l.code)}
-                                            className={`flex-1 sm:flex-none text-[8px] min-[360px]:text-[9px] sm:text-[10px] font-black py-2.5 rounded-full border transition-all whitespace-nowrap min-w-0 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
+                                            className={`flex-1 sm:flex-none text-[8px] min-[360px]:text-[9px] sm:text-[11px] font-black py-2 sm:py-2.5 rounded-full border transition-all whitespace-nowrap min-w-0 sm:px-5 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
                                             {l.label}
                                         </button>
                                     ))}
@@ -495,23 +510,23 @@
                         <ProgressBar step={step} t={t} />
                         {step === 1 && (
                             <div className="animate-up max-w-4xl mx-auto">
-                                <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-400 italic font-medium">{t.step1_desc}</p></div>
-                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-xs font-bold text-gray-300 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
-                                <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={() => setStep(2)} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg">NEXT</button></div>
+                                <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-600 italic font-bold">{t.step1_desc}</p></div>
+                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
+                                <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase">NEXT</button></div>
                             </div>
                         )}
                         {step === 2 && (
                             <div className="animate-up max-w-lg mx-auto py-5">
                                 <h2 className="text-3xl font-black text-center mb-10">{t.step2_title}</h2>
                                 <div className="bg-white rounded-[40px] shadow-soft border border-gray-50 overflow-hidden p-2">{preferencesList.map(p => (<div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-7 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors"><span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p[`label_${lang}`]}</span><div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}><div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div></div></div>))}</div>
-                                <div className="mt-12 flex gap-4"><button onClick={() => setStep(1)} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">BACK</button><button onClick={() => setStep(3)} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl">CONTINUE</button></div>
+                                <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
                             </div>
                         )}
                         {step === 3 && (
                             <div className="animate-up max-w-lg mx-auto py-5">
                                 <h2 className="text-3xl font-black text-center mb-10 leading-tight">{t.step3_title}</h2>
                                 <input type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder} className="w-full py-6 px-10 rounded-full bg-white border-2 border-gray-100 focus:border-primary outline-none text-center text-lg shadow-inner font-bold" />
-                                <div className="mt-12 flex gap-4"><button onClick={() => setStep(2)} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full">BACK</button><button onClick={handleAnalyze} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl">ANALYZE</button></div>
+                                <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={handleAnalyze} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">ANALYZE</button></div>
                             </div>
                         )}
                         {step === 4 && (

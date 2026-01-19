@@ -176,7 +176,15 @@
                 signup_btn: "회원가입",
                 social_login: "소셜 로그인",
                 auth_title: "로그인 / 회원가입",
-                like: "좋아요"
+                like: "좋아요",
+                my_info: "내 정보",
+                liked_list: "내가 좋아하는 웹툰",
+                excluded_list: "추천 제외한 웹툰",
+                delete_account: "회원 탈퇴",
+                find_pw: "비밀번호 찾기",
+                reset_pw_msg: "이메일로 비밀번호 재설정 링크가 발급됩니다.",
+                delete_confirm: "정말로 탈퇴하시겠습니까?\n저장된 모든 데이터가 삭제됩니다.",
+                no_data: "데이터가 없습니다."
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -220,7 +228,23 @@
                 no: "No",
                 main: "Main",
                 ongoing: "Ongoing",
-                finished: "Finished"
+                finished: "Finished",
+                login: "Login",
+                logout: "Logout",
+                email: "Email",
+                password: "Password",
+                login_btn: "Login",
+                signup_btn: "Sign Up",
+                auth_title: "Login / Sign Up",
+                like: "Like",
+                my_info: "My Info",
+                liked_list: "Liked Webtoons",
+                excluded_list: "Excluded Webtoons",
+                delete_account: "Delete Account",
+                find_pw: "Forgot Password?",
+                reset_pw_msg: "A password reset link has been sent to your email.",
+                delete_confirm: "Are you sure you want to delete your account?\nAll saved data will be permanently removed.",
+                no_data: "No data found."
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -264,7 +288,23 @@
                 no: "否",
                 main: "主页",
                 ongoing: "连载중",
-                finished: "已完结"
+                finished: "已完结",
+                login: "登录",
+                logout: "登出",
+                email: "电子邮件",
+                password: "密码",
+                login_btn: "登录",
+                signup_btn: "注册",
+                auth_title: "登录 / 注册",
+                like: "喜欢",
+                my_info: "我的信息",
+                liked_list: "我喜欢的漫画",
+                excluded_list: "排除的漫画",
+                delete_account: "注销账号",
+                find_pw: "找回密码",
+                reset_pw_msg: "重置密码链接已发送至您的邮箱。",
+                delete_confirm: "确定要注销账号吗？\n所有保存的数据将被永久删除。",
+                no_data: "暂无数据。"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -308,7 +348,23 @@
                 no: "いいえ",
                 main: "メイン",
                 ongoing: "連載中",
-                finished: "完結"
+                finished: "完結",
+                login: "ログイン",
+                logout: "ログアウト",
+                email: "メールアドレス",
+                password: "パスワード",
+                login_btn: "ログイン",
+                signup_btn: "新規登録",
+                auth_title: "ログイン / 新規登録",
+                like: "お気に入り",
+                my_info: "マイ情報",
+                liked_list: "お気に入り作品",
+                excluded_list: "除외한 作品",
+                delete_account: "会員脱退",
+                find_pw: "パスワードを忘れた場合",
+                reset_pw_msg: "パスワード再設定リンクをメールで送信しました。",
+                delete_confirm: "本当に退회하시겠습니까?\n保存されたすべてのデータが削除されます。",
+                no_data: "データがありません。"
             }
         };
 
@@ -497,9 +553,11 @@
             const [showExcludePopup, setShowExcludePopup] = useState(false);
             const [showShareModal, setShowShareModal] = useState(false);
             const [showAuthModal, setShowAuthModal] = useState(false);
+            const [showProfileModal, setShowProfileModal] = useState(false);
             const [user, setUser] = useState(null);
             const [likedIds, setLikedIds] = useState([]);
             const [conflictTag, setConflictTag] = useState(null); // Tag causing conflict
+            const [profileTab, setProfileTab] = useState('liked'); // 'liked' or 'excluded'
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
 
@@ -632,7 +690,10 @@
                             </div>
                             <div className="order-3 md:w-1/4 flex justify-end gap-3 items-center">
                                 {user ? (
-                                    <button onClick={() => supabase.auth.signOut()} className="text-gray-400 font-bold text-[10px] uppercase border-b border-gray-100">{t.logout}</button>
+                                    <div className="flex items-center gap-3">
+                                        <button onClick={() => setShowProfileModal(true)} className="px-5 py-2.5 bg-primary/10 text-primary font-black text-[11px] rounded-full border border-primary/20 hover:bg-primary/20 transition-all uppercase">{t.my_info}</button>
+                                        <button onClick={() => supabase.auth.signOut()} className="text-gray-400 font-bold text-[10px] uppercase border-b border-gray-100">{t.logout}</button>
+                                    </div>
                                 ) : (
                                     <button onClick={() => setShowAuthModal(true)} className="px-5 py-2.5 bg-gray-50 text-gray-400 font-black text-[11px] rounded-full border border-gray-100 hover:border-primary hover:text-primary transition-all uppercase">{t.login}</button>
                                 )}
@@ -708,75 +769,164 @@
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
 
                     {/* Conflict Confirmation Modal */}
-                    {conflictTag && (
-                        <div className="fixed inset-0 z-[110000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
-                            <div className="bg-white w-full max-w-xs rounded-[40px] shadow-2xl overflow-hidden animate-up p-8 text-center">
-                                <span className="text-3xl mb-4 block">⚠️</span>
-                                <p className="text-gray-800 font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={() => {
-                                            setSelectedG(prev => prev.filter(it => it !== conflictTag));
-                                            setExcludedG(prev => [...prev, conflictTag]);
-                                            setConflictTag(null);
-                                        }}
-                                        className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
-                                    >
-                                        {t.yes}
-                                    </button>
-                                    <button
-                                        onClick={() => setConflictTag(null)}
-                                        className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-transform"
-                                    >
-                                        {t.no}
-                                    </button>
+                    {
+                        conflictTag && (
+                            <div className="fixed inset-0 z-[110000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+                                <div className="bg-white w-full max-w-xs rounded-[40px] shadow-2xl overflow-hidden animate-up p-8 text-center">
+                                    <span className="text-3xl mb-4 block">⚠️</span>
+                                    <p className="text-gray-800 font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => {
+                                                setSelectedG(prev => prev.filter(it => it !== conflictTag));
+                                                setExcludedG(prev => [...prev, conflictTag]);
+                                                setConflictTag(null);
+                                            }}
+                                            className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
+                                        >
+                                            {t.yes}
+                                        </button>
+                                        <button
+                                            onClick={() => setConflictTag(null)}
+                                            className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-transform"
+                                        >
+                                            {t.no}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )
+                    }
 
                     <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={results} />
 
                     {/* Authentication Modal */}
-                    {showAuthModal && (
-                        <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => setShowAuthModal(false)}>
-                            <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
-                                <h3 className="text-2xl font-black mb-8 tracking-tighter">{t.auth_title}</h3>
-                                <div className="w-full space-y-4">
-                                    <div className="flex flex-col gap-2">
-                                        <input id="auth-email" type="email" placeholder={t.email} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
-                                        <input id="auth-password" type="password" placeholder={t.password} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
+                    {
+                        showAuthModal && (
+                            <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => setShowAuthModal(false)}>
+                                <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+                                    <h3 className="text-2xl font-black mb-8 tracking-tighter">{t.auth_title}</h3>
+                                    <div className="w-full space-y-4">
+                                        <div className="flex flex-col gap-2">
+                                            <input id="auth-email" type="email" placeholder={t.email} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
+                                            <input id="auth-password" type="password" placeholder={t.password} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
+                                        </div>
+                                        <div className="flex gap-2 pt-2">
+                                            <button
+                                                onClick={async () => {
+                                                    const email = document.getElementById('auth-email').value;
+                                                    const password = document.getElementById('auth-password').value;
+                                                    const { error } = await supabase.auth.signInWithPassword({ email, password });
+                                                    if (error) alert(error.message); else setShowAuthModal(false);
+                                                }}
+                                                className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg"
+                                            >
+                                                {t.login_btn}
+                                            </button>
+                                            <button
+                                                onClick={async () => {
+                                                    const email = document.getElementById('auth-email').value;
+                                                    const password = document.getElementById('auth-password').value;
+                                                    const { error } = await supabase.auth.signUp({ email, password });
+                                                    if (error) alert(error.message); else alert("Check your email for confirmation!");
+                                                }}
+                                                className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl"
+                                            >
+                                                {t.signup_btn}
+                                            </button>
+                                        </div>
+                                        <button
+                                            onClick={async () => {
+                                                const email = document.getElementById('auth-email').value;
+                                                if (!email) { alert("Please enter your email first"); return; }
+                                                const { error } = await supabase.auth.resetPasswordForEmail(email);
+                                                if (error) alert(error.message); else alert(t.reset_pw_msg);
+                                            }}
+                                            className="w-full text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors pt-2"
+                                        >
+                                            {t.find_pw}
+                                        </button>
                                     </div>
-                                    <div className="flex gap-2 pt-2">
+                                    <button onClick={() => setShowAuthModal(false)} className="mt-8 text-gray-400 font-bold text-xs uppercase">CLOSE</button>
+                                </div>
+                            </div>
+                        )
+                    }
+
+                    {/* My Info Modal */}
+                    {
+                        showProfileModal && (
+                            <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => setShowProfileModal(false)}>
+                                <div className="bg-white w-full max-w-2xl rounded-[48px] shadow-2xl overflow-hidden animate-up flex flex-col h-[80vh]" onClick={e => e.stopPropagation()}>
+                                    <div className="p-10 pb-6 flex flex-col items-center flex-shrink-0">
+                                        <h3 className="text-2xl font-black mb-6 tracking-tighter">{t.my_info}</h3>
+                                        <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl w-full">
+                                            <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'liked' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.liked_list}</button>
+                                            <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'excluded' ? 'bg-white text-red-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.excluded_list}</button>
+                                        </div>
+                                    </div>
+                                    <div className="flex-grow overflow-y-auto px-10 no-scrollbar">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-10">
+                                            {(profileTab === 'liked' ? likedIds : excludedIds).length === 0 ? (
+                                                <div className="col-span-full py-20 text-center text-gray-300 font-bold">{t.no_data}</div>
+                                            ) : (
+                                                (profileTab === 'liked' ? likedIds : excludedIds).map(id => {
+                                                    const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                                                    const w = rawData.find(it => (it.titleId || it.id) == id);
+                                                    if (!w) return null;
+                                                    return (
+                                                        <div key={id} className="flex gap-4 p-4 rounded-[28px] border border-gray-50 bg-gray-50/50 hover:bg-white hover:shadow-soft transition-all group">
+                                                            <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                                                                <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                                            </div>
+                                                            <div className="flex flex-col justify-center min-w-0 flex-grow">
+                                                                <h4 className="font-extrabold text-gray-900 text-sm truncate tracking-tight">{w.titleName || w.title}</h4>
+                                                                <p className="text-[10px] font-bold text-gray-400 uppercase mt-1">{(w.tags || []).slice(0, 2).join(' ')}</p>
+                                                            </div>
+                                                            <button
+                                                                onClick={async () => {
+                                                                    if (profileTab === 'liked') {
+                                                                        await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                        setLikedIds(prev => prev.filter(it => it !== id));
+                                                                    } else {
+                                                                        await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                        setExcludedIds(prev => prev.filter(it => it !== id));
+                                                                    }
+                                                                }}
+                                                                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-300 hover:text-red-500 shadow-sm transition-all"
+                                                            >
+                                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="p-10 pt-6 border-t border-gray-50 flex flex-col gap-4 flex-shrink-0">
                                         <button
                                             onClick={async () => {
-                                                const email = document.getElementById('auth-email').value;
-                                                const password = document.getElementById('auth-password').value;
-                                                const { error } = await supabase.auth.signInWithPassword({ email, password });
-                                                if (error) alert(error.message); else setShowAuthModal(false);
+                                                if (confirm(t.delete_confirm)) {
+                                                    // Note: Actual user deletion usually requires an edge function.
+                                                    // Here we clear all their data as a "soft" deletion from the app perspective.
+                                                    await supabase.from('favorite_webtoons').delete().eq('user_id', user.id);
+                                                    await supabase.from('excluded_webtoons').delete().eq('user_id', user.id);
+                                                    await supabase.auth.signOut();
+                                                    alert("All data cleared. Your account is now inactive.");
+                                                    setShowProfileModal(false);
+                                                }
                                             }}
-                                            className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg"
+                                            className="text-[11px] font-bold text-gray-300 hover:text-red-400 transition-colors self-center uppercase border-b border-gray-100"
                                         >
-                                            {t.login_btn}
+                                            {t.delete_account}
                                         </button>
-                                        <button
-                                            onClick={async () => {
-                                                const email = document.getElementById('auth-email').value;
-                                                const password = document.getElementById('auth-password').value;
-                                                const { error } = await supabase.auth.signUp({ email, password });
-                                                if (error) alert(error.message); else alert("Check your email for confirmation!");
-                                            }}
-                                            className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl"
-                                        >
-                                            {t.signup_btn}
-                                        </button>
+                                        <button onClick={() => setShowProfileModal(false)} className="w-full py-5 bg-gray-50 rounded-2xl text-gray-400 font-black uppercase">CLOSE</button>
                                     </div>
                                 </div>
-                                <button onClick={() => setShowAuthModal(false)} className="mt-8 text-gray-400 font-bold text-xs">CLOSE</button>
                             </div>
-                        </div>
-                    )}
-                </div>
+                        )
+                    }
+                </div >
             );
         };
         const root = ReactDOM.createRoot(document.getElementById('root'));

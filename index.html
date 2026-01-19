@@ -192,7 +192,8 @@
                 go_to_signup: "아직 계정이 없으신가요? 회원가입",
                 go_to_login: "이미 계정이 있으신가요? 로그인",
                 signup_confirm_msg: "가입 확인 메일이 발송되었습니다! 메일함을 확인해주세요.",
-                login_error_msg: "로그인 정보가 올바르지 않습니다."
+                login_error_msg: "로그인 정보가 올바르지 않습니다.",
+                signup_success: "회원가입이 완료되었습니다!"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -260,7 +261,8 @@
                 go_to_signup: "Don't have an account? Sign Up",
                 go_to_login: "Already have an account? Login",
                 signup_confirm_msg: "Confirmation email sent! Please check your inbox.",
-                login_error_msg: "Invalid login credentials."
+                login_error_msg: "Invalid login credentials.",
+                signup_success: "Sign-up completed successfully!"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -328,7 +330,8 @@
                 go_to_signup: "还没有账号？注册",
                 go_to_login: "已有账号？登录",
                 signup_confirm_msg: "确认邮件已发送！请检查您的收件箱。",
-                login_error_msg: "登录信息无效。"
+                login_error_msg: "登录信息无效。",
+                signup_success: "注册成功！"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -396,7 +399,8 @@
                 go_to_signup: "アカウントをお持ちでないですか？ 新規登録",
                 go_to_login: "すでにアカウントをお持ちですか？ ログイン",
                 signup_confirm_msg: "確認メールを送信しました！メールボックスを確認してください。",
-                login_error_msg: "ログイン情報が正しくありません。"
+                login_error_msg: "ログイン情報が正しくありません。",
+                signup_success: "会員登録が完了しました！"
             }
         };
 
@@ -605,8 +609,16 @@
                     if (session) { setUser(session.user); loadUserData(session.user.id); }
                     else { setUser(null); setLikedIds([]); setExcludedIds([]); }
                 });
+
+                // Handle Signup Success Redirect
+                if (window.location.hash.includes('type=signup')) {
+                    alert(t.signup_success);
+                    // Clear hash to avoid repeated alerts
+                    window.history.replaceState(null, null, window.location.pathname);
+                }
+
                 return () => subscription.unsubscribe();
-            }, []);
+            }, [t]);
 
             const loadUserData = async (userId) => {
                 const { data: exData } = await supabase.from('excluded_webtoons').select('webtoon_id').eq('user_id', userId);

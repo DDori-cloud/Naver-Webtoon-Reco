@@ -126,7 +126,7 @@
 
         const TRANSLATIONS = {
             ko: {
-                subtitle: "My Pick Naver WebToon(with AI)",
+                subtitle: "나의 취향에 맞는 네이버웹툰 찾기(With AI)",
                 process: "분석 프로세스",
                 step: "단계",
                 of: "/",
@@ -196,7 +196,7 @@
                 signup_success: "회원가입이 완료되었습니다!"
             },
             en: {
-                subtitle: "My Pick Naver WebToon(with AI)",
+                subtitle: "Find Naver Webtoons That Match Your Taste(With AI)",
                 process: "Analysis Process",
                 step: "Step",
                 of: "of",
@@ -750,38 +750,53 @@
                 <div className="min-h-screen pb-20">
                     <header className="sticky top-0 z-[1000] bg-white/90 backdrop-blur-md border-b border-gray-100 py-4 px-4 sm:px-10">
                         <div className="max-w-7xl mx-auto">
-                            <div className="flex items-center justify-between mb-3 md:mb-0">
-                                <h1 className="text-base sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none md:hidden">{t.subtitle}</h1>
-                                <div className="flex gap-2 items-center">
-                                    {user ? (
-                                        <>
-                                            <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-500 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all">
-                                                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                            {/* Mobile Layout */}
+                            <div className="md:hidden">
+                                <div className="flex items-center justify-between mb-3">
+                                    <h1 className="text-lg font-black text-gray-800 tracking-tight italic flex-1 pr-2">{t.subtitle}</h1>
+                                    <div className="flex gap-2 items-center flex-shrink-0">
+                                        {user ? (
+                                            <>
+                                                <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-500 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
+                                                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                                                </button>
+                                                <button onClick={() => supabase.auth.signOut()} title={t.logout} className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all">
+                                                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                                                </button>
+                                            </>
+                                        ) : (
+                                            <button onClick={() => setShowAuthModal(true)} title={t.login} className="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
+                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
                                             </button>
-                                            <button onClick={() => supabase.auth.signOut()} title={t.logout} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all">
-                                                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                                        )}
+                                        {step < 4 ? (
+                                            <button onClick={reset} title={t.main} className={`w-9 h-9 flex items-center justify-center rounded-xl border border-gray-100 hover:bg-gray-50 transition-all ${step > 1 ? 'visible' : 'invisible'}`}>
+                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-gray-400"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
                                             </button>
-                                        </>
-                                    ) : (
-                                        <button onClick={() => setShowAuthModal(true)} title={t.login} className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-400 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all">
-                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
-                                        </button>
-                                    )}
-                                    {step < 4 ? (
-                                        <button onClick={reset} title={t.main} className={`w-10 h-10 flex items-center justify-center rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all ${step > 1 ? 'visible' : 'invisible'}`}>
-                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-400"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-                                        </button>
-                                    ) : (
-                                        !loading && (
-                                            <button onClick={() => setShowShareModal(true)} title={t.share} className="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-2xl shadow-lg hover:scale-110 transition-transform active:scale-95 animate-blink">
-                                                <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"></path></svg>
+                                        ) : (
+                                            !loading && (
+                                                <button onClick={() => setShowShareModal(true)} title={t.share} className="w-9 h-9 flex items-center justify-center bg-primary text-white rounded-xl shadow-md hover:scale-105 transition-transform active:scale-95">
+                                                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"></path></svg>
+                                                </button>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="flex items-center justify-center">
+                                    <div className="flex items-center gap-1">
+                                        {[{ code: 'ko', label: 'KO' }, { code: 'en', label: 'EN' }, { code: 'zh', label: 'ZH' }, { code: 'ja', label: 'JA' }].map(l => (
+                                            <button key={l.code} onClick={() => setLang(l.code)}
+                                                className={`px-2 py-1.5 rounded-lg border text-[10px] font-black transition-all ${lang === l.code ? 'bg-primary border-primary text-white' : 'bg-white text-gray-300 border-gray-100'}`}>
+                                                {l.label}
                                             </button>
-                                        )
-                                    )}
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex flex-col md:flex-row items-center gap-3 md:gap-0 justify-between">
-                                <div className="flex items-center gap-1 order-2 md:order-1 md:w-1/4">
+
+                            {/* Desktop Layout */}
+                            <div className="hidden md:flex items-center justify-between">
+                                <div className="flex items-center gap-1">
                                     {[{ code: 'ko', label: 'KO' }, { code: 'en', label: 'EN' }, { code: 'zh', label: 'ZH' }, { code: 'ja', label: 'JA' }].map(l => (
                                         <button key={l.code} onClick={() => setLang(l.code)}
                                             className={`px-2 py-1.5 rounded-lg border text-[10px] font-black transition-all ${lang === l.code ? 'bg-primary border-primary text-white' : 'bg-white text-gray-300 border-gray-100'}`}>
@@ -789,8 +804,34 @@
                                         </button>
                                     ))}
                                 </div>
-                                <h1 className="text-base sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none text-center order-1 md:order-2 hidden md:block">{t.subtitle}</h1>
-                                <div className="order-3 md:w-1/4 hidden md:block"></div>
+                                <h1 className="text-xl font-black text-gray-800 tracking-tight italic">{t.subtitle}</h1>
+                                <div className="flex gap-2 items-center">
+                                    {user ? (
+                                        <>
+                                            <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-500 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
+                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                                            </button>
+                                            <button onClick={() => supabase.auth.signOut()} title={t.logout} className="w-9 h-9 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all">
+                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                                            </button>
+                                        </>
+                                    ) : (
+                                        <button onClick={() => setShowAuthModal(true)} title={t.login} className="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-400 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
+                                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                                        </button>
+                                    )}
+                                    {step < 4 ? (
+                                        <button onClick={reset} title={t.main} className={`w-9 h-9 flex items-center justify-center rounded-xl border border-gray-100 hover:bg-gray-50 transition-all ${step > 1 ? 'visible' : 'invisible'}`}>
+                                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-gray-400"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
+                                        </button>
+                                    ) : (
+                                        !loading && (
+                                            <button onClick={() => setShowShareModal(true)} title={t.share} className="w-9 h-9 flex items-center justify-center bg-primary text-white rounded-xl shadow-md hover:scale-105 transition-transform active:scale-95">
+                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"></path></svg>
+                                            </button>
+                                        )
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </header>

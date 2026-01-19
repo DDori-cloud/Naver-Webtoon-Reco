@@ -594,7 +594,7 @@
             const [loading, setLoading] = useState(false);
             const [results, setResults] = useState([]);
             const [scoredPool, setScoredPool] = useState([]);
-            const [excludedIds, setExcludedIds] = useState(() => {
+            const [dislikedIds, setDislikedIds] = useState(() => {
                 try { return JSON.parse(localStorage.getItem('excludedWebtoons')) || []; } catch (e) { return []; }
             });
             const [showExcludePopup, setShowExcludePopup] = useState(false);
@@ -618,7 +618,7 @@
                 });
                 const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
                     if (session) { setUser(session.user); loadUserData(session.user.id); }
-                    else { setUser(null); setLikedIds([]); setExcludedIds([]); }
+                    else { setUser(null); setLikedIds([]); setDislikedIds([]); }
                 });
 
                 // Handle Signup Success Redirect
@@ -633,7 +633,7 @@
 
             const loadUserData = async (userId) => {
                 const { data: exData } = await supabase.from('excluded_webtoons').select('webtoon_id').eq('user_id', userId);
-                if (exData) setExcludedIds(exData.map(d => d.webtoon_id));
+                if (exData) setDislikedIds(exData.map(d => d.webtoon_id));
                 const { data: favData } = await supabase.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
                 if (favData) setLikedIds(favData.map(d => d.webtoon_id));
             };
@@ -646,7 +646,7 @@
                     setLikedIds(prev => prev.filter(it => it !== id));
                 } else {
                     // Remove from dislikes if it was disliked
-                    if (excludedIds.includes(id)) toggleDislike(id);
+                    if (dislikedIds.includes(id)) toggleDislike(id);
                     await supabase.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: id });
                     setLikedIds(prev => [...prev, id]);
                 }
@@ -737,12 +737,12 @@
                 const isDisliked = dislikedIds.includes(id);
                 if (isDisliked) {
                     await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
-                    setExcludedIds(prev => prev.filter(it => it !== id));
+                    setDislikedIds(prev => prev.filter(it => it !== id));
                 } else {
                     // Remove from likes if it was liked
                     if (likedIds.includes(id)) toggleLike(id);
                     await supabase.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: id });
-                    setExcludedIds(prev => [...prev, id]);
+                    setDislikedIds(prev => [...prev, id]);
                 }
             };
 
@@ -750,20 +750,16 @@
                 <div className="min-h-screen pb-20">
                     <header className="sticky top-0 z-[1000] bg-white/90 backdrop-blur-md border-b border-gray-100 py-4 px-4 sm:px-10">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-4 md:gap-0 justify-between">
-                            <div className="flex items-center gap-2 cursor-pointer order-1 md:w-1/4" onClick={reset}>
-                                <span className="text-2xl">📖</span>
-                                <h1 className="text-xl font-black text-gray-900 tracking-tighter">AIR<span className="text-primary italic">.NW</span></h1>
+                            <div className="flex items-center gap-1 order-1 md:w-1/4">
+                                {[{ code: 'ko', label: 'KO' }, { code: 'en', label: 'EN' }, { code: 'zh', label: 'ZH' }, { code: 'ja', label: 'JA' }].map(l => (
+                                    <button key={l.code} onClick={() => setLang(l.code)}
+                                        className={`px-2 py-1.5 rounded-lg border text-[10px] font-black transition-all ${lang === l.code ? 'bg-primary border-primary text-white' : 'bg-white text-gray-300 border-gray-100'}`}>
+                                        {l.label}
+                                    </button>
+                                ))}
                             </div>
                             <div className="flex flex-col items-center order-2 md:w-2/4 w-full">
-                                <h1 className="text-sm sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none mb-3 sm:mb-4 text-center">{t.subtitle}</h1>
-                                <div className="flex justify-center gap-1 w-full max-w-[340px] sm:max-w-none px-2">
-                                    {[{ code: 'ko', label: '한국어' }, { code: 'en', label: 'English' }, { code: 'zh', label: '中文' }, { code: 'ja', label: '日本語' }].map(l => (
-                                        <button key={l.code} onClick={() => setLang(l.code)}
-                                            className={`flex-1 sm:flex-none text-[8px] min-[360px]:text-[9px] sm:text-[11px] font-black py-2 sm:py-2.5 rounded-xl border transition-all whitespace-nowrap min-w-0 sm:px-5 ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'}`}>
-                                            {l.label}
-                                        </button>
-                                    ))}
-                                </div>
+                                <h1 className="text-base sm:text-xl font-black text-gray-800 tracking-tighter italic leading-none text-center">{t.subtitle}</h1>
                             </div>
                             <div className="order-3 md:w-1/4 flex justify-end gap-2 sm:gap-4 items-center">
                                 {user ? (
@@ -855,8 +851,7 @@
                                         <button onClick={prevStep} className="flex-1 py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">BACK</button>
                                         <button
                                             onClick={handleAnalyze}
-                                            disabled={!favTitle.trim()}
-                                            className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest disabled:opacity-20"
+                                            className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
                                         >
                                             ANALYZE
                                         </button>
@@ -865,7 +860,7 @@
                             </div>
                         )}
                         {step === 4 && (
-                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} isLiked={likedIds.includes(w.id)} isDisliked={excludedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
+                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
                         )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
@@ -904,103 +899,105 @@
 
                     {/* Authentication Modal */}
                     {/* Authentication Modal */}
-                    {showAuthModal && (
-                        <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>
-                            <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
-                                <h3 className="text-2xl font-black mb-8 tracking-tighter">{authMode === 'login' ? t.login : t.signup_btn}</h3>
-                                <div className="w-full space-y-4">
-                                    <div className="flex flex-col gap-3">
-                                        <input
-                                            type="email"
-                                            value={email}
-                                            onChange={e => setEmail(e.target.value)}
-                                            placeholder={t.email}
-                                            className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
-                                        />
-                                        <input
-                                            type="password"
-                                            value={password}
-                                            onChange={e => setPassword(e.target.value)}
-                                            placeholder={t.password}
-                                            className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
-                                        />
-                                        {authMode === 'signup' && (
-                                            <>
-                                                <input
-                                                    type="password"
-                                                    value={confirmPassword}
-                                                    onChange={e => setConfirmPassword(e.target.value)}
-                                                    placeholder={t.password_confirm}
-                                                    className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
-                                                />
-                                                {password && password.length < 6 && <p className="text-[10px] font-bold text-red-500 px-2">{t.pw_criteria}</p>}
-                                                {confirmPassword && password !== confirmPassword && <p className="text-[10px] font-bold text-red-500 px-2">{t.pw_mismatch}</p>}
-                                            </>
+                    {
+                        showAuthModal && (
+                            <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>
+                                <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+                                    <h3 className="text-2xl font-black mb-8 tracking-tighter">{authMode === 'login' ? t.login : t.signup_btn}</h3>
+                                    <div className="w-full space-y-4">
+                                        <div className="flex flex-col gap-3">
+                                            <input
+                                                type="email"
+                                                value={email}
+                                                onChange={e => setEmail(e.target.value)}
+                                                placeholder={t.email}
+                                                className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                            />
+                                            <input
+                                                type="password"
+                                                value={password}
+                                                onChange={e => setPassword(e.target.value)}
+                                                placeholder={t.password}
+                                                className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                            />
+                                            {authMode === 'signup' && (
+                                                <>
+                                                    <input
+                                                        type="password"
+                                                        value={confirmPassword}
+                                                        onChange={e => setConfirmPassword(e.target.value)}
+                                                        placeholder={t.password_confirm}
+                                                        className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                                    />
+                                                    {password && password.length < 6 && <p className="text-[10px] font-bold text-red-500 px-2">{t.pw_criteria}</p>}
+                                                    {confirmPassword && password !== confirmPassword && <p className="text-[10px] font-bold text-red-500 px-2">{t.pw_mismatch}</p>}
+                                                </>
+                                            )}
+                                        </div>
+
+                                        {authMode === 'login' ? (
+                                            <div className="flex flex-col gap-4">
+                                                <button
+                                                    onClick={async () => {
+                                                        const { error } = await supabase.auth.signInWithPassword({ email, password });
+                                                        if (error) alert(t.login_error_msg || error.message); else setShowAuthModal(false);
+                                                    }}
+                                                    className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
+                                                >
+                                                    {t.login_btn}
+                                                </button>
+                                                <button
+                                                    onClick={() => setAuthMode('signup')}
+                                                    className="text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors"
+                                                >
+                                                    {t.go_to_signup}
+                                                </button>
+                                                <button
+                                                    onClick={async () => {
+                                                        if (!email) { alert("Please enter your email first"); return; }
+                                                        const { error } = await supabase.auth.resetPasswordForEmail(email);
+                                                        if (error) alert(error.message); else alert(t.reset_pw_msg);
+                                                    }}
+                                                    className="w-full text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors pt-2 border-t border-gray-50 mt-2"
+                                                >
+                                                    {t.find_pw}
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div className="flex flex-col gap-4">
+                                                <button
+                                                    disabled={!email || password.length < 6 || password !== confirmPassword}
+                                                    onClick={async () => {
+                                                        const { error } = await supabase.auth.signUp({ email, password });
+                                                        if (error) alert(error.message);
+                                                        else {
+                                                            alert(t.signup_confirm_msg);
+                                                            setAuthMode('login');
+                                                        }
+                                                    }}
+                                                    className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform disabled:opacity-30 disabled:pointer-events-none"
+                                                >
+                                                    {t.signup_btn}
+                                                </button>
+                                                <button
+                                                    onClick={() => setAuthMode('login')}
+                                                    className="text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors"
+                                                >
+                                                    {t.go_to_login}
+                                                </button>
+                                            </div>
                                         )}
                                     </div>
-
-                                    {authMode === 'login' ? (
-                                        <div className="flex flex-col gap-4">
-                                            <button
-                                                onClick={async () => {
-                                                    const { error } = await supabase.auth.signInWithPassword({ email, password });
-                                                    if (error) alert(t.login_error_msg || error.message); else setShowAuthModal(false);
-                                                }}
-                                                className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
-                                            >
-                                                {t.login_btn}
-                                            </button>
-                                            <button
-                                                onClick={() => setAuthMode('signup')}
-                                                className="text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors"
-                                            >
-                                                {t.go_to_signup}
-                                            </button>
-                                            <button
-                                                onClick={async () => {
-                                                    if (!email) { alert("Please enter your email first"); return; }
-                                                    const { error } = await supabase.auth.resetPasswordForEmail(email);
-                                                    if (error) alert(error.message); else alert(t.reset_pw_msg);
-                                                }}
-                                                className="w-full text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors pt-2 border-t border-gray-50 mt-2"
-                                            >
-                                                {t.find_pw}
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex flex-col gap-4">
-                                            <button
-                                                disabled={!email || password.length < 6 || password !== confirmPassword}
-                                                onClick={async () => {
-                                                    const { error } = await supabase.auth.signUp({ email, password });
-                                                    if (error) alert(error.message);
-                                                    else {
-                                                        alert(t.signup_confirm_msg);
-                                                        setAuthMode('login');
-                                                    }
-                                                }}
-                                                className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform disabled:opacity-30 disabled:pointer-events-none"
-                                            >
-                                                {t.signup_btn}
-                                            </button>
-                                            <button
-                                                onClick={() => setAuthMode('login')}
-                                                className="text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors"
-                                            >
-                                                {t.go_to_login}
-                                            </button>
-                                        </div>
-                                    )}
+                                    <button
+                                        onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}
+                                        className="mt-8 text-gray-400 font-bold text-xs uppercase"
+                                    >
+                                        CLOSE
+                                    </button>
                                 </div>
-                                <button
-                                    onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}
-                                    className="mt-8 text-gray-400 font-bold text-xs uppercase"
-                                >
-                                    CLOSE
-                                </button>
                             </div>
-                        </div>
-                    )}
+                        )
+                    }
 
                     {/* My Info Modal */}
                     {

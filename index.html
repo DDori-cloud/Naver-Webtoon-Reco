@@ -178,8 +178,8 @@
                 auth_title: "로그인 / 회원가입",
                 like: "좋아요",
                 my_info: "내 정보",
-                liked_list: "내가 좋아하는 웹툰",
-                excluded_list: "추천 제외한 웹툰",
+                liked_list: "선호 작품 (좋아요)",
+                excluded_list: "비선호 작품 (싫어요)",
                 delete_account: "회원 탈퇴",
                 find_pw: "비밀번호 찾기",
                 reset_pw_msg: "이메일로 비밀번호 재설정 링크가 발급됩니다.",
@@ -247,8 +247,8 @@
                 auth_title: "Login / Sign Up",
                 like: "Like",
                 my_info: "My Info",
-                liked_list: "Liked Webtoons",
-                excluded_list: "Excluded Webtoons",
+                liked_list: "Preferred (Like)",
+                excluded_list: "Disliked",
                 delete_account: "Delete Account",
                 find_pw: "Forgot Password?",
                 reset_pw_msg: "A password reset link has been sent to your email.",
@@ -446,7 +446,7 @@
             </div>
         );
 
-        const WebtoonCard = ({ item, rank, onExclude, onLike, isLiked, t }) => {
+        const WebtoonCard = ({ item, rank, onDislike, onLike, isLiked, isDisliked, t }) => {
             const getRankDisplay = (r) => {
                 if (r === 1) return <span className="text-lg mr-1.5 shadow-sm">🥇</span>;
                 if (r === 2) return <span className="text-lg mr-1.5 shadow-sm">🥈</span>;
@@ -455,9 +455,7 @@
             };
             return (
                 <div className="bg-white rounded-[32px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
-                    <button onClick={() => onLike(item.id)} className={`absolute top-4 right-4 z-30 p-2.5 rounded-full backdrop-blur-md shadow-lg transition-all ${isLiked ? 'bg-red-500 text-white scale-110' : 'bg-white/80 text-gray-400 hover:text-red-500 hover:scale-105'}`}>
-                        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
-                    </button>
+
                     <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }} />
                         <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
@@ -483,13 +481,26 @@
                             <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2 break-keep tracking-tighter">{item.title}</h3>
                         </div>
                         <div className="mt-auto w-full">
-                            <div className="flex items-center justify-between mb-3 px-0.5">
-                                {item.starScore && <div className="text-[10px] font-bold text-yellow-500 text-left">★ {item.starScore.toFixed(2)}</div>}
-                                <button onClick={() => onExclude(item.id)} className="text-[9px] font-bold text-gray-400 hover:text-red-400 transition-colors border-b border-gray-200">{t.exclude}</button>
+                            <div className="flex items-center justify-between mb-4">
+                                {item.starScore && <div className="text-[10px] font-bold text-yellow-500">★ {item.starScore.toFixed(2)}</div>}
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => onLike(item.id)}
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLiked ? 'bg-primary text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-primary'}`}
+                                    >
+                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
+                                    </button>
+                                    <button
+                                        onClick={() => onDislike(item.id)}
+                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isDisliked ? 'bg-red-500 text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-red-500'}`}
+                                    >
+                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                                    </button>
+                                </div>
                             </div>
-                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[17px] flex items-center justify-center gap-1 shadow-sm">
+                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[16px] flex items-center justify-center gap-1 shadow-sm">
                                 <span>{t.view_now}</span>
-                                <span className="text-[11px] opacity-80 font-medium translate-y-[1.5px]">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
+                                <span className="text-[10px] opacity-80 font-medium translate-y-[1px]">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
                             </a>
                         </div>
                     </div>
@@ -634,6 +645,8 @@
                     await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
                     setLikedIds(prev => prev.filter(it => it !== id));
                 } else {
+                    // Remove from dislikes if it was disliked
+                    if (excludedIds.includes(id)) toggleDislike(id);
                     await supabase.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: id });
                     setLikedIds(prev => [...prev, id]);
                 }
@@ -706,15 +719,31 @@
                 });
 
                 const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => {
-                    const matchA = Math.floor(a.match);
-                    const matchB = Math.floor(b.match);
-                    if (matchB !== matchA) return matchB - matchA;
+                    let scoreA = a.match;
+                    let scoreB = b.match;
+                    if (dislikedIds.includes(a.id)) scoreA -= 50;
+                    if (dislikedIds.includes(b.id)) scoreB -= 50;
+                    if (scoreB !== scoreA) return scoreB - scoreA;
                     if (b.starScore !== a.starScore) return b.starScore - a.starScore;
                     return b.viewCount - a.viewCount;
                 });
                 setScoredPool(sorted);
-                setResults(sorted.filter(w => !excludedIds.includes(w.id)).slice(0, 10));
+                setResults(sorted.slice(0, 10));
                 setLoading(false);
+            };
+
+            const toggleDislike = async (id) => {
+                if (!user) { setShowAuthModal(true); return; }
+                const isDisliked = dislikedIds.includes(id);
+                if (isDisliked) {
+                    await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                    setExcludedIds(prev => prev.filter(it => it !== id));
+                } else {
+                    // Remove from likes if it was liked
+                    if (likedIds.includes(id)) toggleLike(id);
+                    await supabase.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: id });
+                    setExcludedIds(prev => [...prev, id]);
+                }
             };
 
             return (
@@ -736,24 +765,29 @@
                                     ))}
                                 </div>
                             </div>
-                            <div className="order-3 md:w-1/4 flex justify-end gap-3 items-center">
+                            <div className="order-3 md:w-1/4 flex justify-end gap-2 sm:gap-4 items-center">
                                 {user ? (
-                                    <div className="flex items-center gap-3">
-                                        <button onClick={() => setShowProfileModal(true)} className="px-5 py-2.5 bg-primary/10 text-primary font-black text-[11px] rounded-full border border-primary/20 hover:bg-primary/20 transition-all uppercase">{t.my_info}</button>
-                                        <button onClick={() => supabase.auth.signOut()} className="text-gray-400 font-bold text-[10px] uppercase border-b border-gray-100">{t.logout}</button>
+                                    <div className="flex items-center gap-2 sm:gap-4">
+                                        <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-500 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all">
+                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
+                                        </button>
+                                        <button onClick={() => supabase.auth.signOut()} title={t.logout} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all">
+                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
+                                        </button>
                                     </div>
                                 ) : (
-                                    <button onClick={() => setShowAuthModal(true)} className="px-5 py-2.5 bg-gray-50 text-gray-400 font-black text-[11px] rounded-full border border-gray-100 hover:border-primary hover:text-primary transition-all uppercase">{t.login}</button>
+                                    <button onClick={() => setShowAuthModal(true)} title={t.login} className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-400 rounded-2xl hover:bg-primary/10 hover:text-primary transition-all">
+                                        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"></path></svg>
+                                    </button>
                                 )}
                                 {step < 4 ? (
-                                    <button onClick={reset} className="text-gray-400 font-black text-[11px] sm:text-xs px-5 py-2.5 rounded-full border border-gray-100 hover:bg-gray-50 transition-all uppercase">
-                                        {t.main}
+                                    <button onClick={reset} title={t.main} className={`w-10 h-10 flex items-center justify-center rounded-2xl border border-gray-100 hover:bg-gray-50 transition-all ${step > 1 ? 'visible' : 'invisible'}`}>
+                                        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-gray-400"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
                                     </button>
                                 ) : (
                                     !loading && (
-                                        <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 animate-blink uppercase">
-                                            <span>{t.share}</span>
-                                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path></svg>
+                                        <button onClick={() => setShowShareModal(true)} title={t.share} className="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-2xl shadow-lg hover:scale-110 transition-transform active:scale-95 animate-blink">
+                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"></path></svg>
                                         </button>
                                     )
                                 )}
@@ -804,14 +838,34 @@
                             </div>
                         )}
                         {step === 3 && (
-                            <div className="animate-up max-lg mx-auto py-5">
-                                <h2 className="text-3xl font-black text-center mb-10 leading-tight">{t.step3_title}</h2>
-                                <input type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder} className="w-full py-6 px-10 rounded-full bg-white border-2 border-gray-100 focus:border-primary outline-none text-center text-lg shadow-inner font-bold" />
-                                <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={handleAnalyze} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">ANALYZE</button></div>
+                            <div className="animate-up max-w-2xl mx-auto py-10 px-6">
+                                <div className="text-center mb-12">
+                                    <h2 className="text-3xl font-black mb-4 tracking-tight">{t.step3_title}</h2>
+                                    <p className="text-gray-400 font-medium italic opacity-80 decoration-primary/30 decoration-2">{t.step3_desc || ""}</p>
+                                </div>
+                                <div className="space-y-8">
+                                    <input
+                                        type="text"
+                                        value={favTitle}
+                                        onChange={e => setFavTitle(e.target.value)}
+                                        placeholder={t.step3_placeholder}
+                                        className="w-full py-5 px-8 rounded-3xl bg-white border-2 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-center text-lg shadow-sm transition-all font-bold placeholder:text-gray-200"
+                                    />
+                                    <div className="flex gap-3">
+                                        <button onClick={prevStep} className="flex-1 py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">BACK</button>
+                                        <button
+                                            onClick={handleAnalyze}
+                                            disabled={!favTitle.trim()}
+                                            className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest disabled:opacity-20"
+                                        >
+                                            ANALYZE
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
                         {step === 4 && (
-                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={handleExclude} onLike={toggleLike} isLiked={likedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest">NEW SEARCH</button></div>)}</div>
+                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} isLiked={likedIds.includes(w.id)} isDisliked={excludedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
                         )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}

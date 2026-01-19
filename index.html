@@ -94,6 +94,8 @@
     </style>
     <!-- Kakao SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
@@ -107,6 +109,11 @@
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
+
+        // --- Supabase Config ---
+        const SUPABASE_URL = 'https://vxzdgyentxxipjervdzq.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4emRneWVudHh4aXBqZXJ2ZHpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjQ0ODEsImV4cCI6MjA4NDQwMDQ4MX0.HyZIWay1RI7JHVdVYpkWBTtjg9goQH4muUEaqqG6fPU';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         // --- Kakao Key Management ---
         const KAKAO_JS_KEY = '7716eb056c6c408381180fb2987a0279';
@@ -160,7 +167,16 @@
                 no: "아니오",
                 main: "메인",
                 ongoing: "연재중",
-                finished: "완결"
+                finished: "완결",
+                login: "로그인",
+                logout: "로그아웃",
+                email: "이메일",
+                password: "비밀번호",
+                login_btn: "로그인",
+                signup_btn: "회원가입",
+                social_login: "소셜 로그인",
+                auth_title: "로그인 / 회원가입",
+                like: "좋아요"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -338,7 +354,7 @@
             </div>
         );
 
-        const WebtoonCard = ({ item, rank, onExclude, t }) => {
+        const WebtoonCard = ({ item, rank, onExclude, onLike, isLiked, t }) => {
             const getRankDisplay = (r) => {
                 if (r === 1) return <span className="text-lg mr-1.5 shadow-sm">🥇</span>;
                 if (r === 2) return <span className="text-lg mr-1.5 shadow-sm">🥈</span>;
@@ -347,6 +363,9 @@
             };
             return (
                 <div className="bg-white rounded-[32px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
+                    <button onClick={() => onLike(item.id)} className={`absolute top-4 right-4 z-30 p-2.5 rounded-full backdrop-blur-md shadow-lg transition-all ${isLiked ? 'bg-red-500 text-white scale-110' : 'bg-white/80 text-gray-400 hover:text-red-500 hover:scale-105'}`}>
+                        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                    </button>
                     <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }} />
                         <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
@@ -360,9 +379,7 @@
                                     const isRedundant = filteredTags.some(existing =>
                                         tag.includes(existing) || existing.includes(tag)
                                     );
-                                    if (!isRedundant) {
-                                        filteredTags.push(tag);
-                                    }
+                                    if (!isRedundant) { filteredTags.push(tag); }
                                 }
                                 return filteredTags.slice(0, 6).map((tag, idx) => (
                                     <span key={idx} className="text-[11px] font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-md tracking-tighter">#{tag}</span>
@@ -479,9 +496,52 @@
             });
             const [showExcludePopup, setShowExcludePopup] = useState(false);
             const [showShareModal, setShowShareModal] = useState(false);
+            const [showAuthModal, setShowAuthModal] = useState(false);
+            const [user, setUser] = useState(null);
+            const [likedIds, setLikedIds] = useState([]);
             const [conflictTag, setConflictTag] = useState(null); // Tag causing conflict
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
+
+            useEffect(() => {
+                supabase.auth.getSession().then(({ data: { session } }) => {
+                    if (session) { setUser(session.user); loadUserData(session.user.id); }
+                });
+                const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+                    if (session) { setUser(session.user); loadUserData(session.user.id); }
+                    else { setUser(null); setLikedIds([]); setExcludedIds([]); }
+                });
+                return () => subscription.unsubscribe();
+            }, []);
+
+            const loadUserData = async (userId) => {
+                const { data: exData } = await supabase.from('excluded_webtoons').select('webtoon_id').eq('user_id', userId);
+                if (exData) setExcludedIds(exData.map(d => d.webtoon_id));
+                const { data: favData } = await supabase.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
+                if (favData) setLikedIds(favData.map(d => d.webtoon_id));
+            };
+
+            const toggleLike = async (id) => {
+                if (!user) { setShowAuthModal(true); return; }
+                const isLiked = likedIds.includes(id);
+                if (isLiked) {
+                    await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                    setLikedIds(prev => prev.filter(it => it !== id));
+                } else {
+                    await supabase.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: id });
+                    setLikedIds(prev => [...prev, id]);
+                }
+            };
+
+            const handleExclude = async (id) => {
+                const newEx = [...excludedIds, id];
+                setExcludedIds(newEx);
+                localStorage.setItem('excludedWebtoons', JSON.stringify(newEx));
+                if (user) { await supabase.from('excluded_webtoons').upsert({ user_id: user.id, webtoon_id: id }); }
+                setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10));
+                setShowExcludePopup(true);
+                setTimeout(() => setShowExcludePopup(false), 2000);
+            };
             const categories = useMemo(() => getGenreCategories(t), [t]);
 
             const nextStep = () => { setStep(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -496,6 +556,10 @@
                 const statusFilters = selectedG.filter(s => ["연재중", "완결"].includes(s));
                 const genrePreferences = selectedG.filter(s => !["연재중", "완결"].includes(s));
 
+                // Similarity scoring based on liked webtoons
+                const likedWebtoons = rawData.filter(w => likedIds.includes(w.titleId || w.id));
+                const preferredLegacyTags = likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []);
+
                 const scoredData = rawData.map(item => {
                     const webtoon = {
                         id: item.titleId || item.id,
@@ -508,6 +572,7 @@
                         viewCount: item.viewCount || 0
                     };
 
+                    if (excludedIds.includes(webtoon.id)) return { ...webtoon, match: 0 };
                     if (excludedG.length > 0) {
                         const hasExcludedTag = excludedG.some(ex =>
                             webtoon.tags.some(t => String(t).includes(ex)) || webtoon.title.includes(ex)
@@ -524,6 +589,12 @@
                         const keywords = pref.includes('/') ? pref.split('/') : [pref];
                         if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) score += 20;
                     });
+
+                    // Bonus for similarity to liked webtoons
+                    if (preferredLegacyTags.length > 0) {
+                        const overlap = webtoon.tags.filter(tag => preferredLegacyTags.includes(tag)).length;
+                        score += (overlap * 5);
+                    }
 
                     return { ...webtoon, match: Math.min(99, score + (Math.random() * 5)) };
                 });
@@ -559,14 +630,19 @@
                                     ))}
                                 </div>
                             </div>
-                            <div className="order-3 md:w-1/4 flex justify-end">
+                            <div className="order-3 md:w-1/4 flex justify-end gap-3 items-center">
+                                {user ? (
+                                    <button onClick={() => supabase.auth.signOut()} className="text-gray-400 font-bold text-[10px] uppercase border-b border-gray-100">{t.logout}</button>
+                                ) : (
+                                    <button onClick={() => setShowAuthModal(true)} className="px-5 py-2.5 bg-gray-50 text-gray-400 font-black text-[11px] rounded-full border border-gray-100 hover:border-primary hover:text-primary transition-all uppercase">{t.login}</button>
+                                )}
                                 {step < 4 ? (
-                                    <button onClick={reset} className="text-gray-400 font-black text-[11px] sm:text-xs px-5 py-2.5 rounded-full border border-gray-100 hover:bg-gray-50 transition-all">
+                                    <button onClick={reset} className="text-gray-400 font-black text-[11px] sm:text-xs px-5 py-2.5 rounded-full border border-gray-100 hover:bg-gray-50 transition-all uppercase">
                                         {t.main}
                                     </button>
                                 ) : (
                                     !loading && (
-                                        <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 animate-blink">
+                                        <button onClick={() => setShowShareModal(true)} className="bg-primary text-white text-[11px] sm:text-xs font-black px-6 py-3 rounded-full shadow-lg flex items-center gap-2 hover:scale-105 transition-transform active:scale-95 animate-blink uppercase">
                                             <span>{t.share}</span>
                                             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-white"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path></svg>
                                         </button>
@@ -626,7 +702,7 @@
                             </div>
                         )}
                         {step === 4 && (
-                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={id => { const newEx = [...excludedIds, id]; setExcludedIds(newEx); localStorage.setItem('excludedWebtoons', JSON.stringify(newEx)); setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10)); setShowExcludePopup(true); setTimeout(() => setShowExcludePopup(false), 2000); }} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest">NEW SEARCH</button></div>)}</div>
+                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={handleExclude} onLike={toggleLike} isLiked={likedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest">NEW SEARCH</button></div>)}</div>
                         )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
@@ -660,6 +736,46 @@
                     )}
 
                     <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={results} />
+
+                    {/* Authentication Modal */}
+                    {showAuthModal && (
+                        <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => setShowAuthModal(false)}>
+                            <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+                                <h3 className="text-2xl font-black mb-8 tracking-tighter">{t.auth_title}</h3>
+                                <div className="w-full space-y-4">
+                                    <div className="flex flex-col gap-2">
+                                        <input id="auth-email" type="email" placeholder={t.email} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
+                                        <input id="auth-password" type="password" placeholder={t.password} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
+                                    </div>
+                                    <div className="flex gap-2 pt-2">
+                                        <button
+                                            onClick={async () => {
+                                                const email = document.getElementById('auth-email').value;
+                                                const password = document.getElementById('auth-password').value;
+                                                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                                                if (error) alert(error.message); else setShowAuthModal(false);
+                                            }}
+                                            className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg"
+                                        >
+                                            {t.login_btn}
+                                        </button>
+                                        <button
+                                            onClick={async () => {
+                                                const email = document.getElementById('auth-email').value;
+                                                const password = document.getElementById('auth-password').value;
+                                                const { error } = await supabase.auth.signUp({ email, password });
+                                                if (error) alert(error.message); else alert("Check your email for confirmation!");
+                                            }}
+                                            className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl"
+                                        >
+                                            {t.signup_btn}
+                                        </button>
+                                    </div>
+                                </div>
+                                <button onClick={() => setShowAuthModal(false)} className="mt-8 text-gray-400 font-bold text-xs">CLOSE</button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         };

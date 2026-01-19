@@ -133,11 +133,10 @@
                 next: "다음 단계",
                 step2_title: "비선호 취향을 골라주세요 (선택)",
                 step2_desc: "선택한 취향이 포함된 웹툰은 추천에서 제외됩니다.",
-                step3_title: "선호 테마 설정",
                 back: "이전",
                 continue: "계속하기",
-                step4_title: "가장 재미있게 보신\n웹툰은 무엇인가요?",
-                step3_placeholder: "정확한 제목을 입력해 주세요",
+                step3_title: "가장 재미있게 보신\n웹툰은 무엇인가요?",
+                step3_placeholder: "웹툰 제목을 입력해 주세요",
                 start_analysis: "분석 시작",
                 computing: "결과 계산 중...",
                 result_title: "AI 추천 결과",
@@ -178,11 +177,10 @@
                 next: "Next Step",
                 step2_title: "Choose Non-preferred Tastes (Optional)",
                 step2_desc: "Webtoons with these tags will be strictly excluded.",
-                step3_title: "Preference Settings",
                 back: "Back",
                 continue: "Continue",
-                step4_title: "What is your\nfavorite webtoon?",
-                step3_placeholder: "Enter the exact title",
+                step3_title: "What is your\nfavorite webtoon?",
+                step3_placeholder: "Enter the webtoon title",
                 start_analysis: "Start Analysis",
                 computing: "Computing Result...",
                 result_title: "AI Best Recommendations",
@@ -223,11 +221,10 @@
                 next: "下一步",
                 step2_title: "请选择不喜欢的口味 (可选)",
                 step2_desc: "包含所选标签的漫画将从推荐中排除。",
-                step3_title: "偏好设置",
                 back: "返回",
                 continue: "继续",
-                step4_title: "您最喜欢的\n漫画是什么？",
-                step3_placeholder: "请输入准确的标题",
+                step3_title: "您最喜欢的\n漫画是什么？",
+                step3_placeholder: "请输入漫画标题",
                 start_analysis: "开始分析",
                 computing: "正在计算结果...",
                 result_title: "AI 最佳推荐",
@@ -250,7 +247,7 @@
                 yes: "是",
                 no: "否",
                 main: "主页",
-                ongoing: "连载中",
+                ongoing: "连载중",
                 finished: "已完结"
             },
             ja: {
@@ -268,11 +265,10 @@
                 next: "次へ",
                 step2_title: "苦手な好みを選んでください (任意)",
                 step2_desc: "選択したタグが含まれる作品はおすすめから除外されます。",
-                step3_title: "好みのテーマ設定",
                 back: "戻る",
                 continue: "続ける",
-                step4_title: "一番面白かった\nウェブトゥーンは何ですか？",
-                step3_placeholder: "正確なタイトルを入力してください",
+                step3_title: "一番面白かった\nウェブトゥーンは何ですか？",
+                step3_placeholder: "タイトルを入力してください",
                 start_analysis: "分析開始",
                 computing: "結果を計算中...",
                 result_title: "AI おすすめ結果",
@@ -307,14 +303,14 @@
                 genres: ["로맨스", "판타지", "액션", "드라마", "스릴러", "무협/사극", "개그", "일상", "감성", "스포츠"],
                 en: ["Romance", "Fantasy", "Action", "Drama", "Thriller", "Martial Arts", "Comedy", "Life", "Sensibility", "Sports"],
                 zh: ["浪漫", "奇幻", "动作", "剧情", "惊悚", "武侠/史剧", "搞笑", "日常", "感性", "体育"],
-                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠/時代劇", "ギャグ", "日常", "感性", "スポーツ"]
+                ja: ["ロマンス", "ファンタジー", "アクション", "ドラマ", "スリラー", "武侠/時代劇", "ギャグ", "日常", "感성", "스포츠"]
             },
             {
                 name: t.cat_topic,
                 genres: ["회귀", "빙의", "먼치킨", "아이돌", "게임판타지", "복수", "학원물", "오피스", "로판", "이세계"],
                 en: ["Regression", "Possession", "Munchkin", "Idol", "Game Fantasy", "Revenge", "School", "Office", "Rom-Fantasy", "Isekai"],
                 zh: ["回归", "附身", "龙傲天", "偶像", "游戏奇幻", "复仇", "校园", "职场", "罗曼奇幻", "异世界"],
-                ja: ["回帰", "憑依", "最強", "アイドル", "ゲームファンタジー", "復讐", "学園もの", "オフィス", "ロパン", "異世界"]
+                ja: ["回帰", "憑依", "最強", "アイドル", "게임판타지", "復讐", "学園もの", "オフィス", "로판", "異世界"]
             },
             {
                 name: t.cat_feature,
@@ -325,14 +321,6 @@
             }
         ];
 
-        const getPreferences = (t) => [
-            { id: 'romance', label_ko: '달달한 로맨스/연애물', label_en: 'Sweet Romance', label_zh: '甜甜的浪漫/恋爱', label_ja: '甘いロマンス' },
-            { id: 'action', label_ko: '화끈한 액션과 타격감', label_en: 'Hot Action', label_zh: '火热的动作画面', label_ja: '熱いアクション' },
-            { id: 'brain', label_ko: '심리전과 고도의 두뇌싸움', label_en: 'Psychological Brain Battle', label_zh: '心理战与脑력較量', label_ja: '心理戦と頭脳戦' },
-            { id: 'growth', label_ko: '주인공의 성장과 감동 서사', label_en: 'Protagonist Growth & Emotion', label_zh: '主角的成长与感动', label_ja: '主人公の成長と感動' },
-            { id: 'horror', label_ko: '공포/그로테스크', label_en: 'Horror / Grotesque', label_zh: '恐怖 / 怪诞', label_ja: 'ホラー / グロテスク' }
-        ];
-
         const MOCK_WEBTOONS = [
             { id: "641253", title: "외모지상주의", tags: ["에피소드", "액션", "박태준", "금요웹툰"], thumbnail: "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_d894f11f-668a-4046-8692-730a961f7743.jpg", match: 98, status: 'ONGOING' },
             { id: "183559", title: "신의 탑", tags: ["판타지", "먼치킨", "장대한서사"], thumbnail: "https://image-comic.pstatic.net/webtoon/183559/thumbnail/thumbnail_IMAG21_56133031-69f8-45a7-96a9-858348b4e720.jpg", match: 96, status: 'ONGOING' }
@@ -341,11 +329,11 @@
         const ProgressBar = ({ step, t }) => (
             <div className="mb-10 max-w-2xl mx-auto px-6">
                 <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${(step / 5) * 100}%` }}></div>
+                    <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${(step / 4) * 100}%` }}></div>
                 </div>
                 <div className="mt-4 flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                     <span>{t.process}</span>
-                    <span className="text-primary">{t.step} {step} {t.of} 5</span>
+                    <span className="text-primary">{t.step} {step} {t.of} 4</span>
                 </div>
             </div>
         );
@@ -364,13 +352,11 @@
                         <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
                     </div>
                     <div className="p-5 flex flex-col flex-grow">
-                        {/* Fixed height for tags to align titles perfectly */}
                         <div className="flex flex-wrap gap-1.5 mb-3 h-[5.2rem] content-start overflow-hidden">
                             {(() => {
                                 const rawTags = (item.tags || []);
                                 const filteredTags = [];
                                 for (const tag of rawTags) {
-                                    // 유사 태그 중복 제거 (서로 포함관계인 경우 하나만 유지)
                                     const isRedundant = filteredTags.some(existing =>
                                         tag.includes(existing) || existing.includes(tag)
                                     );
@@ -383,7 +369,6 @@
                                 ));
                             })()}
                         </div>
-                        {/* Title section starts at the same line for all cards */}
                         <div className="flex items-center mb-4 h-[2.6rem]">
                             <div className="flex-shrink-0 flex items-center">{getRankDisplay(rank)}</div>
                             <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2 break-keep tracking-tighter">{item.title}</h3>
@@ -395,7 +380,7 @@
                             </div>
                             <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[17px] flex items-center justify-center gap-1 shadow-sm">
                                 <span>{t.view_now}</span>
-                                <span className="text-[11px] opacity-80 font-medium">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
+                                <span className="text-[11px] opacity-80 font-medium translate-y-[1.5px]">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
                             </a>
                         </div>
                     </div>
@@ -485,7 +470,6 @@
             const [step, setStep] = useState(1);
             const [selectedG, setSelectedG] = useState([]);
             const [excludedG, setExcludedG] = useState([]); // Non-preferred tastes
-            const [prefSettings, setPrefSettings] = useState({});
             const [favTitle, setFavTitle] = useState("");
             const [loading, setLoading] = useState(false);
             const [results, setResults] = useState([]);
@@ -499,14 +483,13 @@
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
             const categories = useMemo(() => getGenreCategories(t), [t]);
-            const preferencesList = useMemo(() => getPreferences(t), [t]);
 
             const nextStep = () => { setStep(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
             const prevStep = () => { setStep(prev => prev - 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-            const reset = () => { setStep(1); setSelectedG([]); setExcludedG([]); setPrefSettings({}); setFavTitle(""); setScoredPool([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+            const reset = () => { setStep(1); setSelectedG([]); setExcludedG([]); setFavTitle(""); setScoredPool([]); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
             const handleAnalyze = async () => {
-                setLoading(true); setStep(5);
+                setLoading(true); setStep(4);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 await new Promise(r => setTimeout(r, 1500));
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
@@ -525,7 +508,6 @@
                         viewCount: item.viewCount || 0
                     };
 
-                    // 1. Check strict exclusion from Step 2 (Non-preferred)
                     if (excludedG.length > 0) {
                         const hasExcludedTag = excludedG.some(ex =>
                             webtoon.tags.some(t => String(t).includes(ex)) || webtoon.title.includes(ex)
@@ -543,20 +525,14 @@
                         if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) score += 20;
                     });
 
-                    // Add small randomness to score for base variety, but keep it within range
                     return { ...webtoon, match: Math.min(99, score + (Math.random() * 5)) };
                 });
 
                 const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => {
-                    // 1순위: 선호도 일치(%), 정수값만 고려
                     const matchA = Math.floor(a.match);
                     const matchB = Math.floor(b.match);
                     if (matchB !== matchA) return matchB - matchA;
-
-                    // 2순위: 별점(점수), 소수점 모두 반영
                     if (b.starScore !== a.starScore) return b.starScore - a.starScore;
-
-                    // 3순위: 조회수(인기순) 반영
                     return b.viewCount - a.viewCount;
                 });
                 setScoredPool(sorted);
@@ -584,7 +560,7 @@
                                 </div>
                             </div>
                             <div className="order-3 md:w-1/4 flex justify-end">
-                                {step < 5 ? (
+                                {step < 4 ? (
                                     <button onClick={reset} className="text-gray-400 font-black text-[11px] sm:text-xs px-5 py-2.5 rounded-full border border-gray-100 hover:bg-gray-50 transition-all">
                                         {t.main}
                                     </button>
@@ -643,20 +619,13 @@
                             </div>
                         )}
                         {step === 3 && (
-                            <div className="animate-up max-w-lg mx-auto py-5">
-                                <h2 className="text-3xl font-black text-center mb-10">{t.step3_title}</h2>
-                                <div className="bg-white rounded-[40px] shadow-soft border border-gray-50 overflow-hidden p-2">{preferencesList.map(p => (<div key={p.id} onClick={() => setPrefSettings(prev => ({ ...prev, [p.id]: !prev[p.id] }))} className="flex items-center justify-between p-7 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50 transition-colors"><span className={`font-bold text-sm sm:text-base ${prefSettings[p.id] ? 'text-primary' : 'text-gray-700'}`}>{p[`label_${lang}`] || p.label_ko}</span><div className={`w-12 h-7 rounded-full relative transition-colors duration-300 ${prefSettings[p.id] ? 'bg-primary' : 'bg-gray-200'}`}><div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-transform duration-300 ${prefSettings[p.id] ? 'translate-x-[22px]' : 'translate-x-1'}`}></div></div></div>))}</div>
-                                <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
-                            </div>
-                        )}
-                        {step === 4 && (
-                            <div className="animate-up max-w-lg mx-auto py-5">
-                                <h2 className="text-3xl font-black text-center mb-10 leading-tight">{t.step4_title}</h2>
+                            <div className="animate-up max-lg mx-auto py-5">
+                                <h2 className="text-3xl font-black text-center mb-10 leading-tight">{t.step3_title}</h2>
                                 <input type="text" value={favTitle} onChange={e => setFavTitle(e.target.value)} placeholder={t.step3_placeholder} className="w-full py-6 px-10 rounded-full bg-white border-2 border-gray-100 focus:border-primary outline-none text-center text-lg shadow-inner font-bold" />
                                 <div className="mt-12 flex gap-4"><button onClick={prevStep} className="flex-1 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={handleAnalyze} className="flex-[2] py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">ANALYZE</button></div>
                             </div>
                         )}
-                        {step === 5 && (
+                        {step === 4 && (
                             <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onExclude={id => { const newEx = [...excludedIds, id]; setExcludedIds(newEx); localStorage.setItem('excludedWebtoons', JSON.stringify(newEx)); setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10)); setShowExcludePopup(true); setTimeout(() => setShowExcludePopup(false), 2000); }} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest">NEW SEARCH</button></div>)}</div>
                         )}
                     </main>

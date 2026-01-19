@@ -79,7 +79,7 @@ def fetch_finished_webtoons():
     return all_finished
 
 def fetch_webtoon_info(title_id):
-    """Fetches detailed info including tags for a specific webtoon."""
+    """Fetches detailed info including tags and description for a specific webtoon."""
     url = f"https://comic.naver.com/api/article/list/info?titleId={title_id}"
     try:
         response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
@@ -97,13 +97,23 @@ def fetch_webtoon_info(title_id):
              tags.extend(data['gfpAdCustomParam']['tags'])
              
         # Dedup
-        return list(set(tags))
+        tags = list(set(tags))
+        
+        # Extract and clean synopsis (description)
+        synopsis = data.get('synopsis', "")
+        # Remove newlines and extra spaces by splitting and re-joining with a single space
+        description = " ".join(synopsis.split())
+        
+        return {
+            'tags': tags,
+            'description': description
+        }
     except Exception as e:
         # print(f"Error fetching info for {title_id}: {e}")
-        return []
+        return {'tags': [], 'description': ""}
 
 def main():
-    print("Starting Naver Webtoon Crawler (with Tags)...")
+    print("Starting Naver Webtoon Crawler (with Tags and Descriptions)...")
     
     # Fetch data
     ongoing_webtoons = fetch_weekday_webtoons()
@@ -122,14 +132,15 @@ def main():
     all_webtoons = list(all_webtoons_map.values())
     print(f"Total unique webtoons to process: {len(all_webtoons)}")
     
-    # Enrich with Tags
-    print("Fetching tags for all webtoons (this may take a while)...")
+    # Enrich with Tags and Descriptions
+    print("Fetching tags and descriptions for all webtoons (this may take a while)...")
     enriched_webtoons = []
     
     for i, w in enumerate(all_webtoons):
         print(f"[{i+1}/{len(all_webtoons)}] Fetching info for {w['titleName']}...")
-        tags = fetch_webtoon_info(w['titleId'])
-        w['tags'] = tags
+        info = fetch_webtoon_info(w['titleId'])
+        w['tags'] = info['tags']
+        w['description'] = info['description']
         
         # Fallback tagging if empty
         if not w['tags']:

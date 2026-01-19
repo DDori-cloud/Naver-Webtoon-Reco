@@ -184,7 +184,13 @@
                 find_pw: "비밀번호 찾기",
                 reset_pw_msg: "이메일로 비밀번호 재설정 링크가 발급됩니다.",
                 delete_confirm: "정말로 탈퇴하시겠습니까?\n저장된 모든 데이터가 삭제됩니다.",
-                no_data: "데이터가 없습니다."
+                no_data: "데이터가 없습니다.",
+                password_confirm: "비밀번호 재확인",
+                pw_mismatch: "비밀번호가 일치하지 않습니다.",
+                pw_criteria: "비밀번호는 6자 이상이어야 합니다.",
+                email_invalid: "유효한 이메일을 입력해주세요.",
+                go_to_signup: "아직 계정이 없으신가요? 회원가입",
+                go_to_login: "이미 계정이 있으신가요? 로그인"
             },
             en: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -244,7 +250,13 @@
                 find_pw: "Forgot Password?",
                 reset_pw_msg: "A password reset link has been sent to your email.",
                 delete_confirm: "Are you sure you want to delete your account?\nAll saved data will be permanently removed.",
-                no_data: "No data found."
+                no_data: "No data found.",
+                password_confirm: "Confirm Password",
+                pw_mismatch: "Passwords do not match.",
+                pw_criteria: "Password must be at least 6 characters.",
+                email_invalid: "Please enter a valid email.",
+                go_to_signup: "Don't have an account? Sign Up",
+                go_to_login: "Already have an account? Login"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -558,6 +570,10 @@
             const [likedIds, setLikedIds] = useState([]);
             const [conflictTag, setConflictTag] = useState(null); // Tag causing conflict
             const [profileTab, setProfileTab] = useState('liked'); // 'liked' or 'excluded'
+            const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
+            const [email, setEmail] = useState('');
+            const [password, setPassword] = useState('');
+            const [confirmPassword, setConfirmPassword] = useState('');
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
 
@@ -801,57 +817,104 @@
                     <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={results} />
 
                     {/* Authentication Modal */}
-                    {
-                        showAuthModal && (
-                            <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => setShowAuthModal(false)}>
-                                <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
-                                    <h3 className="text-2xl font-black mb-8 tracking-tighter">{t.auth_title}</h3>
-                                    <div className="w-full space-y-4">
-                                        <div className="flex flex-col gap-2">
-                                            <input id="auth-email" type="email" placeholder={t.email} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
-                                            <input id="auth-password" type="password" placeholder={t.password} className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm" />
-                                        </div>
-                                        <div className="flex gap-2 pt-2">
+                    {/* Authentication Modal */}
+                    {showAuthModal && (
+                        <div className="fixed inset-0 z-[120000] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>
+                            <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl overflow-hidden animate-up p-10 flex flex-col items-center" onClick={e => e.stopPropagation()}>
+                                <h3 className="text-2xl font-black mb-8 tracking-tighter">{authMode === 'login' ? t.login : t.signup_btn}</h3>
+                                <div className="w-full space-y-4">
+                                    <div className="flex flex-col gap-3">
+                                        <input
+                                            type="email"
+                                            value={email}
+                                            onChange={e => setEmail(e.target.value)}
+                                            placeholder={t.email}
+                                            className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                        />
+                                        <input
+                                            type="password"
+                                            value={password}
+                                            onChange={e => setPassword(e.target.value)}
+                                            placeholder={t.password}
+                                            className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                        />
+                                        {authMode === 'signup' && (
+                                            <>
+                                                <input
+                                                    type="password"
+                                                    value={confirmPassword}
+                                                    onChange={e => setConfirmPassword(e.target.value)}
+                                                    placeholder={t.password_confirm}
+                                                    className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                                />
+                                                {password && password.length < 6 && <p className="text-[10px] font-bold text-red-500 px-2">{t.pw_criteria}</p>}
+                                                {confirmPassword && password !== confirmPassword && <p className="text-[10px] font-bold text-red-500 px-2">{t.pw_mismatch}</p>}
+                                            </>
+                                        )}
+                                    </div>
+
+                                    {authMode === 'login' ? (
+                                        <div className="flex flex-col gap-4">
                                             <button
                                                 onClick={async () => {
-                                                    const email = document.getElementById('auth-email').value;
-                                                    const password = document.getElementById('auth-password').value;
                                                     const { error } = await supabase.auth.signInWithPassword({ email, password });
                                                     if (error) alert(error.message); else setShowAuthModal(false);
                                                 }}
-                                                className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg"
+                                                className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
                                             >
                                                 {t.login_btn}
                                             </button>
                                             <button
+                                                onClick={() => setAuthMode('signup')}
+                                                className="text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors"
+                                            >
+                                                {t.go_to_signup}
+                                            </button>
+                                            <button
                                                 onClick={async () => {
-                                                    const email = document.getElementById('auth-email').value;
-                                                    const password = document.getElementById('auth-password').value;
-                                                    const { error } = await supabase.auth.signUp({ email, password });
-                                                    if (error) alert(error.message); else alert("Check your email for confirmation!");
+                                                    if (!email) { alert("Please enter your email first"); return; }
+                                                    const { error } = await supabase.auth.resetPasswordForEmail(email);
+                                                    if (error) alert(error.message); else alert(t.reset_pw_msg);
                                                 }}
-                                                className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl"
+                                                className="w-full text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors pt-2 border-t border-gray-50 mt-2"
+                                            >
+                                                {t.find_pw}
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col gap-4">
+                                            <button
+                                                disabled={!email || password.length < 6 || password !== confirmPassword}
+                                                onClick={async () => {
+                                                    const { error } = await supabase.auth.signUp({ email, password });
+                                                    if (error) alert(error.message);
+                                                    else {
+                                                        alert("Check your email for confirmation!");
+                                                        setAuthMode('login');
+                                                    }
+                                                }}
+                                                className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform disabled:opacity-30 disabled:pointer-events-none"
                                             >
                                                 {t.signup_btn}
                                             </button>
+                                            <button
+                                                onClick={() => setAuthMode('login')}
+                                                className="text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors"
+                                            >
+                                                {t.go_to_login}
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={async () => {
-                                                const email = document.getElementById('auth-email').value;
-                                                if (!email) { alert("Please enter your email first"); return; }
-                                                const { error } = await supabase.auth.resetPasswordForEmail(email);
-                                                if (error) alert(error.message); else alert(t.reset_pw_msg);
-                                            }}
-                                            className="w-full text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors pt-2"
-                                        >
-                                            {t.find_pw}
-                                        </button>
-                                    </div>
-                                    <button onClick={() => setShowAuthModal(false)} className="mt-8 text-gray-400 font-bold text-xs uppercase">CLOSE</button>
+                                    )}
                                 </div>
+                                <button
+                                    onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}
+                                    className="mt-8 text-gray-400 font-bold text-xs uppercase"
+                                >
+                                    CLOSE
+                                </button>
                             </div>
-                        )
-                    }
+                        </div>
+                    )}
 
                     {/* My Info Modal */}
                     {

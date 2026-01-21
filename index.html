@@ -1182,10 +1182,17 @@
                     romanceTop: getTopByGenre('로맨스'),
                     martialTop: getTopByGenre('무협'), // '무협/사극' usually
                     sliceTop: getTopByGenre('일상'),
-                    heroWebtoons: [...rawData].sort(() => 0.5 - Math.random()).slice(0, 5).map(item => ({
-                        id: item.titleId || item.id,
-                        thumbnail: item.thumbnailUrl || item.thumbnail
-                    }))
+                    heroWebtoons: [...rawData]
+                        .filter(item => {
+                            const combined = ((item.tags || []).join(' ') + (item.description || '') + (item.titleName || item.title)).toLowerCase();
+                            return !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
+                        })
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 5)
+                        .map(item => ({
+                            id: item.titleId || item.id,
+                            thumbnail: item.thumbnailUrl || item.thumbnail
+                        }))
                 };
             }, []);
 
@@ -1200,7 +1207,8 @@
                 const filtered = rawData.filter(w =>
                     (w.titleName || w.title).toLowerCase().includes(q.toLowerCase()) ||
                     (w.author || '').toLowerCase().includes(q.toLowerCase()) ||
-                    (w.tags || []).some(t => t.toLowerCase().includes(q.toLowerCase()))
+                    (w.tags || []).some(t => t.toLowerCase().includes(q.toLowerCase())) ||
+                    (w.description || '').toLowerCase().includes(q.toLowerCase())
                 ).map(item => ({
                     id: item.titleId || item.id,
                     title: item.titleName || item.title,
@@ -1330,6 +1338,7 @@
                         tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? t.finished : t.ongoing, item.author].filter(Boolean),
                         author: item.author,
                         status: item.status,
+                        description: item.description || "",
                         starScore: item.starScore || 0,
                         viewCount: item.viewCount || 0
                     };
@@ -1355,7 +1364,8 @@
                     if (expandedExcluded.length > 0) {
                         const hasExcludedTag = expandedExcluded.some(ex =>
                             webtoon.tags.some(t => String(t).toLowerCase().includes(ex.toLowerCase())) ||
-                            webtoon.title.toLowerCase().includes(ex.toLowerCase())
+                            webtoon.title.toLowerCase().includes(ex.toLowerCase()) ||
+                            webtoon.description.toLowerCase().includes(ex.toLowerCase())
                         );
                         if (hasExcludedTag) return { ...webtoon, match: 0 };
                     }
@@ -1363,7 +1373,8 @@
                     // 선호 장르 점수 계산 (확장된 키워드 적용)
                     expandedPrefs.forEach(pref => {
                         if (webtoon.tags.some(t => String(t).toLowerCase().includes(pref.toLowerCase())) ||
-                            webtoon.title.toLowerCase().includes(pref.toLowerCase())) {
+                            webtoon.title.toLowerCase().includes(pref.toLowerCase()) ||
+                            webtoon.description.toLowerCase().includes(pref.toLowerCase())) {
                             score += 15; // 유사 장르는 약간 낮은 점수
                         }
                     });
@@ -1371,7 +1382,11 @@
                     // 원본 선호 장르는 추가 보너스
                     genrePreferences.forEach(pref => {
                         const keywords = pref.includes('/') ? pref.split('/') : [pref];
-                        if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) {
+                        if (keywords.some(k =>
+                            webtoon.tags.some(t => String(t).includes(k)) ||
+                            webtoon.title.includes(k) ||
+                            webtoon.description.includes(k)
+                        )) {
                             score += 10; // 원본 매칭 보너스
                         }
                     });

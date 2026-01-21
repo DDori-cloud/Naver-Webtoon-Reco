@@ -1185,7 +1185,9 @@
                     heroWebtoons: [...rawData]
                         .filter(item => {
                             const combined = ((item.tags || []).join(' ') + (item.description || '') + (item.titleName || item.title)).toLowerCase();
-                            return !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
+                            const isClean = !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
+                            const isHighRated = (item.starScore || 0) >= 9.90;
+                            return isClean && isHighRated;
                         })
                         .sort(() => 0.5 - Math.random())
                         .slice(0, 5)

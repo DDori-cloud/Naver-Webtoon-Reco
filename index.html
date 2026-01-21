@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ko">
 
 <head>
@@ -11,25 +11,56 @@
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { primary: '#8D6E63', bgLight: '#F5F7FA' },
-                    boxShadow: { 'soft': '0 10px 40px rgba(0,0,0,0.05)', 'blue': '0 15px 45px rgba(141,110,99,0.2)' }
+                    colors: {
+                        primary: '#2ba85b',
+                        'primary-light': '#36c66d',
+                        'primary-dark': '#218a4a',
+                        'bg-light': '#0B0F1A',
+                        'bg-card': '#161B28',
+                        'bg-card-hover': '#1E2533',
+                        'border-light': 'rgba(255, 255, 255, 0.08)'
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px rgba(0,0,0,0.4)',
+                        'glow': '0 0 30px rgba(0, 213, 100, 0.3)',
+                        'glow-lg': '0 0 50px rgba(0, 213, 100, 0.5)'
+                    }
                 }
             }
         }
     </script>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css" rel="stylesheet">
     <style>
         body {
-            font-family: 'Pretendard', sans-serif;
-            background-color: #F5F7FA;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), url('bg.png');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+            font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #0B0F1A;
+            color: #F8FAFC;
             -webkit-font-smoothing: antialiased;
             margin: 0;
             padding: 0;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0B0F1A;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2D3748;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00D564;
         }
 
         #root {
@@ -45,17 +76,17 @@
             left: 0;
             width: 100%;
             z-index: 100000;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid #F1F5F9;
+            background: rgba(11, 15, 26, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         main {
-            transform: scale(0.85);
-            transform-origin: top center;
-            margin-top: 100px;
+            margin-top: 80px;
             flex: 1;
             width: 100%;
+            padding-bottom: 80px;
         }
 
         .modal-container {
@@ -68,16 +99,13 @@
             display: flex;
             justify-content: center;
             align-items: start;
-            padding-top: 12vh;
-            /* 조금 더 아래로 내림 */
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
+            padding-top: 10vh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(12px);
             overflow-y: auto;
         }
 
         .modal-content-box {
-            transform: scale(1.1);
-            transform-origin: top center;
             width: 100%;
             display: flex;
             justify-content: center;
@@ -99,8 +127,29 @@
             }
         }
 
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 213, 100, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 40px rgba(0, 213, 100, 0.5);
+            }
+        }
+
+        .animate-pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
         .no-scrollbar::-webkit-scrollbar {
             display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         .backdrop-blur-custom {
@@ -112,16 +161,56 @@
             overflow: hidden !important;
         }
 
-        .premium-gray-btn {
-            background: #F8FAFC;
-            border: 1px solid #F1F5F9;
+        /* Card Hover Effect */
+        .card-hover {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #161B28;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
         }
 
-        .premium-gray-btn:hover {
-            background: #F1F5F9;
+        .card-hover:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            border-color: #00D564;
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #00D564 0%, #00B856 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Primary Gradient Button */
+        .btn-gradient {
+            background: linear-gradient(135deg, #00D564 0%, #00B856 100%);
+            box-shadow: 0 4px 15px rgba(0, 213, 100, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .btn-gradient:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 6px 25px rgba(0, 213, 100, 0.4);
+        }
+
+        /* Hero Covers */
+        .hero-cover {
+            position: absolute;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+            transition: all 0.4s ease;
+        }
+
+        .hero-cover:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        /* Hero Gradient Overlay */
+        .hero-gradient {
+            background: linear-gradient(135deg, rgba(0, 213, 100, 0.1) 0%, transparent 50%);
         }
 
         @keyframes blink {
@@ -143,6 +232,15 @@
 
         .animate-blink {
             animation: blink 2s infinite ease-in-out;
+        }
+
+        /* VS Neon Text */
+        .vs-neon {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
         }
     </style>
     <!-- Kakao SDK -->
@@ -186,13 +284,13 @@
                 of: "/",
                 share: "공유하기",
                 step1_title: "선호취향을 골라주세요.",
-                step1_desc: "다양한 장르 중 1개 이상 선택이 필수입니다.",
+                step1_desc: "1개 이상 선택 필수!",
                 cat_status: "연재 상태",
                 cat_genre: "메인 장르",
                 cat_topic: "인기 소재",
                 cat_feature: "스토리 특징",
                 next: "다음 단계",
-                step2_title: "비선호 취향을 골라주세요 (선택)",
+                step2_title: "이런 웹툰 싫어~!",
                 step2_desc: "선택한 취향이 포함된 웹툰은 추천에서 제외됩니다.",
                 back: "이전",
                 continue: "계속하기",
@@ -250,8 +348,8 @@
                 signup_confirm_msg: "가입 확인 메일이 발송되었습니다! 메일함을 확인해주세요.",
                 login_error_msg: "로그인 정보가 올바르지 않습니다.",
                 signup_success: "회원가입이 완료되었습니다!",
-                worldcup: "웹툰 월드컵",
-                worldcup_title: "웹툰 이상형 월드컵",
+                worldcup: "웹툰 토너먼트",
+                worldcup_title: "웹툰 토너먼트",
                 worldcup_select_round: "라운드 선택",
                 worldcup_start: "시작하기",
                 worldcup_vs: "VS",
@@ -259,11 +357,13 @@
                 worldcup_final: "결승",
                 worldcup_winner: "우승",
                 worldcup_result: "월드컵 결과",
-                worldcup_history: "월드컵 기록",
+                worldcup_history: "토너먼트 기록",
                 exclude_from_reco: "추천 제외",
                 exclude_from_reco_desc: "선호도에는 영향을 주지만 추천 결과에서는 제외됩니다",
                 today_visitors: "오늘 방문자",
-                total_visitors: "총 방문자"
+                total_visitors: "총 방문자",
+                help: "도움말",
+                strict_exclude: "엄격 필터"
             },
             en: {
                 subtitle: "Find Naver Webtoons That Match Your Taste(With AI)",
@@ -348,133 +448,138 @@
                 exclude_from_reco: "Exclude from Recommendations",
                 exclude_from_reco_desc: "Affects preference but excluded from recommendation results",
                 today_visitors: "Today",
-                total_visitors: "Total"
+                total_visitors: "Total",
+                help: "Help",
+                strict_exclude: "Strict Exclude"
             },
             zh: {
-                subtitle: "My Pick Naver WebToon(with AI)",
-                process: "分析进度",
-                step: "第",
-                of: "步 / 共",
+                subtitle: "我的 AI 网络漫画推荐 (With AI)",
+                process: "分析流程",
+                step: "阶段",
+                of: "/",
                 share: "分享",
-                step1_title: "请选择您喜好的口味",
-                step1_desc: "请至少选择一个类别。",
+                step1_title: "请选择您的偏好。",
+                step1_desc: "至少选择1个！",
                 cat_status: "连载状态",
-                cat_genre: "主打类型",
+                cat_genre: "主要类型",
                 cat_topic: "热门素材",
-                cat_feature: "剧情特点",
+                cat_feature: "故事特点",
                 next: "下一步",
-                step2_title: "请选择不喜欢的口味 (可选)",
-                step2_desc: "包含所选标签的漫画将从推荐中排除。",
-                back: "返回",
+                step2_title: "这种漫画我不喜欢~！",
+                step2_desc: "包含所选偏好的漫画将从推荐中排除。",
+                back: "上一步",
                 continue: "继续",
-                step3_title: "您最喜欢的\n漫画是什么？",
-                step3_placeholder: "请输入漫画标题",
+                step3_title: "您觉得最有趣的\n网络漫画是什么？",
+                step3_placeholder: "请输入网络漫画标题",
                 start_analysis: "开始分析",
-                computing: "正在计算结果...",
-                result_title: "AI 最佳推荐",
-                result_desc: "根据您的独特偏好分析得出。",
-                exclude: "不再推荐",
-                view_now: "去看看",
+                computing: "结果计算中...",
+                result_title: "AI 推荐结果",
+                result_desc: "这是基于用户独特偏好的分析结果。",
+                exclude: "推荐排除",
+                view_now: "立即阅读",
                 new_analysis: "重新分析",
                 exclude_msg: "今后将不再推荐此漫画。",
                 like: "喜欢",
                 dislike: "不喜欢",
-                share_copy: "结果已复制到剪贴板！",
-                share_fail: "复制失败。",
+                share_copy: "分析结果已复制！",
+                share_fail: "复制失败",
                 share_tpl_title: "[AIR.NW] AI 推荐结果",
                 share_tpl_link: "我也要试试",
-                share_modal_title: "分享结果",
+                share_modal_title: "分享",
                 share_to_kakao: "KakaoTalk",
-                share_to_line: "LINE",
+                share_to_line: "Line",
                 share_to_tiktok: "TikTok",
                 share_to_text: "复制结果",
-                share_to_system: "其他",
-                conflict_msg: "这是您在第1步选择的喜好标签。\n要改为不喜欢的吗？",
+                share_to_system: "其他分享",
+                conflict_msg: "这是在阶段 1 中选择的偏好标签。\n要改为不喜欢吗？",
                 yes: "是",
                 no: "否",
                 main: "主页",
-                ongoing: "连载중",
-                finished: "已完结",
+                ongoing: "连载中",
+                finished: "完结",
                 login: "登录",
                 logout: "登出",
-                email: "电子邮件",
+                email: "电子邮箱",
                 password: "密码",
                 login_btn: "登录",
                 signup_btn: "注册",
+                social_login: "社交登录",
                 auth_title: "登录 / 注册",
                 like: "喜欢",
                 my_info: "我的信息",
-                liked_list: "我喜欢的漫画",
-                excluded_list: "排除的漫画",
-                delete_account: "注销账号",
+                liked_list: "喜欢作品 (Like)",
+                excluded_list: "不喜欢作品 (Dislike)",
+                delete_account: "注销账户",
                 find_pw: "找回密码",
-                reset_pw_msg: "重置密码链接已发送至您的邮箱。",
-                delete_confirm: "确定要注销账号吗？\n所有保存的数据将被永久删除。",
+                reset_pw_msg: "重置密码链接将发送至您的邮箱。",
+                delete_confirm: "确定要注销吗？\n所有保存的数据将被删除。",
                 no_data: "暂无数据。",
-                password_confirm: "确认密码",
-                pw_mismatch: "密码不一致。",
-                pw_criteria: "密码长度至少为 6 位。",
-                email_invalid: "请输入有效的电子邮件地址。",
-                go_to_signup: "还没有账号？注册",
-                go_to_login: "已有账号？登录",
-                signup_confirm_msg: "确认邮件已发送！请检查您的收件箱。",
-                login_error_msg: "登录信息无效。",
+                password_confirm: "密码确认",
+                pw_mismatch: "密码不匹配。",
+                pw_criteria: "密码至少 6 位。",
+                email_invalid: "请输入有效的邮箱。",
+                go_to_signup: "还没有账号？去注册",
+                go_to_login: "已有账号？去登录",
+                signup_confirm_msg: "验证邮件已发送！请检查您的邮箱。",
+                login_error_msg: "登录信息不正确。",
                 signup_success: "注册成功！",
                 worldcup: "漫画世界杯",
                 worldcup_title: "漫画理想型世界杯",
-                worldcup_select_round: "选择轮次",
+                worldcup_select_round: "选择轮数",
                 worldcup_start: "开始",
                 worldcup_vs: "VS",
                 worldcup_round: "强",
                 worldcup_final: "决赛",
                 worldcup_winner: "冠军",
                 worldcup_result: "世界杯结果",
-                worldcup_history: "世界杯记录",
-                exclude_from_reco: "排除推荐",
-                exclude_from_reco_desc: "影响偏好但不在推荐结果中显示",
-                today_visitors: "今日",
-                total_visitors: "总计"
+                worldcup_history: "对决纪录",
+                exclude_from_reco: "推荐排除",
+                exclude_from_reco_desc: "影响偏好但在推荐结果中排除",
+                today_visitors: "今日访问者",
+                total_visitors: "总访问者",
+                help: "帮助",
+                strict_exclude: "严格排除"
             },
             ja: {
-                subtitle: "My Pick Naver WebToon(with AI)",
+                subtitle: "好みに合った Naver WebToon 探し (With AI)",
                 process: "分析プロセス",
-                step: "ステップ",
+                step: "段階",
                 of: "/",
-                share: "共有する",
-                step1_title: "お好みのタイプを選んでください",
-                step1_desc: "1つ以上の選択が必須です。",
-                cat_status: "連載状態",
+                share: "共有",
+                step1_title: "好みの設定",
+                step1_desc: "1つ以上選択してください。",
+                cat_status: "連載状況",
                 cat_genre: "メインジャンル",
                 cat_topic: "人気の素材",
                 cat_feature: "ストーリーの特徴",
                 next: "次へ",
-                step2_title: "苦手な好みを選んでください (任意)",
-                step2_desc: "選択したタグが含まれる作品はおすすめから除外されます。",
+                step2_title: "こんな漫画は苦手~！",
+                step2_desc: "選択した好みが含まれる漫画は推奨から除外されます。",
                 back: "戻る",
                 continue: "続ける",
-                step3_title: "一番面白かった\nウェブトゥーンは何ですか？",
-                step3_placeholder: "タイトルを入力してください",
+                step3_title: "一番面白かった\n漫画は何ですか？",
+                step3_placeholder: "漫画のタイトルを入力してください",
                 start_analysis: "分析開始",
-                computing: "結果を計算中...",
-                result_title: "AI おすすめ結果",
-                result_desc: "あなたの好みを分析した結果です。",
-                exclude: "おすすめ除外",
-                view_now: "보러가기",
+                computing: "結果計算中...",
+                result_title: "AI 推奨結果",
+                result_desc: "ユーザーの独自の好みを分析した結果です。",
+                exclude: "推奨除外",
+                view_now: "見に行く",
                 new_analysis: "新しい分析",
-                exclude_msg: "今後、この作品はおすすめされません。",
-                like: "お気に入り",
+                exclude_msg: "今後この漫画は推奨されません。",
+                like: "いいね",
                 dislike: "嫌い",
-                share_copy: "結果がコピーされました！",
-                share_fail: "コピーに失敗しました。",
-                share_tpl_title: "[AIR.NW] AI おすすめ結果",
-                share_tpl_link: "やってみる",
-                share_modal_title: "結果を共有",
+                share_copy: "分析結果がコピーされました！",
+                share_fail: "コピー失敗",
+                share_tpl_title: "[AIR.NW] AI 推奨結果",
+                share_tpl_link: "私もやってみる",
+                share_modal_title: "共有",
                 share_to_kakao: "KakaoTalk",
-                share_to_line: "LINE",
+                share_to_line: "Line",
                 share_to_tiktok: "TikTok",
-                share_to_text: "結果コピー",
+                share_to_text: "結果をコピー",
                 share_to_system: "その他",
-                conflict_msg: "ステップ1で選択した好みタグです。\n苦手なタイプに変更しますか？",
+                conflict_msg: "これはステップ 1 で選択した好みのタグです。\n嫌いに変更しますか？",
                 yes: "はい",
                 no: "いいえ",
                 main: "メイン",
@@ -485,43 +590,44 @@
                 email: "メールアドレス",
                 password: "パスワード",
                 login_btn: "ログイン",
-                signup_btn: "新規登録",
-                auth_title: "ログイン / 新規登録",
-                like: "お気に入り",
+                signup_btn: "会員登録",
+                social_login: "ソーシャルログイン",
+                auth_title: "ログイン / 会員登録",
+                like: "いいね",
                 my_info: "マイ情報",
-                liked_list: "お気に入り作品",
-                excluded_list: "除外した作品",
-                delete_account: "会員脱退",
+                liked_list: "好きな作品 (Like)",
+                excluded_list: "嫌いな作品 (Dislike)",
+                delete_account: "退会する",
                 find_pw: "パスワードを忘れた場合",
-                reset_pw_msg: "パスワード再設定リンクをメールで送信しました。",
+                reset_pw_msg: "メールでパスワード再設定リンクが発行されます。",
                 delete_confirm: "本当に退会しますか？\n保存されたすべてのデータが削除されます。",
                 no_data: "データがありません。",
-                password_confirm: "パスワード再確認",
+                password_confirm: "パスワードの再確認",
                 pw_mismatch: "パスワードが一致しません。",
-                pw_criteria: "パスワードは6文字以上である必要があります。",
-                email_invalid: "有効なメールアドレスを入力してください。",
-                go_to_signup: "アカウントをお持ちでないですか？ 新規登録",
-                go_to_login: "すでにアカウントをお持ちですか？ ログイン",
-                signup_confirm_msg: "確認メールを送信しました！メールボックスを確認してください。",
+                pw_criteria: "パスワードは 6 文字以上である必要があります。",
+                email_invalid: "有効なメールを入力してください。",
+                go_to_signup: "アカウントをお持ちでないですか？ 会員登録",
+                go_to_login: "既にアカウントをお持ちですか？ ログイン",
+                signup_confirm_msg: "加入確認メールが送信されました！ メールを確認してください。",
                 login_error_msg: "ログイン情報が正しくありません。",
                 signup_success: "会員登録が完了しました！",
-                worldcup: "ウェブトゥーンワールドカップ",
-                worldcup_title: "ウェブトゥーン理想型ワールドカップ",
+                worldcup: "ウェブトゥーンW杯",
+                worldcup_title: "理想のウェブトゥーンW杯",
                 worldcup_select_round: "ラウンド選択",
-                worldcup_start: "スタート",
+                worldcup_start: "開始",
                 worldcup_vs: "VS",
                 worldcup_round: "強",
                 worldcup_final: "決勝",
                 worldcup_winner: "優勝",
-                worldcup_result: "ワールドカップ結果",
-                worldcup_history: "ワールドカップ記録",
-                exclude_from_reco: "推薦除外",
-                exclude_from_reco_desc: "好みに影響するが推薦結果からは除外されます",
-                today_visitors: "今日",
-                total_visitors: "累計"
-            }
+                worldcup_result: "W杯結果",
+                worldcup_history: "対決履歴",
+                exclude_from_reco: "推奨除外",
+                today_visitors: "本日の訪問者",
+                total_visitors: "総訪問者",
+                help: "ヘルプ",
+                strict_exclude: "厳密除外"
+            },
         };
-
         const getGenreCategories = (t) => [
             { name: t.cat_status, genres: ["연재중", "완결"], en: ["Ongoing", "Finished"], zh: ["连载中", "已完结"], ja: ["連載中", "完結"] },
             {
@@ -605,8 +711,8 @@
 
         const ProgressBar = ({ step, t }) => (
             <div className="mb-10 max-w-2xl mx-auto px-6">
-                <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary transition-all duration-700 ease-out" style={{ width: `${(step / 4) * 100}%` }}></div>
+                <div className="h-1.5 w-full bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-primary to-primary-dark transition-all duration-700 ease-out" style={{ width: `${(step / 4) * 100}%` }}></div>
                 </div>
                 <div className="mt-4 flex justify-between text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                     <span>{t.process}</span>
@@ -617,9 +723,18 @@
 
         const WebtoonCard = ({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t }) => {
             const isFinished = item.status === 'FINISHED';
+            // 1~3등 트로피 이모지
+            const getTrophyEmoji = (r) => {
+                if (r === 1) return '🥇';
+                if (r === 2) return '🥈';
+                if (r === 3) return '🥉';
+                return null;
+            };
+            const trophy = getTrophyEmoji(rank);
+
             return (
-                <div className="flex flex-col gap-3 group relative bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300">
-                    <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md">
+                <div className="flex flex-col gap-3 group relative card-hover p-3">
+                    <div className="relative aspect-[3/4] rounded-xl overflow-hidden">
                         <img
                             src={item.thumbnail}
                             alt={item.title}
@@ -628,66 +743,75 @@
                             loading="lazy"
                             onError={(e) => { e.target.src = "https://via.placeholder.com/300x400?text=No+Image"; }}
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
 
-                        {rank > 0 && <div className="absolute top-3 left-3 bg-[#00DC64] text-white font-black text-xl italic px-2.5 py-0.5 rounded-xl shadow-lg z-10 drop-shadow-md">#{rank}</div>}
+                        {/* 등수 뱃지 - 좌측 상단, 작은 크기 */}
+                        {rank > 0 && (
+                            <div className="absolute top-2 left-2 z-10">
+                                {trophy ? (
+                                    <span className="text-lg drop-shadow-lg">{trophy}</span>
+                                ) : (
+                                    <span className="bg-gray-700/80 text-white text-[11px] font-bold px-2 py-0.5 rounded-md">{rank}</span>
+                                )}
+                            </div>
+                        )}
 
-                        <div className="absolute bottom-3 left-3 flex gap-1">
-                            {isFinished && <span className="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-lg">{t.finished}</span>}
-                            {!isFinished && <span className="bg-[#00DC64]/90 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-lg">{t.ongoing}</span>}
+                        <div className="absolute bottom-2 left-2 flex gap-1">
+                            {isFinished && <span className="bg-gray-800/70 backdrop-blur-sm text-white text-[9px] font-bold px-2 py-0.5 rounded-md">{t.finished}</span>}
+                            {!isFinished && <span className="bg-primary/90 text-white text-[9px] font-bold px-2 py-0.5 rounded-md">{t.ongoing}</span>}
                         </div>
 
                         {/* Top Right Heart Button */}
                         <button
                             onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
-                            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-red-500 text-white shadow-lg scale-110' : 'bg-black/20 text-white/70 hover:bg-white hover:text-red-500'}`}
+                            className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-sm transition-all z-10 ${isLiked ? 'bg-red-500 text-white shadow-lg scale-110' : 'bg-white/80 text-gray-400 hover:bg-red-500 hover:text-white'}`}
                         >
-                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
                         </button>
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1">
                         <div className="flex justify-between items-start">
-                            <h3 className="font-black text-gray-900 text-[15px] truncate group-hover:text-[#00DC64] transition-colors leading-tight">{item.title}</h3>
-                            <div className="flex items-center gap-0.5 text-yellow-400 flex-shrink-0 bg-yellow-50 px-1.5 py-0.5 rounded-lg">
-                                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
-                                <span className="text-[11px] font-black text-gray-900">{item.starScore ? item.starScore.toFixed(2) : "0.0"}</span>
+                            <h3 className="font-bold text-white text-[13px] truncate group-hover:text-primary transition-colors leading-tight">{item.title}</h3>
+                            <div className="flex items-center gap-0.5 text-yellow-500 flex-shrink-0 bg-yellow-50 px-1.5 py-0.5 rounded">
+                                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                                <span className="text-[10px] font-bold text-gray-700">{item.starScore ? item.starScore.toFixed(2) : "0.0"}</span>
                             </div>
                         </div>
-                        <p className="text-[12px] text-gray-400 font-bold truncate">{item.author}</p>
+                        <p className="text-[11px] text-gray-400 font-medium truncate">{item.author}</p>
                     </div>
 
-                    <div className="flex flex-col gap-2 mt-2">
+                    <div className="flex flex-col gap-2 mt-1">
                         <a
                             href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`}
                             target="_blank"
-                            className="w-full py-2.5 bg-[#00DC64] hover:bg-[#00c65a] text-white font-black text-[13px] rounded-xl text-center shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+                            className="w-full py-2 btn-gradient text-[#334155] font-bold text-[12px] rounded-lg text-center flex items-center justify-center gap-1"
                         >
                             <span>{t.view_now}</span>
-                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
                         </a>
 
-                        <div className="flex gap-1.5">
+                        <div className="flex gap-1">
                             <button
                                 onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
-                                className={`flex-1 py-2 rounded-xl font-bold text-[10px] transition-all border flex items-center justify-center gap-1 ${isLiked ? 'bg-red-50 text-red-500 border-red-100' : 'bg-gray-50 text-gray-400 border-transparent hover:bg-gray-100 hover:text-gray-600'}`}
+                                className={`flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border flex items-center justify-center gap-1 ${isLiked ? 'bg-red-50 text-red-500 border-red-200' : 'bg-gray-50 text-gray-400 border-gray-100 hover:text-red-500 hover:border-red-200'}`}
                             >
-                                <svg viewBox="0 0 24 24" className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : 'fill-none stroke-current stroke-2'}`}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                                <svg viewBox="0 0 24 24" className={`w-3 h-3 ${isLiked ? 'fill-current' : 'fill-none stroke-current stroke-2'}`}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
                                 {t.like}
                             </button>
                             <button
                                 onClick={(e) => { e.stopPropagation(); onDislike(item.id); }}
-                                className={`flex-1 py-2 rounded-xl font-bold text-[10px] transition-all border flex items-center justify-center gap-1 ${isDisliked ? 'bg-gray-800 text-white border-gray-800' : 'bg-gray-50 text-gray-400 border-transparent hover:bg-gray-100 hover:text-gray-600'}`}
+                                className={`flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border flex items-center justify-center gap-1 ${isDisliked ? 'bg-gray-200 text-gray-700 border-gray-300' : 'bg-gray-50 text-gray-400 border-gray-100 hover:text-gray-600'}`}
                             >
-                                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2"><path d="M10 14h4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-current stroke-2"><path d="M10 14h4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 {t.dislike}
                             </button>
                             {onExcludeFromResult && (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); onExcludeFromResult(item.id); }}
-                                    className="flex-1 py-2 rounded-xl font-bold text-[10px] transition-all border bg-gray-50 text-gray-400 border-transparent hover:bg-red-50 hover:text-red-600 hover:border-red-100 flex items-center justify-center gap-1"
+                                    className="flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border bg-gray-50 text-gray-400 border-gray-100 hover:bg-red-50 hover:text-red-500 hover:border-red-200 flex items-center justify-center gap-1"
                                 >
-                                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
+                                    <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
                                     {t.exclude}
                                 </button>
                             )}
@@ -748,13 +872,13 @@
             return (
                 <div className="modal-container" onClick={onClose}>
                     <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                        <div className="bg-white w-full max-w-sm rounded-[56px] shadow-2xl overflow-hidden animate-up">
-                            <div className="pt-12 pb-10 px-8">
+                        <div className="bg-[#161B28] w-full max-w-sm rounded-[56px] shadow-2xl overflow-hidden animate-up border border-white/10">
+                            <div className="pt-12 pb-10 px-8 text-white">
                                 <h3 className="text-2xl font-black text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
                                 <div className="grid grid-cols-2 gap-4 mb-8">
                                     <button onClick={shareToKakao} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
                                         <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[24px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" className="w-10 h-10 object-contain" alt="Kakao" /></div>
-                                        <span className="text-sm font-black text-gray-700">{t.share_to_kakao}</span>
+                                        <span className="text-sm font-black text-gray-300">{t.share_to_kakao}</span>
                                     </button>
                                     <button onClick={shareToLine} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
                                         <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" className="w-10 h-10 object-contain" alt="LINE" /></div>
@@ -769,7 +893,7 @@
                                         <span className="text-sm font-black text-gray-700">{t.share_to_text}</span>
                                     </button>
                                 </div>
-                                <button onClick={onClose} className="w-full py-5 bg-gray-50 rounded-2xl text-gray-400 font-black">CLOSE</button>
+                                <button onClick={onClose} className="w-full py-5 bg-white/5 rounded-2xl text-gray-500 font-black hover:text-gray-300 transition-colors">CLOSE</button>
                             </div>
                         </div>
                     </div>
@@ -782,32 +906,32 @@
             return (
                 <div className="modal-container" onClick={onClose}>
                     <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                        <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl p-10 animate-up">
+                        <div className="bg-[#161B28] w-full max-w-2xl rounded-[40px] shadow-2xl p-10 animate-up border border-white/10">
                             <h3 className="text-3xl font-black mb-8 text-primary">N웹툰 파인더 가이드 📘</h3>
 
                             <div className="space-y-6">
-                                <div className="p-5 bg-gray-50 rounded-3xl">
-                                    <h4 className="font-black text-lg mb-2">1. 🔍 똑똑한 검색</h4>
-                                    <p className="text-gray-600 text-sm leading-relaxed">제목이나 작가는 물론, "먼치킨", "회귀", "로맨스" 같은 키워드로도 검색할 수 있어요. 원하는 취향을 입력만 하세요!</p>
+                                <div className="p-5 bg-white/5 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2 text-white">1. 🔍 똑똑한 검색</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">제목이나 작가는 물론, "먼치킨", "회귀", "로맨스" 같은 키워드로도 검색할 수 있어요. 원하는 취향을 입력만 하세요!</p>
                                 </div>
 
-                                <div className="p-5 bg-gray-50 rounded-3xl">
-                                    <h4 className="font-black text-lg mb-2">2. ✨ 맞춤 추천받기</h4>
-                                    <p className="text-gray-600 text-sm leading-relaxed">'추천받기' 메뉴에서 4단계의 간단한 질문에 답해보세요. AI가 수천 개의 웹툰 중 당신에게 딱 맞는 작품을 찾아드립니다.</p>
+                                <div className="p-5 bg-white/5 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2 text-white">2. ✨ 맞춤 추천받기</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">'추천받기' 메뉴에서 4단계의 간단한 질문에 답해보세요. AI가 수천 개의 웹툰 중 당신에게 딱 맞는 작품을 찾아드립니다.</p>
                                 </div>
 
-                                <div className="p-5 bg-gray-50 rounded-3xl">
-                                    <h4 className="font-black text-lg mb-2">3. 🏆 웹툰 월드컵</h4>
-                                    <p className="text-gray-600 text-sm leading-relaxed">최대 2048강까지! 나만의 최애 웹툰을 뽑는 토너먼트를 즐겨보세요. 우승작은 당신의 취향 분석에도 반영됩니다.</p>
+                                <div className="p-5 bg-white/5 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2 text-white">3. 🏆 {t.worldcup}</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">최대 2048강까지! 나만의 최애 웹툰을 뽑는 토너먼트를 즐겨보세요. 우승작은 당신의 취향 분석에도 반영됩니다.</p>
                                 </div>
 
-                                <div className="p-5 bg-gray-50 rounded-3xl">
-                                    <h4 className="font-black text-lg mb-2">4. 📚 나만의 컬렉션 공유</h4>
-                                    <p className="text-gray-600 text-sm leading-relaxed">마음에 드는 작품은 썸네일의 '❤️' 버튼을 눌러 컬렉션에 추가하세요. '내 정보 {'>'} 나의 컬렉션'에서 친구들에게 리스트를 공유할 수 있습니다.</p>
+                                <div className="p-5 bg-white/5 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2 text-white">4. 📚 나만의 컬렉션 공유</h4>
+                                    <p className="text-gray-400 text-sm leading-relaxed">마음에 드는 작품은 썸네일의 '❤️' 버튼을 눌러 컬렉션에 추가하세요. '내 정보 {'>'} 나의 컬렉션'에서 친구들에게 리스트를 공유할 수 있습니다.</p>
                                 </div>
                             </div>
 
-                            <button onClick={onClose} className="w-full mt-8 py-4 bg-black text-white font-black rounded-2xl text-lg hover:scale-[1.02] active:scale-95 transition-all">
+                            <button onClick={onClose} className="w-full mt-8 py-4 bg-white/5 text-white font-black rounded-2xl text-lg hover:bg-white/10 active:scale-95 transition-all">
                                 확인했어요!
                             </button>
                         </div>
@@ -918,7 +1042,7 @@
                                 <p className="text-gray-400 font-medium mb-10 italic">{t.worldcup_desc}</p>
                                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-2xl mx-auto mb-12">
                                     {rounds.map(r => (
-                                        <button key={r} onClick={() => setSelectedRound(r)} className={`px-4 py-3 rounded-2xl font-black transition-all ${selectedRound === r ? 'bg-primary text-white shadow-xl scale-105' : 'bg-gray-50 text-gray-300 hover:bg-gray-100'}`}>{r}{t.worldcup_round}</button>
+                                        <button key={r} onClick={() => setSelectedRound(r)} className={`px-4 py-3 rounded-2xl font-black transition-all ${selectedRound === r ? 'bg-primary text-white shadow-xl scale-105' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>{r}{t.worldcup_round}</button>
                                     ))}
                                 </div>
                                 <button onClick={startWorldcup} className="w-full max-w-sm py-6 bg-primary text-white font-black rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all text-xl uppercase tracking-widest">
@@ -985,9 +1109,11 @@
             const [step, setStep] = useState(1);
             const [searchQuery, setSearchQuery] = useState('');
             const [searchResults, setSearchResults] = useState([]);
+            const [searchLimit, setSearchLimit] = useState(10);
             const [selectedG, setSelectedG] = useState([]);
             const [excludedG, setExcludedG] = useState([]); // Non-preferred tastes
             const [favTitle, setFavTitle] = useState("");
+            const [manualExcludes, setManualExcludes] = useState(""); // Manual tags input
             const [loading, setLoading] = useState(false);
             const [results, setResults] = useState([]);
             const [scoredPool, setScoredPool] = useState([]);
@@ -1014,14 +1140,14 @@
             const [totalVisitors, setTotalVisitors] = useState(0);
 
             // Compute Top 5 Lists for Genres
-            const { topWebtoons, fantasyTop, romanceTop, martialTop, sliceTop } = useMemo(() => {
+            const { topWebtoons, hiddenGems, fantasyTop, romanceTop, martialTop, sliceTop } = useMemo(() => {
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                 const sorted = [...rawData].sort((a, b) => (b.starScore || 0) - (a.starScore || 0));
 
                 const getTopByGenre = (genreKeyword) => {
                     return sorted
                         .filter(w => (w.tags || []).some(t => t.includes(genreKeyword)))
-                        .slice(0, 5)
+                        .slice(0, 20)
                         .map(item => ({
                             id: item.titleId || item.id,
                             title: item.titleName || item.title,
@@ -1034,7 +1160,16 @@
                 };
 
                 return {
-                    topWebtoons: sorted.slice(0, 5).map(item => ({
+                    topWebtoons: sorted.slice(0, 20).map(item => ({
+                        id: item.titleId || item.id,
+                        title: item.titleName || item.title,
+                        thumbnail: item.thumbnailUrl || item.thumbnail,
+                        tags: item.tags || [item.author],
+                        status: item.status,
+                        author: item.author,
+                        starScore: item.starScore
+                    })),
+                    hiddenGems: sorted.filter(w => (w.starScore || 0) > 9.85).slice(5, 25).map(item => ({
                         id: item.titleId || item.id,
                         title: item.titleName || item.title,
                         thumbnail: item.thumbnailUrl || item.thumbnail,
@@ -1072,6 +1207,7 @@
                     starScore: item.starScore
                 }));
                 setSearchResults(filtered);
+                setSearchLimit(10);
                 setView('search');
             };
 
@@ -1157,15 +1293,6 @@
                 }
             };
 
-            const handleExclude = async (id) => {
-                const newEx = [...dislikedIds, id];
-                setDislikedIds(newEx);
-                localStorage.setItem('excludedWebtoons', JSON.stringify(newEx));
-                if (user) { await supabaseClient.from('excluded_webtoons').upsert({ user_id: user.id, webtoon_id: id }); }
-                setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10));
-                setShowExcludePopup(true);
-                setTimeout(() => setShowExcludePopup(false), 2000);
-            };
             const categories = useMemo(() => getGenreCategories(t), [t]);
 
             const nextStep = () => { setStep(prev => prev + 1); window.scrollTo({ top: 0, behavior: 'smooth' }); };
@@ -1177,8 +1304,12 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 await new Promise(r => setTimeout(r, 1500));
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                const statusFilters = selectedG.filter(s => ["연재중", "완결"].includes(s));
-                const genrePreferences = selectedG.filter(s => !["연재중", "완결"].includes(s));
+                const genrePreferences = selectedG; // Step 1 now only contains genres
+                const manualExcludeTags = manualExcludes.split(',').map(s => s.trim()).filter(Boolean);
+                const allExcludes = [...excludedG, ...manualExcludeTags];
+
+                const excludedStatus = allExcludes.filter(s => ["연재중", "매일+", "완결"].includes(s));
+                const excludedGenreTags = allExcludes.filter(s => !["연재중", "매일+", "완결"].includes(s));
 
                 // Similarity scoring based on liked webtoons
                 const likedWebtoons = rawData.filter(w => likedIds.includes(w.titleId || w.id));
@@ -1202,14 +1333,19 @@
                     if (dislikedIds.includes(webtoon.id)) return { ...webtoon, match: 0 };
 
                     let score = 50;
-                    if (statusFilters.length > 0) {
+
+                    // 연재여부 제외 필터 (Step 2)
+                    if (excludedStatus.length > 0) {
                         const myStatus = webtoon.status === 'FINISHED' ? '완결' : '연재중';
-                        if (!statusFilters.includes(myStatus)) return { ...webtoon, match: 0 };
+                        const isDailyPlus = String(item.day || item.category || "").toLowerCase().includes('plus') ||
+                            (item.tags || []).some(t => t.includes('매일') || t.includes('플러스'));
+                        if (excludedStatus.includes(myStatus)) return { ...webtoon, match: 0 };
+                        if (isDailyPlus && excludedStatus.includes('매일+')) return { ...webtoon, match: 0 };
                     }
 
                     // 확장된 장르 매칭 (유사 장르 포함)
                     const expandedPrefs = expandGenres(genrePreferences);
-                    const expandedExcluded = expandGenres(excludedG);
+                    const expandedExcluded = expandGenres(excludedGenreTags);
 
                     // 비선호 장르 체크 (확장된 키워드 적용)
                     if (expandedExcluded.length > 0) {
@@ -1304,24 +1440,85 @@
                 setTimeout(() => setShowExcludePopup(false), 2000);
             };
 
+            const HorizontalSlider = ({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, likedIds, dislikedIds }) => {
+                const scrollRef = React.useRef(null);
+                const [showLeft, setShowLeft] = React.useState(false);
+
+                const scroll = (dir) => {
+                    if (scrollRef.current) {
+                        const containerWidth = scrollRef.current.offsetWidth;
+                        const amount = dir === 'left' ? -containerWidth : containerWidth;
+                        scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+                    }
+                };
+
+                const handleScroll = () => {
+                    if (scrollRef.current) {
+                        setShowLeft(scrollRef.current.scrollLeft > 10);
+                    }
+                };
+
+                return (
+                    <div className="relative group/slider">
+                        {showLeft && (
+                            <button
+                                onClick={() => scroll('left')}
+                                className="absolute left-[-20px] top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-black/90 text-white rounded-full flex items-center justify-center border border-white/10 hover:bg-primary transition-all shadow-2xl opacity-0 group-hover/slider:opacity-100"
+                            >
+                                <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current rotate-180"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                            </button>
+                        )}
+                        <button
+                            onClick={() => scroll('right')}
+                            className="absolute right-[-20px] top-1/2 -translate-y-1/2 z-20 w-11 h-11 bg-black/90 text-white rounded-full flex items-center justify-center border border-white/10 hover:bg-primary transition-all shadow-2xl opacity-0 group-hover/slider:opacity-100"
+                        >
+                            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                        </button>
+
+                        <div
+                            ref={scrollRef}
+                            onScroll={handleScroll}
+                            className="flex overflow-x-hidden gap-5 pb-6 scroll-smooth snap-x snap-mandatory"
+                        >
+                            {items.map((w, idx) => (
+                                <div key={w.id} className="flex-shrink-0 w-[calc((100%-80px)/5)] snap-start">
+                                    <WebtoonCard
+                                        item={w}
+                                        rank={rankOffset + idx + 1}
+                                        onDislike={toggleDislike}
+                                        onLike={toggleLike}
+                                        onExcludeFromResult={excludeFromResult}
+                                        isLiked={likedIds.includes(w.id)}
+                                        isDisliked={dislikedIds.includes(w.id)}
+                                        t={t}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                );
+            };
+
             return (
                 <div className="min-h-screen">
-                    <header className="!bg-white shadow-[0_1px_0_0_rgba(0,0,0,0.08)] sticky top-0 z-[100000]">
+                    <header>
                         <div className="max-w-[1500px] mx-auto px-6 h-16 flex items-center justify-between gap-8">
                             {/* Left: Brand & Nav */}
                             <div className="flex items-center gap-8 flex-shrink-0">
                                 <button onClick={() => setView('home')} className="flex items-center gap-1 group">
-                                    <span className="text-xl font-black text-[#00DC64] tracking-tighter italic group-hover:scale-105 transition-transform">N웹툰</span>
-                                    <span className="text-xl font-black text-gray-900 tracking-tighter italic group-hover:scale-105 transition-transform">파인더</span>
+                                    <span className="text-xl font-black tracking-tight">
+                                        <span className="text-primary">N웹툰</span>
+                                        <span className="text-white ml-1">FINDER</span>
+                                    </span>
                                 </button>
                                 <nav className="hidden md:flex items-center gap-6">
-                                    <button onClick={() => setView('home')} className={`text-sm font-bold transition-colors ${view === 'home' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>{lang === 'ko' ? '홈' : 'Home'}</button>
-                                    <button onClick={() => { setView('recommend'); setStep(1); }} className={`text-sm font-bold transition-colors ${view === 'recommend' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>{lang === 'ko' ? '추천받기' : 'Recommend'}</button>
+                                    <button onClick={() => setView('home')} className={`text-sm font-semibold transition-colors ${view === 'home' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? '홈' : 'Home'}</button>
+                                    <button onClick={() => { setView('recommend'); setStep(1); }} className={`text-sm font-semibold transition-colors ${view === 'recommend' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? '추천받기' : 'Recommend'}</button>
                                     <button onClick={() => {
                                         setView('worldcup');
                                         if (!user) alert(lang === 'ko' ? "로그인 시 내 취향에 반영됩니다!" : "Login to reflect in your preferences!");
-                                    }} className={`text-sm font-bold transition-colors ${view === 'worldcup' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>{lang === 'ko' ? '웹툰월드컵' : 'World Cup'}</button>
-                                    <button onClick={() => setShowHelpModal(true)} className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">도움말</button>
+                                    }} className={`text-sm font-semibold transition-colors ${view === 'worldcup' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{t.worldcup}</button>
+                                    <button onClick={() => setShowHelpModal(true)} className={`text-sm font-semibold transition-colors ${showHelpModal ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{t.help}</button>
                                 </nav>
                             </div>
 
@@ -1335,29 +1532,29 @@
                                     value={searchQuery}
                                     onChange={(e) => handleSearch(e.target.value)}
                                     placeholder={lang === 'ko' ? '작가, 장르, 키워드 등을 입력해보세요' : 'Search titles, authors, keywords'}
-                                    className="w-full bg-gray-100 rounded-lg py-2 pl-12 pr-4 text-sm font-medium outline-none focus:bg-gray-200 transition-all border border-transparent focus:border-gray-300"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 pl-12 pr-4 text-sm font-medium outline-none text-white placeholder:text-gray-500 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
                                 />
                             </div>
 
                             {/* Right: Actions */}
                             <div className="flex items-center gap-4 flex-shrink-0">
-                                <div className="flex items-center gap-1 scale-90 border-r border-gray-100 pr-4 mr-2">
+                                <div className="flex items-center gap-1 scale-90 border-r border-gray-200 pr-4 mr-2">
                                     {[{ code: 'ko', label: 'KO' }, { code: 'en', label: 'EN' }, { code: 'zh', label: 'ZH' }, { code: 'ja', label: 'JA' }].map(l => (
                                         <button key={l.code} onClick={() => setLang(l.code)}
-                                            className={`px-2 py-1 rounded-md border text-[9px] font-black transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white text-gray-300 border-gray-100'}`}>
+                                            className={`px-2 py-1 rounded-md border text-[9px] font-bold transition-all ${lang === l.code ? 'bg-primary border-primary text-white' : 'bg-white text-gray-400 border-gray-200 hover:border-gray-400'}`}>
                                             {l.label}
                                         </button>
                                     ))}
                                 </div>
                                 {user ? (
                                     <div className="flex items-center gap-4">
-                                        <button onClick={() => setShowProfileModal(true)} className="text-sm font-bold text-gray-500 hover:text-gray-900">{lang === 'ko' ? '내 정보' : 'Profile'}</button>
-                                        <button onClick={() => supabase.auth.signOut()} className="text-sm font-bold text-gray-400 hover:text-red-500">{lang === 'ko' ? '로그아웃' : 'Logout'}</button>
+                                        <button onClick={() => setShowProfileModal(true)} className="text-sm font-semibold text-gray-500 hover:text-gray-800">{lang === 'ko' ? '내 정보' : 'Profile'}</button>
+                                        <button onClick={() => supabase.auth.signOut()} className="text-sm font-semibold text-gray-400 hover:text-red-500">{lang === 'ko' ? '로그아웃' : 'Logout'}</button>
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-2">
-                                        <button onClick={() => { setShowAuthModal(true); setAuthMode('login'); }} className="text-xs font-black bg-black text-white px-4 py-2 rounded-full hover:scale-105 transition-transform">{lang === 'ko' ? '로그인' : 'Log In'}</button>
-                                        <button onClick={() => { setShowAuthModal(true); setAuthMode('signup'); email && setAuthMode('signup'); }} className="text-xs font-black bg-[#00DC64] text-white px-4 py-2 rounded-full hover:scale-105 transition-transform">{lang === 'ko' ? '회원가입' : 'Sign Up'}</button>
+                                        <button onClick={() => { setShowAuthModal(true); setAuthMode('login'); }} className="text-xs font-bold bg-white/5 border border-white/10 text-white px-4 py-2 rounded-full hover:bg-white/10 transition-all">{lang === 'ko' ? '로그인' : 'Log In'}</button>
+                                        <button onClick={() => { setShowAuthModal(true); setAuthMode('signup'); email && setAuthMode('signup'); }} className="text-xs font-bold btn-gradient text-[#334155] px-4 py-2 rounded-full">{lang === 'ko' ? '회원가입' : 'Sign Up'}</button>
                                     </div>
                                 )}
                             </div>
@@ -1366,41 +1563,105 @@
                     <main className="max-w-[1500px] mx-auto px-10 py-10">
                         {view === 'home' && (
                             <div className="animate-up space-y-16">
-                                <div className="">
-                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-[#00DC64] pl-3">{lang === 'ko' ? '네이버 웹툰 별점 Top 5' : 'Naver Webtoon Top 5'}</h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                        {topWebtoons.map((w, idx) => (
-                                            <WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
-                                        ))}
+                                {/* Hero Section */}
+                                <div className="relative pt-6 pb-12 rounded-3xl overflow-hidden hero-gradient">
+                                    <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
+                                        <div className="flex-1 space-y-12 z-10 pl-8 lg:pl-16">
+                                            <h1 className="text-3xl lg:text-5xl font-black leading-[1.6] text-white tracking-tight">
+                                                지금, 당신의 심장을 뛰게 할<br />
+                                                <span className="text-primary">웹툰</span>을 찾아보세요
+                                            </h1>
+                                            <p className="text-gray-500 text-base max-w-md">
+                                                AI가 분석한 수천 개의 웹툰 중 당신의 취향저격 작품을 추천해 드립니다.
+                                            </p>
+                                            <button
+                                                onClick={() => { setView('recommend'); setStep(1); }}
+                                                className="btn-gradient text-[#334155] font-bold text-base px-8 py-4 rounded-full animate-pulse-glow flex items-center gap-2"
+                                            >
+                                                지금 바로 추천받기 ✨
+                                            </button>
+                                        </div>
+                                        {/* 우측 웹툰 커버 - 세련된 사선 슬라이스 배치 */}
+                                        <div className="hidden lg:flex flex-1 relative h-[300px] items-stretch overflow-hidden gap-[3px] px-8">
+                                            {[1, 2, 3, 4, 5].map((num, i) => (
+                                                <div
+                                                    key={num}
+                                                    className="relative flex-1 group transition-all duration-700 hover:flex-[3] overflow-hidden"
+                                                    style={{
+                                                        clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)',
+                                                    }}
+                                                >
+                                                    <div className="absolute inset-0 transition-all duration-500 scale-110 group-hover:scale-100">
+                                                        <img
+                                                            src={`${num}.jpg`}
+                                                            alt={`hero-${num}`}
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </div>
+                                                    {/* 상하 블러 마스크 - 얇게 모서리만 */}
+                                                    <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent backdrop-blur-[1px]"></div>
+                                                    <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent backdrop-blur-[1px]"></div>
+                                                    {/* 내부 셰도우 */}
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 group-hover:from-transparent"></div>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div className="">
-                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-purple-500 pl-3">🔮 {lang === 'ko' ? '판타지 Top 5' : 'Fantasy Top 5'}</h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                        {fantasyTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                {/* Real-time Trends */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">🔥</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '평점 Top 20' : 'Star Rating Top 20'}</h2>
+                                        <span className="text-[10px] font-bold bg-primary/10 text-primary px-3 py-1 rounded-full uppercase">{lang === 'ko' ? '#추천' : 'Recommended'}</span>
                                     </div>
+                                    <HorizontalSlider items={topWebtoons} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
 
-                                <div className="">
-                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-pink-500 pl-3">💖 {lang === 'ko' ? '로맨스 Top 5' : 'Romance Top 5'}</h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                        {romanceTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                {/* Hidden Gems */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">💎</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '숨겨진 명작 발굴' : 'Hidden Gems'}</h2>
                                     </div>
+                                    <HorizontalSlider items={hiddenGems} rankOffset={5} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
 
-                                <div className="">
-                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-orange-500 pl-3">⚔️ {lang === 'ko' ? '무협/사극 Top 5' : 'Martial Arts Top 5'}</h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                        {martialTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                {/* Fantasy Top 20 */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">🐲</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '판타지 Top 20' : 'Fantasy Top 20'}</h2>
                                     </div>
+                                    <HorizontalSlider items={fantasyTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
 
-                                <div className="">
-                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-yellow-500 pl-3">🌱 {lang === 'ko' ? '일상 Top 5' : 'Slice of Life Top 5'}</h2>
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                        {sliceTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                {/* Romance Top 20 */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">💖</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '로맨스 Top 20' : 'Romance Top 20'}</h2>
                                     </div>
+                                    <HorizontalSlider items={romanceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                </div>
+
+                                {/* Martial Arts Top 20 */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">⚔️</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '무협/사극 Top 20' : 'Martial Arts Top 20'}</h2>
+                                    </div>
+                                    <HorizontalSlider items={martialTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                </div>
+
+                                {/* Slice of Life Top 20 */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">🌱</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '일상 Top 20' : 'Slice of Life Top 20'}</h2>
+                                    </div>
+                                    <HorizontalSlider items={sliceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
                             </div>
                         )}
@@ -1408,15 +1669,30 @@
                         {view === 'search' && (
                             <div className="animate-up">
                                 <div className="mb-10">
-                                    <h2 className="text-xl font-black mb-6 text-gray-900">{lang === 'ko' ? `'${searchQuery}' 검색 결과` : `Search results for '${searchQuery}'`}</h2>
+                                    <h2 className="text-xl font-bold mb-6 text-white">{lang === 'ko' ? `'${searchQuery}' 검색 결과` : `Search results for '${searchQuery}'`}</h2>
                                     {searchResults.length === 0 ? (
-                                        <div className="py-20 text-center text-gray-300 font-bold">{t.no_data || 'No results found.'}</div>
+                                        <div className="py-20 text-center text-gray-500 font-bold">{t.no_data || 'No results found.'}</div>
                                     ) : (
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                                            {searchResults.map((w, idx) => (
-                                                <WebtoonCard key={w.id} item={w} rank={0} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
-                                            ))}
-                                        </div>
+                                        <>
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                                                {searchResults.slice(0, searchLimit).map((w, idx) => (
+                                                    <WebtoonCard key={w.id} item={w} rank={0} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
+                                                ))}
+                                            </div>
+                                            {searchResults.length > searchLimit && (
+                                                <div className="mt-12 flex justify-center">
+                                                    <button
+                                                        onClick={() => setSearchLimit(prev => prev + 10)}
+                                                        className="group flex flex-col items-center gap-2 text-gray-500 hover:text-primary transition-all"
+                                                    >
+                                                        <span className="text-sm font-bold uppercase tracking-widest">{lang === 'ko' ? '검색 결과 더보기' : 'Show More'}</span>
+                                                        <div className="w-12 h-12 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary/5 transition-all">
+                                                            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current group-hover:animate-bounce mt-1"><path d="M7 10l5 5 5-5z"></path></svg>
+                                                        </div>
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             </div>
@@ -1437,81 +1713,134 @@
                             </div>
                         )}
 
-                        {view === 'recommend' && (
-                            <>
-                                <ProgressBar step={step} t={t} />
-                                {step === 1 && (
-                                    <div className="animate-up max-w-4xl mx-auto">
-                                        <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-600 italic font-bold">{t.step1_desc}</p></div>
-                                        <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
-                                        <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase tracking-widest">NEXT</button></div>
-                                    </div>
-                                )}
-                                {step === 2 && (
-                                    <div className="animate-up max-w-4xl mx-auto">
-                                        <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step2_title}</h2><p className="text-gray-600 italic font-bold">{t.step2_desc}</p></div>
-                                        <div className="space-y-10">
-                                            {categories.map(cat => (
-                                                <div key={cat.name} className="space-y-5">
-                                                    <h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3>
-                                                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                                                        {cat.genres.map((g, idx) => {
-                                                            const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g;
-                                                            const isPreferred = selectedG.includes(g);
-                                                            return (
-                                                                <button
-                                                                    key={g}
-                                                                    onClick={() => {
-                                                                        if (isPreferred) {
-                                                                            setConflictTag(g);
-                                                                        } else {
-                                                                            setExcludedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g]);
-                                                                        }
-                                                                    }}
-                                                                    className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${excludedG.includes(g) ? 'bg-red-500 border-red-500 text-white shadow-xl scale-[0.98]' : isPreferred ? 'bg-gray-100 border-gray-100 text-gray-300' : 'bg-white border-gray-100 text-gray-500'}`}
-                                                                >
-                                                                    #{label}
-                                                                </button>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                        <div className="mt-20 flex gap-4 justify-center"><button onClick={prevStep} className="px-16 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
-                                    </div>
-                                )}
-                                {step === 3 && (
-                                    <div className="animate-up max-w-2xl mx-auto py-10 px-6">
-                                        <div className="text-center mb-12">
-                                            <h2 className="text-3xl font-black mb-4 tracking-tight">{t.step3_title}</h2>
-                                            <p className="text-gray-400 font-medium italic opacity-80 decoration-primary/30 decoration-2">{t.step3_desc || ""}</p>
-                                        </div>
-                                        <div className="space-y-8">
-                                            <input
-                                                type="text"
-                                                value={favTitle}
-                                                onChange={e => setFavTitle(e.target.value)}
-                                                placeholder={t.step3_placeholder}
-                                                className="w-full py-5 px-8 rounded-3xl bg-white border-2 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-center text-lg shadow-sm transition-all font-bold placeholder:text-gray-200"
-                                            />
-                                            <div className="flex gap-3">
-                                                <button onClick={prevStep} className="flex-1 py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">BACK</button>
-                                                <button
-                                                    onClick={handleAnalyze}
-                                                    className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
-                                                >
-                                                    ANALYZE
-                                                </button>
+                        {
+                            view === 'recommend' && (
+                                <>
+                                    <ProgressBar step={step} t={t} />
+                                    {step === 1 && (
+                                        <div className="animate-up max-w-4xl mx-auto">
+                                            <div className="text-center mb-12">
+                                                <h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight text-white">{t.step1_title}</h2>
+                                                <p className="text-gray-500 font-medium">{t.step1_desc}</p>
+                                            </div>
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                                                {[
+                                                    { genre: '판타지', thumbnail: '1.jpg', en: 'Fantasy' },
+                                                    { genre: '로맨스', thumbnail: '5.jpg', en: 'Romance' },
+                                                    { genre: '액션', thumbnail: '2.jpg', en: 'Action' },
+                                                    { genre: '일상', thumbnail: '4.jpg', en: 'Daily' },
+                                                    { genre: '스릴러', thumbnail: '6.jpg', en: 'Thriller' },
+                                                    { genre: '무협', thumbnail: '7.jpg', en: 'Martial Arts' }
+                                                ].map(item => (
+                                                    <button
+                                                        key={item.genre}
+                                                        onClick={() => setSelectedG(prev => prev.includes(item.genre) ? prev.filter(it => it !== item.genre) : [...prev, item.genre])}
+                                                        className={`relative overflow-hidden rounded-2xl aspect-[2/3] transition-all ${selectedG.includes(item.genre) ? 'ring-4 ring-primary shadow-lg scale-[0.98]' : 'hover:scale-[1.02] hover:shadow-md'}`}
+                                                    >
+                                                        <img src={item.thumbnail} alt={item.genre} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors"></div>
+                                                        <div className="absolute inset-0 flex items-center justify-center p-2 text-center">
+                                                            <span className="text-white font-black text-xl drop-shadow-lg break-keep">{lang === 'ko' ? item.genre : item.en}</span>
+                                                        </div>
+                                                        {selectedG.includes(item.genre) && (
+                                                            <div className="absolute top-3 right-3 bg-primary text-white w-6 h-6 flex items-center justify-center rounded-full shadow-lg border-2 border-white">
+                                                                <span className="text-xs font-bold">✓</span>
+                                                            </div>
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <div className="mt-16 text-center">
+                                                <button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 btn-gradient text-[#334155] font-bold rounded-full disabled:opacity-20 text-lg uppercase tracking-widest">{t.next}</button>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                                {step === 4 && (
-                                    <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up max-w-[1400px] mx-auto pb-40 px-6"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
-                                )}
-                            </>
-                        )}
+                                    )}
+                                    {step === 2 && (
+                                        <div className="animate-up max-w-3xl mx-auto">
+                                            <div className="text-center mb-12">
+                                                <h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight text-white">{t.step2_title}</h2>
+                                                <p className="text-gray-500 font-medium">{t.step2_desc}</p>
+                                            </div>
+                                            <div className="space-y-8">
+                                                <div>
+                                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">연재여부</h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                                                        {['연재중', '매일+', '완결'].map(item => (
+                                                            <button
+                                                                key={item}
+                                                                onClick={() => setExcludedG(prev => prev.includes(item) ? prev.filter(it => it !== item) : [...prev, item])}
+                                                                className={`py-4 px-6 rounded-xl text-sm font-bold border-2 transition-all ${excludedG.includes(item) ? 'bg-red-500 border-red-500 text-white shadow-md scale-[0.98]' : 'bg-white/5 border-white/10 text-gray-400 hover:border-red-500/50 hover:text-red-500'}`}
+                                                            >
+                                                                {item}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">소재</h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                                                        {['회귀', '먼치킨', '환생', '빙의', '사이다'].map(item => (
+                                                            <button
+                                                                key={item}
+                                                                onClick={() => setExcludedG(prev => prev.includes(item) ? prev.filter(it => it !== item) : [...prev, item])}
+                                                                className={`py-4 px-6 rounded-xl text-sm font-bold border-2 transition-all ${excludedG.includes(item) ? 'bg-red-500 border-red-500 text-white shadow-md scale-[0.98]' : 'bg-white/5 border-white/10 text-gray-400 hover:border-red-500/50 hover:text-red-500'}`}
+                                                            >
+                                                                #{item}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">{lang === 'ko' ? '직접 입력 (태그/키워드)' : 'Manual Input (Tag/Keyword)'}</h3>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="text"
+                                                            value={manualExcludes}
+                                                            onChange={e => setManualExcludes(e.target.value)}
+                                                            placeholder={lang === 'ko' ? '예: 사이다, 피폐, 참교육 (쉼표로 구분)' : 'Ex: Clover, Dark, Revenge (split with comma)'}
+                                                            className="w-full py-5 px-8 rounded-2xl bg-white/5 border-2 border-white/10 focus:border-red-500/50 outline-none text-white placeholder:text-gray-600 transition-all font-medium"
+                                                        />
+                                                        <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[10px] font-bold text-red-500/50 uppercase tracking-widest">{t.strict_exclude}</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="mt-16 flex gap-4 justify-center">
+                                                <button onClick={prevStep} className="px-12 py-4 bg-white/5 border border-white/10 text-gray-400 font-bold rounded-full uppercase hover:border-white/30 transition-all">{t.back}</button>
+                                                <button onClick={nextStep} className="px-12 py-4 btn-gradient text-[#334155] font-bold rounded-full uppercase">{t.continue}</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {step === 3 && (
+                                        <div className="animate-up max-w-2xl mx-auto py-10 px-6">
+                                            <div className="text-center mb-12">
+                                                <h2 className="text-3xl font-black mb-4 tracking-tight text-white">{t.step3_title}</h2>
+                                                <p className="text-gray-400 font-medium italic opacity-80 decoration-primary/30 decoration-2">{t.step3_desc || ""}</p>
+                                            </div>
+                                            <div className="space-y-8">
+                                                <input
+                                                    type="text"
+                                                    value={favTitle}
+                                                    onChange={e => setFavTitle(e.target.value)}
+                                                    placeholder={t.step3_placeholder}
+                                                    className="w-full py-5 px-8 rounded-2xl bg-white/5 border-2 border-white/10 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-center text-lg transition-all font-medium text-white placeholder:text-gray-600 shadow-inner"
+                                                />
+                                                <div className="flex gap-3">
+                                                    <button onClick={prevStep} className="flex-1 py-4 bg-white/5 border border-white/10 text-gray-400 font-bold rounded-2xl hover:border-white/30 transition-all uppercase tracking-widest text-sm">{t.back}</button>
+                                                    <button
+                                                        onClick={handleAnalyze}
+                                                        className="flex-[2] py-4 btn-gradient text-[#334155] font-bold rounded-2xl hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
+                                                    >
+                                                        {t.start_analysis}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {step === 4 && (
+                                        <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[6px] border-white/10 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-400 font-bold tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up max-w-[1400px] mx-auto pb-40 px-6"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 tracking-tight text-white">{t.result_title}</h2><p className="text-gray-500 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-white/10 text-gray-400 font-bold rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
+                                    )}
+                                </>
+                            )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
 
@@ -1520,9 +1849,9 @@
                         conflictTag && (
                             <div className="modal-container" onClick={() => setConflictTag(null)}>
                                 <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <div className="bg-white w-full max-w-xs rounded-[40px] shadow-2xl p-8 text-center animate-up">
+                                    <div className="bg-[#161B28] w-full max-w-xs rounded-[40px] shadow-2xl p-8 text-center animate-up border border-white/10">
                                         <span className="text-3xl mb-4 block">⚠️</span>
-                                        <p className="text-gray-800 font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
+                                        <p className="text-white font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
                                         <div className="flex gap-3">
                                             <button
                                                 onClick={() => {
@@ -1536,7 +1865,7 @@
                                             </button>
                                             <button
                                                 onClick={() => setConflictTag(null)}
-                                                className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-transform"
+                                                className="flex-1 py-4 bg-white/5 text-gray-400 font-bold rounded-2xl active:scale-95 transition-transform"
                                             >
                                                 {t.no}
                                             </button>
@@ -1572,8 +1901,8 @@
                         showAuthModal && (
                             <div className="modal-container" onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>
                                 <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <div className="bg-white w-full max-w-sm rounded-[48px] shadow-2xl p-10 flex flex-col items-center">
-                                        <h3 className="text-2xl font-black mb-8 tracking-tighter">{authMode === 'login' ? t.login : t.signup_btn}</h3>
+                                    <div className="bg-[#161B28] w-full max-w-sm rounded-[48px] shadow-2xl p-10 flex flex-col items-center border border-white/10">
+                                        <h3 className="text-2xl font-black mb-8 tracking-tighter text-white">{authMode === 'login' ? t.login : t.signup_btn}</h3>
                                         <div className="w-full space-y-4">
                                             <div className="flex flex-col gap-3">
                                                 <input
@@ -1581,14 +1910,14 @@
                                                     value={email}
                                                     onChange={e => setEmail(e.target.value)}
                                                     placeholder={t.email}
-                                                    className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                                    className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-primary font-bold text-sm text-white placeholder:text-gray-500"
                                                 />
                                                 <input
                                                     type="password"
                                                     value={password}
                                                     onChange={e => setPassword(e.target.value)}
                                                     placeholder={t.password}
-                                                    className="px-6 py-4 rounded-2xl bg-gray-50 border border-gray-100 outline-none focus:border-primary font-bold text-sm"
+                                                    className="px-6 py-4 rounded-2xl bg-white/5 border border-white/10 outline-none focus:border-primary font-bold text-sm text-white placeholder:text-gray-500"
                                                 />
                                                 {authMode === 'signup' && (
                                                     <>
@@ -1675,13 +2004,13 @@
                         showProfileModal && (
                             <div className="modal-container" onClick={() => setShowProfileModal(false)}>
                                 <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <div className="bg-white w-full max-w-2xl rounded-[48px] shadow-2xl flex flex-col h-[80vh]">
+                                    <div className="bg-[#161B28] w-full max-w-2xl rounded-[48px] shadow-2xl flex flex-col h-[80vh] border border-white/10 overflow-hidden">
                                         <div className="p-10 pb-6 flex flex-col items-center flex-shrink-0">
-                                            <h3 className="text-2xl font-black mb-6 tracking-tighter">{t.my_info}</h3>
-                                            <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl w-full">
-                                                <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'liked' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>📚 {lang === 'ko' ? '나의 컬렉션' : 'My Collection'}</button>
-                                                <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'excluded' ? 'bg-white text-red-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.excluded_list}</button>
-                                                <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'worldcup' ? 'bg-white text-yellow-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>🏆 {t.worldcup_history}</button>
+                                            <h3 className="text-2xl font-black mb-6 tracking-tighter text-white">{t.my_info}</h3>
+                                            <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl w-full">
+                                                <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'liked' ? 'bg-white/10 text-primary shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>📚 {lang === 'ko' ? '나의 컬렉션' : 'My Collection'}</button>
+                                                <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'excluded' ? 'bg-white/10 text-red-500 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>{t.excluded_list}</button>
+                                                <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'worldcup' ? 'bg-white/10 text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>🏆 {t.worldcup_history}</button>
                                             </div>
                                         </div>
                                         <div className="flex-grow overflow-y-auto px-10 no-scrollbar">
@@ -1701,14 +2030,14 @@
                                                             const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                                                             const w = rawData.find(it => (it.titleId || it.id) == record.winner_id);
                                                             return (
-                                                                <div key={idx} className="flex gap-4 p-4 rounded-[28px] border border-yellow-100 bg-yellow-50/30 hover:bg-yellow-50 transition-all">
+                                                                <div key={idx} className="flex gap-4 p-4 rounded-[28px] border border-white/5 bg-white/5 hover:bg-white/10 transition-all">
                                                                     {w && (
                                                                         <>
-                                                                            <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                                                                            <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-white/5">
                                                                                 <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                                                                             </div>
                                                                             <div className="flex flex-col justify-center min-w-0 flex-grow">
-                                                                                <h4 className="font-extrabold text-gray-900 text-sm truncate tracking-tight">{record.winner_title}</h4>
+                                                                                <h4 className="font-extrabold text-white text-sm truncate tracking-tight">{record.winner_title}</h4>
                                                                                 <p className="text-[10px] font-bold text-yellow-600 uppercase mt-1">🏆 {record.round}{t.worldcup_round} {t.worldcup_winner}</p>
                                                                                 <p className="text-[9px] text-gray-400 mt-1">{new Date(record.created_at).toLocaleDateString()}</p>
                                                                             </div>
@@ -1730,13 +2059,13 @@
                                                             if (!w) return null;
                                                             const isExcludedFromReco = excludedFromRecoIds.includes(id);
                                                             return (
-                                                                <div key={id} className="flex flex-col gap-3 p-4 rounded-[28px] border border-gray-50 bg-gray-50/50 hover:bg-white hover:shadow-soft transition-all group">
+                                                                <div key={id} className="flex flex-col gap-3 p-4 rounded-[28px] border border-white/5 bg-white/5 hover:bg-white/10 transition-all group">
                                                                     <div className="flex gap-4">
                                                                         <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
                                                                             <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                                                                         </div>
                                                                         <div className="flex flex-col justify-center min-w-0 flex-grow">
-                                                                            <h4 className="font-extrabold text-gray-900 text-sm truncate tracking-tight">{w.titleName || w.title}</h4>
+                                                                            <h4 className="font-extrabold text-white text-sm truncate tracking-tight">{w.titleName || w.title}</h4>
                                                                             <p className="text-[10px] font-bold text-gray-400 uppercase mt-1">{(w.tags || []).slice(0, 2).join(' ')}</p>
                                                                         </div>
                                                                         <button
@@ -1754,7 +2083,7 @@
                                                                             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
                                                                         </button>
                                                                     </div>
-                                                                    <div className="flex items-center justify-between px-2 pt-2 border-t border-gray-100">
+                                                                    <div className="flex items-center justify-between px-2 pt-2 border-t border-white/5">
                                                                         <label className="flex items-center gap-2 cursor-pointer group/toggle">
                                                                             <input
                                                                                 type="checkbox"
@@ -1782,7 +2111,7 @@
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="p-10 pt-6 border-t border-gray-50 flex flex-col gap-4 flex-shrink-0">
+                                        <div className="p-10 pt-6 border-t border-white/5 flex flex-col gap-4 flex-shrink-0">
                                             <button
                                                 onClick={async () => {
                                                     if (confirm(t.delete_confirm)) {
@@ -1793,11 +2122,11 @@
                                                         setShowProfileModal(false);
                                                     }
                                                 }}
-                                                className="text-[11px] font-bold text-gray-300 hover:text-red-400 transition-colors self-center uppercase border-b border-gray-100"
+                                                className="text-[11px] font-bold text-gray-500 hover:text-red-400 transition-colors self-center uppercase border-b border-white/10"
                                             >
                                                 {t.delete_account}
                                             </button>
-                                            <button onClick={() => setShowProfileModal(false)} className="w-full py-5 bg-gray-50 rounded-2xl text-gray-400 font-black uppercase">CLOSE</button>
+                                            <button onClick={() => setShowProfileModal(false)} className="w-full py-5 bg-white/5 rounded-2xl text-gray-500 font-black uppercase hover:text-gray-300 transition-colors">CLOSE</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1806,20 +2135,20 @@
                     }
 
                     {/* Footer with Visitor Counter */}
-                    <footer className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 py-3 px-4 z-[900]">
+                    <footer className="fixed bottom-0 left-0 right-0 bg-[#0B0F1A]/90 backdrop-blur-md border-t border-white/5 py-3 px-4 z-[900]">
                         <div className="max-w-7xl mx-auto flex items-center justify-center gap-6">
                             <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{t.today_visitors}</span>
-                                <span className="text-sm font-black text-primary">{todayVisitors.toLocaleString()}</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.today_visitors}</span>
+                                <span className="text-sm font-bold text-primary">{todayVisitors.toLocaleString()}</span>
                             </div>
-                            <div className="w-px h-4 bg-gray-200"></div>
+                            <div className="w-px h-4 bg-white/10"></div>
                             <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{t.total_visitors}</span>
-                                <span className="text-sm font-black text-gray-600">{totalVisitors.toLocaleString()}</span>
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.total_visitors}</span>
+                                <span className="text-sm font-bold text-gray-400">{totalVisitors.toLocaleString()}</span>
                             </div>
                         </div>
                     </footer>
-                </div >
+                </div>
             );
         };
         const root = ReactDOM.createRoot(document.getElementById('root'));

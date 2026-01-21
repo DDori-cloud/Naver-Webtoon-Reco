@@ -1,15 +1,32 @@
+/* ============================================
+   TOON PICK - Premium Dark Mode Theme
+   Primary: Naver Green #00D564
+   Background: Deep Charcoal #0B0B0B
+   ============================================ */
+
 :root {
-    --primary-color: #007AFF;
-    --primary-light: #E5F1FF;
-    --primary-dark: #0056B3;
-    --bg-color: #FFFFFF;
-    --text-main: #1D1D1F;
-    --text-muted: #86868B;
-    --border-color: #F2F2F7;
-    --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
-    --card-shadow-hover: 0 12px 40px rgba(0, 122, 255, 0.1);
+    --primary: #00D564;
+    --primary-light: #00FF7A;
+    --primary-dark: #00B856;
+    --primary-glow: rgba(0, 213, 100, 0.4);
+    --bg-dark: #0B0B0B;
+    --bg-card: #141414;
+    --bg-card-hover: #1A1A1A;
+    --bg-glass: rgba(20, 20, 20, 0.8);
+    --text-white: #FFFFFF;
+    --text-gray: #A0A0A0;
+    --text-muted: #606060;
+    --border-dark: #252525;
+    --border-glow: rgba(0, 213, 100, 0.3);
+    --gradient-primary: linear-gradient(135deg, #00D564 0%, #00FF7A 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(0, 213, 100, 0.1) 0%, transparent 50%);
+    --shadow-glow: 0 0 30px rgba(0, 213, 100, 0.3);
+    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+    --radius-sm: 12px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --radius: 16px;
 }
 
 * {
@@ -19,103 +36,563 @@
 }
 
 body {
-    font-family: 'Outfit', 'Noto Sans KR', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-main);
+    font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-white);
     line-height: 1.6;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
 }
 
-.container {
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 0 24px;
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
 }
 
-/* Header */
-.header {
-    height: 80px;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
-    z-index: 100;
+::-webkit-scrollbar-track {
+    background: var(--bg-dark);
 }
 
-.header .container {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
+::-webkit-scrollbar-thumb {
+    background: var(--border-dark);
+    border-radius: 4px;
 }
 
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
 }
 
-.logo h1 {
-    font-size: 24px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
+/* ============================================
+   Glassmorphism Navigation
+   ============================================ */
+.nav-glass {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-dark);
 }
 
-.logo h1 span {
-    color: var(--primary-color);
-}
-
-.logo-icon {
-    font-size: 24px;
-}
-
-/* Progress Bar */
-.progress-container {
-    margin: 40px 0;
-}
-
-.progress-bar {
-    height: 6px;
-    background: var(--border-color);
-    border-radius: 10px;
+.nav-link {
+    color: var(--text-gray);
+    font-weight: 600;
+    font-size: 14px;
+    transition: var(--transition);
     position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary);
+}
+
+.nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+.hero-section {
+    position: relative;
+    padding: 80px 0;
     overflow: hidden;
 }
 
-.progress-bar::after {
+.hero-section::before {
     content: '';
     position: absolute;
-    left: 0;
     top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-hero);
+    pointer-events: none;
+}
+
+.hero-headline {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.hero-headline .highlight {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* CTA Button with Glow */
+.btn-cta {
+    background: var(--gradient-primary);
+    color: #000;
+    font-weight: 800;
+    padding: 18px 36px;
+    border-radius: var(--radius-xl);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-glow);
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 50px rgba(0, 213, 100, 0.5);
+}
+
+/* Hero Webtoon Covers */
+.hero-covers {
+    position: relative;
+    perspective: 1000px;
+}
+
+.hero-cover {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.hero-cover:hover {
+    transform: scale(1.05) rotateY(-5deg);
+}
+
+/* ============================================
+   Section Headers
+   ============================================ */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.section-icon {
+    font-size: 20px;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-white);
+}
+
+.section-badge {
+    background: rgba(0, 213, 100, 0.1);
+    color: var(--primary);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+/* ============================================
+   Webtoon Card - Dark Theme
+   ============================================ */
+.webtoon-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-dark);
+    transition: var(--transition);
+    position: relative;
+}
+
+.webtoon-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--primary);
+    box-shadow: 0 0 30px var(--primary-glow);
+}
+
+.webtoon-card .thumbnail {
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    position: relative;
+}
+
+.webtoon-card .thumbnail img {
+    width: 100%;
     height: 100%;
-    width: 25%;
-    background: var(--primary-color);
-    transition: width 0.5s ease;
-    border-radius: 10px;
+    object-fit: cover;
+    transition: transform 0.5s ease;
 }
 
-.steps-info {
-    margin-top: 12px;
+.webtoon-card:hover .thumbnail img {
+    transform: scale(1.1);
+}
+
+.webtoon-card .rank-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--primary);
+    color: #000;
+    font-weight: 900;
+    font-size: 16px;
+    font-style: italic;
+    padding: 4px 12px;
+    border-radius: var(--radius-md);
+    z-index: 10;
+}
+
+.webtoon-card .heart-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+}
+
+.webtoon-card .heart-btn:hover,
+.webtoon-card .heart-btn.active {
+    background: #FF4757;
+    color: white;
+    transform: scale(1.1);
+}
+
+.webtoon-card .card-content {
+    padding: 16px;
+}
+
+.webtoon-card .card-title {
     font-size: 14px;
+    font-weight: 700;
+    color: var(--text-white);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.webtoon-card .card-author {
+    font-size: 12px;
     color: var(--text-muted);
-    font-weight: 600;
-    text-align: right;
 }
 
-/* Step Sections */
-.step-section {
+.webtoon-card .card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+}
+
+.webtoon-card .rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.webtoon-card .rating-star {
+    color: #FFD700;
+    font-size: 12px;
+}
+
+.webtoon-card .rating-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-white);
+}
+
+.webtoon-card .view-count {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ============================================
+   Horizontal Scroll Section (Trends)
+   ============================================ */
+.horizontal-scroll {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 16px;
+    scroll-snap-type: x mandatory;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.horizontal-scroll::-webkit-scrollbar {
     display: none;
-    animation: fadeIn 0.5s ease forwards;
 }
 
-.step-section.active {
-    display: block;
+.horizontal-scroll .webtoon-card {
+    flex: 0 0 200px;
+    scroll-snap-align: start;
 }
 
-@keyframes fadeIn {
+/* ============================================
+   Recommendation Wizard Steps
+   ============================================ */
+.step-progress {
+    height: 4px;
+    background: var(--border-dark);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 40px;
+}
+
+.step-progress-bar {
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: width 0.5s ease;
+}
+
+.step-indicator {
+    display: inline-block;
+    padding: 8px 16px;
+    background: var(--primary);
+    color: #000;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.genre-card {
+    background: var(--bg-card);
+    border: 2px solid var(--border-dark);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-align: center;
+    font-weight: 600;
+    color: var(--text-gray);
+}
+
+.genre-card:hover {
+    border-color: var(--primary);
+    background: rgba(0, 213, 100, 0.05);
+    color: var(--primary);
+}
+
+.genre-card.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: #000;
+    box-shadow: var(--shadow-glow);
+}
+
+.genre-card.selected::after {
+    content: '✓';
+    margin-left: 8px;
+}
+
+/* ============================================
+   Webtoon World Cup (VS Screen)
+   ============================================ */
+.worldcup-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 40px;
+}
+
+.worldcup-card {
+    position: relative;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.worldcup-card:hover {
+    transform: scale(1.05);
+}
+
+.worldcup-card.selected {
+    box-shadow: 0 0 50px var(--primary-glow);
+}
+
+.worldcup-card .cover {
+    width: 280px;
+    height: 380px;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    border: 4px solid transparent;
+    transition: var(--transition);
+}
+
+.worldcup-card:hover .cover,
+.worldcup-card.selected .cover {
+    border-color: var(--primary);
+}
+
+.worldcup-card .cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.vs-text {
+    font-size: 48px;
+    font-weight: 900;
+    font-style: italic;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+}
+
+.worldcup-btn {
+    margin-top: 16px;
+    padding: 12px 32px;
+    border-radius: var(--radius-lg);
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.worldcup-btn.primary {
+    background: var(--primary);
+    color: #000;
+    border: none;
+}
+
+.worldcup-btn.ghost {
+    background: transparent;
+    color: var(--text-gray);
+    border: 2px solid var(--border-dark);
+}
+
+.worldcup-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   Input Fields - Dark Theme
+   ============================================ */
+.input-dark {
+    width: 100%;
+    padding: 16px 24px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-dark);
+    border-radius: var(--radius-lg);
+    color: var(--text-white);
+    font-size: 16px;
+    font-weight: 500;
+    transition: var(--transition);
+    outline: none;
+}
+
+.input-dark::placeholder {
+    color: var(--text-muted);
+}
+
+.input-dark:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(0, 213, 100, 0.1);
+}
+
+/* ============================================
+   Buttons
+   ============================================ */
+.btn-primary {
+    background: var(--gradient-primary);
+    color: #000;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: var(--radius-lg);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+}
+
+.btn-primary:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-gray);
+    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-dark);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--text-muted);
+}
+
+/* ============================================
+   Modal - Dark Theme
+   ============================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-dark);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* ============================================
+   Footer - Dark Theme
+   ============================================ */
+.footer-dark {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border-dark);
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+@keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -127,390 +604,49 @@ body {
     }
 }
 
-.step-header {
-    margin-bottom: 40px;
-    text-align: center;
-}
+@keyframes pulse-glow {
 
-.step-header h2 {
-    font-size: 32px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    letter-spacing: -1px;
-}
-
-.step-header p {
-    color: var(--text-muted);
-    font-size: 18px;
-}
-
-/* Genre Grid & Categories */
-.genre-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 32px;
-    margin-bottom: 40px;
-}
-
-.genre-category {
-    text-align: left;
-}
-
-.category-title {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 16px;
-    padding-left: 4px;
-    border-left: 4px solid var(--primary-color);
-}
-
-.category-chips {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
-}
-
-.genre-chip {
-    padding: 16px;
-    border: 1.5px solid var(--border-color);
-    border-radius: var(--radius);
-    text-align: center;
-    cursor: pointer;
-    transition: var(--transition);
-    font-weight: 500;
-    background: white;
-    font-size: 14px;
-}
-
-.genre-chip:hover {
-    border-color: var(--primary-color);
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-}
-
-.genre-chip.selected {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    color: white;
-    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-}
-
-/* Preference Filter */
-.preference-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-width: 600px;
-    margin: 0 auto 40px;
-}
-
-.preference-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 24px;
-    background: #F9F9FB;
-    border-radius: var(--radius);
-    transition: var(--transition);
-}
-
-.preference-item:hover {
-    background: #F2F2F7;
-}
-
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 28px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: #E2E2E7;
-    transition: .4s;
-    border-radius: 34px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 22px;
-    width: 22px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: .4s;
-    border-radius: 50%;
-}
-
-input:checked+.slider {
-    background-color: var(--primary-color);
-}
-
-input:checked+.slider:before {
-    transform: translateX(22px);
-}
-
-/* Input Styles */
-.input-group {
-    max-width: 600px;
-    margin: 0 auto 40px;
-}
-
-input[type="text"] {
-    width: 100%;
-    padding: 20px 24px;
-    font-size: 18px;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius);
-    outline: none;
-    transition: var(--transition);
-    font-family: inherit;
-}
-
-input[type="text"]:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 4px var(--primary-light);
-}
-
-.search-hint {
-    margin-top: 12px;
-    font-size: 14px;
-    color: var(--text-muted);
-    text-align: center;
-}
-
-/* Results Grid */
-.result-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 24px;
-    margin-bottom: 60px;
-}
-
-.result-card {
-    background: white;
-    border-radius: var(--radius);
-    overflow: hidden;
-    border: 1px solid var(--border-color);
-    transition: var(--transition);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
-.result-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--card-shadow-hover);
-    border-color: var(--primary-light);
-}
-
-.matching-badge {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: rgba(0, 122, 255, 0.9);
-    color: white;
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 700;
-    z-index: 10;
-    backdrop-filter: blur(4px);
-}
-
-.thumbnail-wrapper {
-    width: 100%;
-    aspect-ratio: 4 / 3;
-    overflow: hidden;
-    background: #f0f0f0;
-}
-
-.thumbnail-wrapper img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.result-card:hover .thumbnail-wrapper img {
-    transform: scale(1.05);
-}
-
-.card-content {
-    padding: 24px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 12px;
-}
-
-.tag {
-    font-size: 12px;
-    padding: 4px 8px;
-    background: var(--primary-light);
-    color: var(--primary-color);
-    border-radius: 4px;
-    font-weight: 600;
-}
-
-.card-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 12px;
-    color: var(--text-main);
-}
-
-.card-desc {
-    font-size: 14px;
-    color: var(--text-muted);
-    margin-bottom: 24px;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.5;
-}
-
-.btn-visit {
-    margin-top: auto;
-    width: 100%;
-    padding: 14px;
-    background: #F2F2F7;
-    color: var(--text-main);
-    text-decoration: none;
-    text-align: center;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: var(--transition);
-}
-
-.btn-visit:hover {
-    background: var(--primary-color);
-    color: white;
-}
-
-/* Buttons */
-.step-actions {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 40px;
-}
-
-.btn {
-    padding: 16px 32px;
-    border-radius: var(--radius);
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: var(--transition);
-    border: none;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-    background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
-}
-
-.btn-primary:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-.btn-secondary {
-    background-color: #F2F2F7;
-    color: var(--text-main);
-}
-
-.btn-secondary:hover {
-    background-color: #E5E5EA;
-}
-
-.btn-text {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-text:hover {
-    color: var(--primary-color);
-}
-
-/* Loading */
-.loading-container {
-    text-align: center;
-    padding: 60px 0;
-}
-
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid var(--primary-light);
-    border-top: 5px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 20px;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
+    0%,
     100% {
-        transform: rotate(360deg);
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    50% {
+        box-shadow: 0 0 40px var(--primary-glow);
     }
 }
 
-/* Footer */
-.footer {
-    padding: 60px 0;
-    border-top: 1px solid var(--border-color);
-    margin-top: 100px;
-    text-align: center;
-    color: var(--text-muted);
-    font-size: 14px;
+.animate-fadeInUp {
+    animation: fadeInUp 0.5s ease forwards;
 }
 
-/* Responsive */
+.animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
 @media (max-width: 768px) {
-    .step-header h2 {
-        font-size: 24px;
+    .hero-headline {
+        font-size: 1.75rem;
     }
 
-    .genre-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    .horizontal-scroll .webtoon-card {
+        flex: 0 0 160px;
     }
 
-    .result-grid {
-        grid-template-columns: 1fr;
+    .worldcup-vs {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .worldcup-card .cover {
+        width: 200px;
+        height: 280px;
+    }
+
+    .vs-text {
+        font-size: 32px;
     }
 }

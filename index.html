@@ -30,6 +30,12 @@
             -webkit-font-smoothing: antialiased;
         }
 
+        #root {
+            transform: scale(0.85);
+            transform-origin: top center;
+            min-height: 118vh;
+        }
+
         .animate-up {
             animation: fadeInUp 0.5s ease-out forwards;
         }
@@ -553,22 +559,22 @@
             </div>
         );
 
-        const WebtoonCard = ({ item, rank, onDislike, onLike, isLiked, isDisliked, t }) => {
+        const WebtoonCard = ({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t }) => {
             const getRankDisplay = (r) => {
-                if (r === 1) return <span className="text-lg mr-1.5 shadow-sm">🥇</span>;
-                if (r === 2) return <span className="text-lg mr-1.5 shadow-sm">🥈</span>;
-                if (r === 3) return <span className="text-lg mr-1.5 shadow-sm">🥉</span>;
-                return <span className="text-base font-black text-gray-300 mr-2 italic">{r}</span>;
+                if (r === 1) return <span className="text-base mr-1 shadow-sm">🥇</span>;
+                if (r === 2) return <span className="text-base mr-1 shadow-sm">🥈</span>;
+                if (r === 3) return <span className="text-base mr-1 shadow-sm">🥉</span>;
+                return <span className="text-sm font-black text-gray-300 mr-1.5 italic">{r}</span>;
             };
             return (
-                <div className="bg-white rounded-[32px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
+                <div className="bg-white rounded-[24px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
 
                     <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
                         <img src={item.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }} />
-                        <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[10px] font-bold px-2 py-0.5 rounded-lg shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
+                        <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
                     </div>
-                    <div className="p-5 flex flex-col flex-grow">
-                        <div className="flex flex-wrap gap-1.5 mb-3 h-[5.2rem] content-start overflow-hidden">
+                    <div className="p-4 flex flex-col flex-grow">
+                        <div className="flex flex-wrap gap-1 mb-2 h-[4.5rem] content-start overflow-hidden">
                             {(() => {
                                 const rawTags = (item.tags || []);
                                 const filteredTags = [];
@@ -578,36 +584,45 @@
                                     );
                                     if (!isRedundant) { filteredTags.push(tag); }
                                 }
-                                return filteredTags.slice(0, 6).map((tag, idx) => (
-                                    <span key={idx} className="text-[11px] font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-md tracking-tighter">#{tag}</span>
+                                return filteredTags.slice(0, 5).map((tag, idx) => (
+                                    <span key={idx} className="text-[10px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded tracking-tighter">#{tag}</span>
                                 ));
                             })()}
                         </div>
-                        <div className="flex items-center mb-4 h-[2.6rem]">
+                        <div className="flex items-center mb-3 h-[2.2rem]">
                             <div className="flex-shrink-0 flex items-center">{getRankDisplay(rank)}</div>
-                            <h3 className="text-sm font-extrabold text-gray-900 leading-tight line-clamp-2 break-keep tracking-tighter">{item.title}</h3>
+                            <h3 className="text-xs font-extrabold text-gray-900 leading-tight line-clamp-2 break-keep tracking-tighter">{item.title}</h3>
                         </div>
                         <div className="mt-auto w-full">
-                            <div className="flex items-center justify-between mb-4">
-                                {item.starScore && <div className="text-[10px] font-bold text-yellow-500">★ {item.starScore.toFixed(2)}</div>}
-                                <div className="flex gap-2">
+                            <div className="flex items-center justify-between mb-3">
+                                {item.starScore && <div className="text-[9px] font-bold text-yellow-500">★ {item.starScore.toFixed(2)}</div>}
+                                <div className="flex gap-1.5 ml-auto">
                                     <button
                                         onClick={() => onLike(item.id)}
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isLiked ? 'bg-primary text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-primary'}`}
+                                        title={t.like}
+                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isLiked ? 'bg-primary text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-primary'}`}
                                     >
-                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
+                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
                                     </button>
                                     <button
                                         onClick={() => onDislike(item.id)}
-                                        className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isDisliked ? 'bg-red-500 text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-red-500'}`}
+                                        title={t.excluded_list}
+                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isDisliked ? 'bg-red-500 text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-red-500'}`}
                                     >
-                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
+                                    </button>
+                                    <button
+                                        onClick={() => onExcludeFromResult(item.id)}
+                                        title={t.exclude_from_reco}
+                                        className="w-7 h-7 rounded-full flex items-center justify-center transition-all bg-gray-50 text-gray-300 hover:bg-gray-200 hover:text-gray-600"
+                                    >
+                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"></path></svg>
                                     </button>
                                 </div>
                             </div>
-                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-3 bg-primary text-white text-center rounded-xl font-bold hover:opacity-90 transition-all text-[16px] flex items-center justify-center gap-1 shadow-sm">
+                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-lg font-bold hover:opacity-90 transition-all text-[13px] flex items-center justify-center gap-1 shadow-sm">
                                 <span>{t.view_now}</span>
-                                <span className="text-[10px] opacity-80 font-medium translate-y-[1px]">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
+                                <span className="text-[9px] opacity-80 font-medium translate-y-[0.5px]">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
                             </a>
                         </div>
                     </div>
@@ -1126,6 +1141,28 @@
                 }
             };
 
+            // 추천 결과에서만 제외 (선호에 영향 없음)
+            const excludeFromResult = (id) => {
+                // 현재 결과에서 제외하고, scoredPool에서 다음 웠툰 가져오기
+                const currentResultIds = results.map(r => r.id);
+                const remainingPool = scoredPool.filter(w => !currentResultIds.includes(w.id) || w.id === id);
+                const newResults = results.filter(r => r.id !== id);
+
+                // 다음 순위 웠툰 추가 (현재 10개 미만이면)
+                if (newResults.length < 10 && remainingPool.length > 0) {
+                    const nextInPool = scoredPool.find(w => !newResults.some(r => r.id === w.id) && w.id !== id);
+                    if (nextInPool) {
+                        newResults.push(nextInPool);
+                    }
+                }
+
+                setResults(newResults);
+
+                // 팝업 표시
+                setShowExcludePopup(true);
+                setTimeout(() => setShowExcludePopup(false), 2000);
+            };
+
             return (
                 <div className="min-h-screen pb-20">
                     <header className="sticky top-0 z-[1000] bg-white/90 backdrop-blur-md border-b border-gray-100 py-4 px-4 sm:px-10">
@@ -1291,7 +1328,7 @@
                             </div>
                         )}
                         {step === 4 && (
-                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium">{t.result_desc}</p></div><div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-24 px-16 py-6 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
+                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
                         )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}

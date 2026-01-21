@@ -205,7 +205,9 @@
                 worldcup_result: "월드컵 결과",
                 worldcup_history: "월드컵 기록",
                 exclude_from_reco: "추천 제외",
-                exclude_from_reco_desc: "선호도에는 영향을 주지만 추천 결과에서는 제외됩니다"
+                exclude_from_reco_desc: "선호도에는 영향을 주지만 추천 결과에서는 제외됩니다",
+                today_visitors: "오늘 방문자",
+                total_visitors: "총 방문자"
             },
             en: {
                 subtitle: "Find Naver Webtoons That Match Your Taste(With AI)",
@@ -286,7 +288,9 @@
                 worldcup_result: "Worldcup Result",
                 worldcup_history: "Worldcup History",
                 exclude_from_reco: "Exclude from Recommendations",
-                exclude_from_reco_desc: "Affects preference but excluded from recommendation results"
+                exclude_from_reco_desc: "Affects preference but excluded from recommendation results",
+                today_visitors: "Today",
+                total_visitors: "Total"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -367,7 +371,9 @@
                 worldcup_result: "世界杯结果",
                 worldcup_history: "世界杯记录",
                 exclude_from_reco: "排除推荐",
-                exclude_from_reco_desc: "影响偏好但不在推荐结果中显示"
+                exclude_from_reco_desc: "影响偏好但不在推荐结果中显示",
+                today_visitors: "今日",
+                total_visitors: "总计"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -448,7 +454,9 @@
                 worldcup_result: "ワールドカップ結果",
                 worldcup_history: "ワールドカップ記録",
                 exclude_from_reco: "推薦除外",
-                exclude_from_reco_desc: "好みに影響するが推薦結果からは除外されます"
+                exclude_from_reco_desc: "好みに影響するが推薦結果からは除外されます",
+                today_visitors: "今日",
+                total_visitors: "累計"
             }
         };
 
@@ -733,18 +741,18 @@
 
             return (
                 <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
-                    <div className="bg-white w-full max-w-4xl rounded-[40px] shadow-2xl overflow-hidden animate-up max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white w-full max-w-xl rounded-[28px] shadow-2xl overflow-hidden animate-up max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
                         {stage === 'select' && (
-                            <div className="p-10">
-                                <h2 className="text-3xl font-black text-center mb-8 tracking-tight">{t.worldcup_title}</h2>
-                                <p className="text-center text-gray-500 mb-10 font-medium">{t.worldcup_select_round}</p>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+                            <div className="p-6">
+                                <h2 className="text-xl font-black text-center mb-4 tracking-tight">{t.worldcup_title}</h2>
+                                <p className="text-center text-gray-500 mb-6 font-medium text-sm">{t.worldcup_select_round}</p>
+                                <div className="grid grid-cols-4 gap-2 mb-6">
                                     {[16, 32, 64, 128, 256, 512, 1024, 2048].map(round => (
                                         <button
                                             key={round}
                                             onClick={() => setSelectedRound(round)}
-                                            className={`py-6 px-4 rounded-2xl font-black text-lg transition-all ${selectedRound === round
-                                                ? 'bg-primary text-white shadow-xl scale-105'
+                                            className={`py-3 px-2 rounded-xl font-bold text-sm transition-all ${selectedRound === round
+                                                ? 'bg-primary text-white shadow-lg scale-105'
                                                 : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
                                                 }`}
                                         >
@@ -752,58 +760,58 @@
                                         </button>
                                     ))}
                                 </div>
-                                <div className="flex gap-4">
-                                    <button onClick={onClose} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl">닫기</button>
-                                    <button onClick={startWorldcup} className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl">{t.worldcup_start}</button>
+                                <div className="flex gap-3">
+                                    <button onClick={onClose} className="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-xl text-sm">닫기</button>
+                                    <button onClick={startWorldcup} className="flex-[2] py-3 bg-primary text-white font-black rounded-xl shadow-lg text-sm">{t.worldcup_start}</button>
                                 </div>
                             </div>
                         )}
 
                         {stage === 'playing' && currentMatch && (
-                            <div className="p-10">
-                                <div className="text-center mb-8">
-                                    <h3 className="text-2xl font-black mb-2">{getCurrentRound()}</h3>
-                                    <p className="text-gray-400 font-medium">{currentMatchIndex + 1} / {matches.length}</p>
+                            <div className="p-4">
+                                <div className="text-center mb-4">
+                                    <h3 className="text-lg font-black mb-1">{getCurrentRound()}</h3>
+                                    <p className="text-gray-400 font-medium text-sm">{currentMatchIndex + 1} / {matches.length}</p>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-2 gap-3">
                                     {currentMatch.map((webtoon, idx) => (
                                         <>
                                             <button
                                                 key={idx}
                                                 onClick={() => selectWinner(webtoon)}
-                                                className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-primary"
+                                                className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 hover:border-primary"
                                             >
                                                 <div className="aspect-[3/4] overflow-hidden bg-gray-100">
                                                     <img
                                                         src={webtoon.thumbnailUrl || webtoon.thumbnail}
                                                         referrerPolicy="no-referrer"
-                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                         onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
                                                     />
                                                 </div>
-                                                <div className="p-6 bg-gradient-to-t from-white to-transparent">
-                                                    <h4 className="text-lg font-black text-gray-900 line-clamp-2 mb-2">{webtoon.titleName || webtoon.title}</h4>
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {(webtoon.tags || []).slice(0, 3).map((tag, i) => (
-                                                            <span key={i} className="text-[10px] font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-md">#{tag}</span>
+                                                <div className="p-3 bg-gradient-to-t from-white to-transparent">
+                                                    <h4 className="text-xs font-black text-gray-900 line-clamp-2 mb-1">{webtoon.titleName || webtoon.title}</h4>
+                                                    <div className="flex flex-wrap gap-0.5">
+                                                        {(webtoon.tags || []).slice(0, 2).map((tag, i) => (
+                                                            <span key={i} className="text-[8px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded">#{tag}</span>
                                                         ))}
                                                     </div>
                                                 </div>
                                             </button>
-                                            {idx === 0 && <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"><span className="text-4xl font-black text-primary bg-white px-6 py-3 rounded-2xl shadow-xl">{t.worldcup_vs}</span></div>}
+                                            {idx === 0 && <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"><span className="text-2xl font-black text-primary bg-white px-4 py-2 rounded-xl shadow-lg">{t.worldcup_vs}</span></div>}
                                         </>
                                     ))}
                                 </div>
-                                <div className="md:hidden text-center my-6"><span className="text-4xl font-black text-primary">{t.worldcup_vs}</span></div>
+                                <div className="text-center my-3"><span className="text-2xl font-black text-primary">{t.worldcup_vs}</span></div>
                             </div>
                         )}
 
                         {stage === 'result' && finalWinner && (
-                            <div className="p-10 text-center">
-                                <div className="text-6xl mb-6">🏆</div>
-                                <h2 className="text-3xl font-black mb-4">{t.worldcup_winner}</h2>
-                                <div className="max-w-sm mx-auto mb-8">
-                                    <div className="bg-white rounded-3xl overflow-hidden shadow-xl border-4 border-primary">
+                            <div className="p-6 text-center">
+                                <div className="text-4xl mb-4">🏆</div>
+                                <h2 className="text-xl font-black mb-3">{t.worldcup_winner}</h2>
+                                <div className="max-w-[200px] mx-auto mb-6">
+                                    <div className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-primary">
                                         <div className="aspect-[3/4] overflow-hidden bg-gray-100">
                                             <img
                                                 src={finalWinner.thumbnailUrl || finalWinner.thumbnail}
@@ -812,13 +820,13 @@
                                                 onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
                                             />
                                         </div>
-                                        <div className="p-6">
-                                            <h3 className="text-2xl font-black text-gray-900 mb-3">{finalWinner.titleName || finalWinner.title}</h3>
-                                            <p className="text-sm text-gray-500 font-medium">{selectedRound}{t.worldcup_round} {t.worldcup_winner}</p>
+                                        <div className="p-4">
+                                            <h3 className="text-base font-black text-gray-900 mb-2">{finalWinner.titleName || finalWinner.title}</h3>
+                                            <p className="text-xs text-gray-500 font-medium">{selectedRound}{t.worldcup_round} {t.worldcup_winner}</p>
                                         </div>
                                     </div>
                                 </div>
-                                <button onClick={onClose} className="px-16 py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-transform">완료</button>
+                                <button onClick={onClose} className="px-10 py-3 bg-primary text-white font-black rounded-xl shadow-lg hover:scale-105 transition-transform text-sm">완료</button>
                             </div>
                         )}
                     </div>
@@ -857,6 +865,8 @@
             const [worldcupWinners, setWorldcupWinners] = useState([]);
             const [worldcupHistory, setWorldcupHistory] = useState([]);
             const [excludedFromRecoIds, setExcludedFromRecoIds] = useState([]);
+            const [todayVisitors, setTodayVisitors] = useState(0);
+            const [totalVisitors, setTotalVisitors] = useState(0);
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
 
@@ -878,6 +888,38 @@
 
                 return () => subscription.unsubscribe();
             }, [t]);
+
+            // Visitor Counter Effect
+            useEffect(() => {
+                const trackVisitor = async () => {
+                    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                    const visitorKey = `visited_${today}`;
+
+                    // Check if already visited today
+                    if (!localStorage.getItem(visitorKey)) {
+                        localStorage.setItem(visitorKey, 'true');
+
+                        // Increment visitor count in Supabase
+                        await supabase.rpc('increment_visitor', { visit_date: today });
+                    }
+
+                    // Fetch visitor counts
+                    const { data: todayData } = await supabase
+                        .from('visitor_stats')
+                        .select('count')
+                        .eq('date', today)
+                        .single();
+
+                    const { data: totalData } = await supabase
+                        .from('visitor_stats')
+                        .select('count');
+
+                    if (todayData) setTodayVisitors(todayData.count || 0);
+                    if (totalData) setTotalVisitors(totalData.reduce((sum, row) => sum + (row.count || 0), 0));
+                };
+
+                trackVisitor();
+            }, []);
 
             const loadUserData = async (userId) => {
                 const { data: exData } = await supabase.from('excluded_webtoons').select('webtoon_id').eq('user_id', userId);
@@ -1032,7 +1074,7 @@
                                             </button>
                                         ))}
                                     </div>
-                                    <div className="flex gap-2 items-center">
+                                    <div className="flex gap-1.5 items-center ml-auto">
                                         {user ? (
                                             <>
                                                 <button onClick={() => setShowWorldcupModal(true)} title={t.worldcup} className="w-9 h-9 flex items-center justify-center bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-100 transition-all">
@@ -1453,6 +1495,21 @@
                             </div>
                         )
                     }
+
+                    {/* Footer with Visitor Counter */}
+                    <footer className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-md border-t border-gray-100 py-3 px-4 z-[900]">
+                        <div className="max-w-7xl mx-auto flex items-center justify-center gap-6">
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{t.today_visitors}</span>
+                                <span className="text-sm font-black text-primary">{todayVisitors.toLocaleString()}</span>
+                            </div>
+                            <div className="w-px h-4 bg-gray-200"></div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{t.total_visitors}</span>
+                                <span className="text-sm font-black text-gray-600">{totalVisitors.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </footer>
                 </div >
             );
         };

@@ -763,7 +763,7 @@
             </div>
         );
 
-        const WebtoonCard = ({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t }) => {
+        const WebtoonCard = ({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t, simpleMode = false }) => {
             const isFinished = item.status === 'FINISHED';
             // 1~3등 트로피 이모지
             const getTrophyEmoji = (r) => {
@@ -833,31 +833,33 @@
                             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
                         </a>
 
-                        <div className="flex gap-1">
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
-                                className={`flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border flex items-center justify-center gap-1 ${isLiked ? 'bg-blue-500 text-white border-blue-200' : 'bg-gray-50 text-gray-400 border-gray-100 hover:text-blue-500 hover:border-blue-200'}`}
-                            >
-                                <svg viewBox="0 0 24 24" className={`w-3 h-3 ${isLiked ? 'fill-current' : 'fill-none stroke-current stroke-2'}`}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
-                                {t.like}
-                            </button>
-                            <button
-                                onClick={(e) => { e.stopPropagation(); onDislike(item.id); }}
-                                className={`flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border flex items-center justify-center gap-1 ${isDisliked ? 'bg-red-500 text-white border-red-200' : 'bg-gray-50 text-gray-400 border-gray-100 hover:text-red-500 hover:border-red-200'}`}
-                            >
-                                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-current stroke-2"><path d="M10 14h4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                {t.dislike}
-                            </button>
-                            {onExcludeFromResult && (
+                        {!simpleMode && (
+                            <div className="flex gap-1">
                                 <button
-                                    onClick={(e) => { e.stopPropagation(); onExcludeFromResult(item.id); }}
-                                    className="flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border bg-gray-50 text-gray-400 border-gray-100 hover:bg-black hover:text-white hover:border-black flex items-center justify-center gap-1"
+                                    onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
+                                    className={`flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border flex items-center justify-center gap-1 ${isLiked ? 'bg-blue-500 text-white border-blue-200' : 'bg-gray-50 text-gray-400 border-gray-100 hover:text-blue-500 hover:border-blue-200'}`}
                                 >
-                                    <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
-                                    {t.exclude}
+                                    <svg viewBox="0 0 24 24" className={`w-3 h-3 ${isLiked ? 'fill-current' : 'fill-none stroke-current stroke-2'}`}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                                    {t.like}
                                 </button>
-                            )}
-                        </div>
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onDislike(item.id); }}
+                                    className={`flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border flex items-center justify-center gap-1 ${isDisliked ? 'bg-red-500 text-white border-red-200' : 'bg-gray-50 text-gray-400 border-gray-100 hover:text-red-500 hover:border-red-200'}`}
+                                >
+                                    <svg viewBox="0 0 24 24" className="w-3 h-3 fill-none stroke-current stroke-2"><path d="M10 14h4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    {t.dislike}
+                                </button>
+                                {onExcludeFromResult && (
+                                    <button
+                                        onClick={(e) => { e.stopPropagation(); onExcludeFromResult(item.id); }}
+                                        className="flex-1 py-1.5 rounded-lg font-bold text-[9px] transition-all border bg-gray-50 text-gray-400 border-gray-100 hover:bg-black hover:text-white hover:border-black flex items-center justify-center gap-1"
+                                    >
+                                        <svg viewBox="0 0 24 24" className="w-3 h-3 fill-current"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
+                                        {t.exclude}
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             );
@@ -1604,16 +1606,16 @@
                             className="flex overflow-x-hidden gap-5 pb-6 scroll-smooth snap-x snap-mandatory"
                         >
                             {items.map((w, idx) => (
-                                <div key={w.id} className="flex-shrink-0 w-[calc((100%-80px)/5)] snap-start">
+                                <div key={w.id} className="flex-shrink-0 w-[calc((100%-32px)/3)] md:w-[calc((100%-80px)/5)] snap-start">
                                     <WebtoonCard
                                         item={w}
                                         rank={rankOffset + idx + 1}
                                         onDislike={toggleDislike}
                                         onLike={toggleLike}
                                         onExcludeFromResult={excludeFromResult}
-                                        isLiked={likedIds.includes(w.id)}
                                         isDisliked={dislikedIds.includes(w.id)}
                                         t={t}
+                                        simpleMode={true}
                                     />
                                 </div>
                             ))}
@@ -1926,6 +1928,18 @@
                         {view === 'search' && (
                             <div className="animate-up">
                                 <div className="mb-10">
+                                    {/* Mobile Search Input */}
+                                    <div className="md:hidden mb-6">
+                                        <input
+                                            type="text"
+                                            value={searchQuery}
+                                            onChange={(e) => handleSearch(e.target.value)}
+                                            placeholder={lang === 'ko' ? '작가, 장르, 키워드 검색' : 'Search...'}
+                                            autoFocus
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-base font-medium outline-none text-white placeholder:text-gray-500 focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all"
+                                        />
+                                    </div>
+
                                     <h2 className="text-xl font-bold mb-6 text-white">{lang === 'ko' ? `'${searchQuery}' 검색 결과` : `Search results for '${searchQuery}'`}</h2>
                                     {searchResults.length === 0 ? (
                                         <div className="py-20 text-center text-gray-500 font-bold">{t.no_data || 'No results found.'}</div>

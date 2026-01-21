@@ -242,6 +242,48 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
         }
+
+        /* Dual Range Slider Thumbs */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            pointer-events: auto;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #00D564;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            border: 2px solid #fff;
+            position: relative;
+            z-index: 50;
+            margin-top: -8px;
+        }
+
+        /* Firefox */
+        input[type=range]::-moz-range-thumb {
+            pointer-events: auto;
+            height: 20px;
+            width: 20px;
+            border: none;
+            border-radius: 50%;
+            background: #00D564;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            border: 2px solid #fff;
+            position: relative;
+            z-index: 50;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+        }
+
+        /* Reset for Firefox line height */
+        input[type=range]::-moz-range-track {
+            background: transparent;
+        }
     </style>
     <!-- Kakao SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
@@ -1139,8 +1181,81 @@
             const [todayVisitors, setTodayVisitors] = useState(0);
             const [totalVisitors, setTotalVisitors] = useState(0);
 
+            // --- Random Pick State ---
+            const [randomMinScore, setRandomMinScore] = useState(9.0);
+            const [randomMaxScore, setRandomMaxScore] = useState(10.0);
+            const [randomGenres, setRandomGenres] = useState([]);
+            const [randomResults, setRandomResults] = useState([]);
+            const [hasRandomPicked, setHasRandomPicked] = useState(false);
+            const [heroItems, setHeroItems] = useState([]);
+
+            const [isRandomLoading, setIsRandomLoading] = useState(false);
+
+            const handleRandomPick = async (minScore, maxScore, genres) => {
+                setIsRandomLoading(true);
+                await new Promise(r => setTimeout(r, 800));
+                const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                let filtered = rawData.filter(w => (w.starScore || 0) >= minScore && (w.starScore || 0) <= maxScore);
+
+                if (genres.length > 0) {
+                    filtered = filtered.filter(w => {
+                        return (w.tags || []).some(t => genres.some(g => t.includes(g)));
+                    });
+                }
+
+                // Fisher-Yates Shuffle
+                const shuffled = [...filtered];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+
+                // WebtoonCard 규격에 맞게 데이터 매핑 (titleName -> title, thumbnailUrl -> thumbnail 등)
+                const normalized = shuffled.slice(0, 20).map(item => ({
+                    ...item,
+                    id: item.titleId || item.id,
+                    title: item.titleName || item.title,
+                    thumbnail: item.thumbnailUrl || item.thumbnail,
+                    tags: item.tags || [],
+                    author: item.author || "Unknown",
+                    starScore: item.starScore || 0,
+                    status: item.status || "ONGOING"
+                }));
+
+                setRandomResults(normalized);
+                setRandomResults(normalized);
+                setHasRandomPicked(true);
+                setIsRandomLoading(false);
+            };
+
+            useEffect(() => {
+                if (view === 'random') {
+                    setHasRandomPicked(false);
+                    setRandomResults([]);
+                }
+                if (view === 'home') {
+                    const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                    const cleanHighRated = rawData
+                        .filter(item => {
+                            const combined = ((item.tags || []).join(' ') + (item.description || '') + (item.titleName || item.title)).toLowerCase();
+                            const isClean = !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
+                            const isHighRated = (item.starScore || 0) >= 9.80;
+                            return isClean && isHighRated;
+                        })
+                        .sort(() => 0.5 - Math.random())
+                        .slice(0, 5)
+                        .map(item => ({
+                            id: item.titleId || item.id,
+                            thumbnail: item.thumbnailUrl || item.thumbnail
+                        }));
+                    setHeroItems(cleanHighRated);
+                }
+            }, [view]);
+
             // Compute Top 5 Lists for Genres
-            const { topWebtoons, hiddenGems, fantasyTop, romanceTop, martialTop, sliceTop, heroWebtoons } = useMemo(() => {
+
+            // Compute Top 5 Lists for Genres
+            const { topWebtoons, hiddenGems, fantasyTop, romanceTop, martialTop, sliceTop } = useMemo(() => {
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                 const sorted = [...rawData].sort((a, b) => (b.starScore || 0) - (a.starScore || 0));
 
@@ -1182,19 +1297,6 @@
                     romanceTop: getTopByGenre('로맨스'),
                     martialTop: getTopByGenre('무협'), // '무협/사극' usually
                     sliceTop: getTopByGenre('일상'),
-                    heroWebtoons: [...rawData]
-                        .filter(item => {
-                            const combined = ((item.tags || []).join(' ') + (item.description || '') + (item.titleName || item.title)).toLowerCase();
-                            const isClean = !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
-                            const isHighRated = (item.starScore || 0) >= 9.90;
-                            return isClean && isHighRated;
-                        })
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 5)
-                        .map(item => ({
-                            id: item.titleId || item.id,
-                            thumbnail: item.thumbnailUrl || item.thumbnail
-                        }))
                 };
             }, []);
 
@@ -1534,7 +1636,8 @@
                                 </button>
                                 <nav className="hidden md:flex items-center gap-6">
                                     <button onClick={() => setView('home')} className={`text-sm font-semibold transition-colors ${view === 'home' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? '홈' : 'Home'}</button>
-                                    <button onClick={() => { setView('recommend'); setStep(1); }} className={`text-sm font-semibold transition-colors ${view === 'recommend' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? '추천받기' : 'Recommend'}</button>
+                                    <button onClick={() => { setView('recommend'); setStep(1); }} className={`text-sm font-semibold transition-colors ${view === 'recommend' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? 'AI추천' : 'AI Reco'}</button>
+                                    <button onClick={() => { setView('random'); }} className={`text-sm font-semibold transition-colors ${view === 'random' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? '랜덤추첨' : 'Random Pick'}</button>
                                     <button onClick={() => {
                                         setView('worldcup');
                                         if (!user) alert(lang === 'ko' ? "로그인 시 내 취향에 반영됩니다!" : "Login to reflect in your preferences!");
@@ -1604,10 +1707,12 @@
                                         </div>
                                         {/* 우측 웹툰 커버 - 세련된 사선 슬라이스 배치 */}
                                         <div className="hidden lg:flex flex-1 relative h-[300px] items-stretch overflow-hidden gap-[3px] px-8">
-                                            {heroWebtoons.map((w, i) => (
-                                                <div
+                                            {heroItems.map((w, i) => (
+                                                <a
+                                                    href={`https://comic.naver.com/webtoon/list?titleId=${w.id}`}
+                                                    target="_blank"
                                                     key={w.id}
-                                                    className="relative flex-1 group transition-all duration-700 hover:flex-[3] overflow-hidden"
+                                                    className="relative flex-1 group transition-all duration-700 hover:flex-[3] overflow-hidden cursor-pointer"
                                                     style={{
                                                         clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)',
                                                     }}
@@ -1625,7 +1730,7 @@
                                                     <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent backdrop-blur-[1px]"></div>
                                                     {/* 내부 셰도우 */}
                                                     <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 group-hover:from-transparent"></div>
-                                                </div>
+                                                </a>
                                             ))}
                                         </div>
                                     </div>
@@ -1685,6 +1790,117 @@
                                     </div>
                                     <HorizontalSlider items={sliceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
+                            </div>
+                        )}
+
+                        {view === 'random' && (
+                            <div className="animate-up">
+                                <div className="mb-10 text-center">
+                                    <h2 className="text-3xl font-black text-white mb-2">🎲 랜덤 웹툰 뽑기</h2>
+                                    <p className="text-gray-500 text-sm">조건에 맞는 웹툰을 20개씩 랜덤으로 추천해드립니다.</p>
+                                </div>
+
+                                <div className="bg-[#161B28] rounded-3xl p-8 mb-12 border border-white/5 shadow-2xl">
+                                    <div className="flex flex-col gap-8">
+                                        {/* Filters */}
+                                        <div className="flex flex-col md:flex-row gap-8 items-start">
+                                            <div className="flex-1 w-full">
+                                                <div className="flex justify-between mb-4">
+                                                    <h3 className="text-white font-bold text-sm uppercase tracking-widest">별점 범위 ({randomMinScore} ~ {randomMaxScore})</h3>
+                                                </div>
+                                                <div className="relative w-full h-12 flex items-center select-none touch-none">
+                                                    {/* Track Background */}
+                                                    <div className="absolute w-full h-2 bg-gray-700 rounded-full z-0"></div>
+                                                    {/* Active Track */}
+                                                    <div
+                                                        className="absolute h-2 bg-primary rounded-full z-10"
+                                                        style={{ left: `${randomMinScore * 10}%`, width: `${(randomMaxScore - randomMinScore) * 10}%` }}
+                                                    ></div>
+
+                                                    {/* Min Input */}
+                                                    <input
+                                                        type="range"
+                                                        min="0" max="10" step="0.1"
+                                                        value={randomMinScore}
+                                                        onChange={(e) => {
+                                                            const val = Math.min(parseFloat(e.target.value), randomMaxScore - 0.5);
+                                                            setRandomMinScore(val);
+                                                        }}
+                                                        className="absolute w-full h-full appearance-none pointer-events-none z-20"
+                                                    />
+                                                    {/* Max Input */}
+                                                    <input
+                                                        type="range"
+                                                        min="0" max="10" step="0.1"
+                                                        value={randomMaxScore}
+                                                        onChange={(e) => {
+                                                            const val = Math.max(parseFloat(e.target.value), randomMinScore + 0.5);
+                                                            setRandomMaxScore(val);
+                                                        }}
+                                                        className="absolute w-full h-full appearance-none pointer-events-none z-20"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 w-full">
+                                                <h3 className="text-white font-bold text-sm uppercase tracking-widest mb-4">장르 필터 (선택 시 포함)</h3>
+                                                <div className="flex flex-wrap gap-2">
+                                                    {["로맨스", "판타지", "액션", "무협/사극", "드라마", "일상", "스릴러", "개그", "스포츠"].map(g => (
+                                                        <button
+                                                            key={g}
+                                                            onClick={() => setRandomGenres(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])}
+                                                            className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-all ${randomGenres.includes(g) ? 'bg-primary border-primary text-white' : 'bg-white/5 border-white/10 text-gray-400 hover:border-gray-500'}`}
+                                                        >
+                                                            {g}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {/* Refresh Button */}
+                                        <button
+                                            onClick={() => handleRandomPick(randomMinScore, randomMaxScore, randomGenres)}
+                                            disabled={isRandomLoading}
+                                            className={`w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg transition-all text-lg flex items-center justify-center gap-2 ${isRandomLoading ? 'opacity-70 cursor-wait' : 'hover:scale-[1.01] active:scale-95'}`}
+                                        >
+                                            <span>{isRandomLoading ? '⏳' : '🔄'}</span> {isRandomLoading ? '섞는 중...' : '새로고침 (랜덤결과보기)'}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Grid Results */}
+
+                                {(!hasRandomPicked && !isRandomLoading) ? (
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                                        {[...Array(10)].map((_, i) => (
+                                            <div key={i} className="aspect-[3/4] rounded-2xl bg-[#161B28] overflow-hidden border border-white/5 relative group">
+                                                <div className="absolute inset-0 flex items-center justify-center">
+                                                    <img src="question_mark.png" alt="?" className="w-1/2 h-1/2 object-contain opacity-50 group-hover:opacity-100 transition-opacity drop-shadow-[0_0_15px_rgba(0,213,100,0.5)]" />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <>
+                                        {isRandomLoading ? (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                                                {[...Array(10)].map((_, i) => (
+                                                    <div key={i} className="aspect-[3/4] rounded-2xl bg-white/5 animate-pulse border border-white/5"></div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
+                                                {randomResults.map((w, idx) => (
+                                                    <div key={w.id + idx} className="animate-in fade-in zoom-in duration-500" style={{ animationDelay: `${idx * 50}ms` }}>
+                                                        <WebtoonCard item={w} rank={0} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                                {hasRandomPicked && !isRandomLoading && randomResults.length === 0 && (
+                                    <div className="py-20 text-center text-gray-500 font-bold">조건에 맞는 웹툰이 없습니다.</div>
+                                )}
                             </div>
                         )}
 
@@ -1863,6 +2079,15 @@
                                 </>
                             )}
                     </main>
+                    {/* Random Pick Floating Refresh Button (Mobile) - Optional */}
+                    {view === 'random' && (
+                        <button
+                            onClick={() => { window.scrollTo({ top: 0, behavior: 'smooth' }); handleRandomPick(randomMinScore, randomMaxScore, randomGenres); }}
+                            className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center lg:hidden hover:scale-110 transition-transform"
+                        >
+                            <span className="text-2xl">🔄</span>
+                        </button>
+                    )}
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
 
                     {/* Conflict Confirmation Modal */}

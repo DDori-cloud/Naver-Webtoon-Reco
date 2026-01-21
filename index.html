@@ -68,7 +68,8 @@
             display: flex;
             justify-content: center;
             align-items: start;
-            padding-top: 5vh;
+            padding-top: 12vh;
+            /* 조금 더 아래로 내림 */
             background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
             overflow-y: auto;
@@ -165,7 +166,8 @@
         // --- Supabase Config ---
         const SUPABASE_URL = 'https://vxzdgyentxxipjervdzq.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4emRneWVudHh4aXBqZXJ2ZHpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjQ0ODEsImV4cCI6MjA4NDQwMDQ4MX0.HyZIWay1RI7JHVdVYpkWBTtjg9goQH4muUEaqqG6fPU';
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseInstance = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseClient = supabaseInstance;
 
         // --- Kakao Key Management ---
         const KAKAO_JS_KEY = '7716eb056c6c408381180fb2987a0279';
@@ -201,9 +203,11 @@
                 result_title: "AI 추천 결과",
                 result_desc: "사용자의 고유 취향을 분석한 결과입니다.",
                 exclude: "추천제외",
-                view_now: "바로보기",
+                view_now: "보러가기",
                 new_analysis: "새로운 분석",
                 exclude_msg: "앞으로 이 웹툰은 추천되지 않습니다.",
+                like: "좋아요",
+                dislike: "싫어요",
                 share_copy: "분석 결과가 복사되었습니다!",
                 share_fail: "복사 실패",
                 share_tpl_title: "[AIR.NW] AI 추천 결과",
@@ -288,6 +292,8 @@
                 view_now: "View Now",
                 new_analysis: "New Analysis",
                 exclude_msg: "This webtoon will no longer be recommended.",
+                like: "Like",
+                dislike: "Dislike",
                 share_copy: "Results copied to clipboard!",
                 share_fail: "Copy failed.",
                 share_tpl_title: "[AIR.NW] AI Recommended Results",
@@ -368,9 +374,11 @@
                 result_title: "AI 最佳推荐",
                 result_desc: "根据您的独特偏好分析得出。",
                 exclude: "不再推荐",
-                view_now: "立即阅读",
+                view_now: "去看看",
                 new_analysis: "重新分析",
                 exclude_msg: "今后将不再推荐此漫画。",
+                like: "喜欢",
+                dislike: "不喜欢",
                 share_copy: "结果已复制到剪贴板！",
                 share_fail: "复制失败。",
                 share_tpl_title: "[AIR.NW] AI 推荐结果",
@@ -451,9 +459,11 @@
                 result_title: "AI おすすめ結果",
                 result_desc: "あなたの好みを分析した結果です。",
                 exclude: "おすすめ除外",
-                view_now: "今すぐ見る",
+                view_now: "보러가기",
                 new_analysis: "新しい分析",
                 exclude_msg: "今後、この作品はおすすめされません。",
+                like: "お気に入り",
+                dislike: "嫌い",
                 share_copy: "結果がコピーされました！",
                 share_fail: "コピーに失敗しました。",
                 share_tpl_title: "[AIR.NW] AI おすすめ結果",
@@ -606,70 +616,81 @@
         );
 
         const WebtoonCard = ({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t }) => {
-            const getRankDisplay = (r) => {
-                if (r === 1) return <span className="text-base mr-1 shadow-sm">🥇</span>;
-                if (r === 2) return <span className="text-base mr-1 shadow-sm">🥈</span>;
-                if (r === 3) return <span className="text-base mr-1 shadow-sm">🥉</span>;
-                return <span className="text-sm font-black text-gray-300 mr-1.5 italic">{r}</span>;
-            };
+            const isFinished = item.status === 'FINISHED';
             return (
-                <div className="bg-white rounded-[24px] overflow-hidden shadow-soft hover:shadow-xl transition-all duration-500 transform hover:-translate-y-2 flex flex-col relative group border border-gray-50 h-full">
+                <div className="flex flex-col gap-3 group relative bg-white p-4 rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div className="relative aspect-[3/4] rounded-2xl overflow-hidden shadow-md">
+                        <img
+                            src={item.thumbnail}
+                            alt={item.title}
+                            referrerPolicy="no-referrer"
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            loading="lazy"
+                            onError={(e) => { e.target.src = "https://via.placeholder.com/300x400?text=No+Image"; }}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
 
-                    <div className="relative aspect-[3/4] overflow-hidden bg-gray-100">
-                        <img src={item.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }} />
-                        <div className="absolute bottom-1 right-1 z-20 bg-primary/95 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md shadow-md backdrop-blur-sm">{Math.floor(item.match)}%</div>
+                        {rank > 0 && <div className="absolute top-3 left-3 bg-[#00DC64] text-white font-black text-xl italic px-2.5 py-0.5 rounded-xl shadow-lg z-10 drop-shadow-md">#{rank}</div>}
+
+                        <div className="absolute bottom-3 left-3 flex gap-1">
+                            {isFinished && <span className="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-lg">{t.finished}</span>}
+                            {!isFinished && <span className="bg-[#00DC64]/90 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded-lg">{t.ongoing}</span>}
+                        </div>
+
+                        {/* Top Right Heart Button */}
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
+                            className={`absolute top-3 right-3 p-2.5 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-red-500 text-white shadow-lg scale-110' : 'bg-black/20 text-white/70 hover:bg-white hover:text-red-500'}`}
+                        >
+                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                        </button>
                     </div>
-                    <div className="p-4 flex flex-col flex-grow">
-                        <div className="flex flex-wrap gap-1 mb-2 h-[4.5rem] content-start overflow-hidden">
-                            {(() => {
-                                const rawTags = (item.tags || []);
-                                const filteredTags = [];
-                                for (const tag of rawTags) {
-                                    const isRedundant = filteredTags.some(existing =>
-                                        tag.includes(existing) || existing.includes(tag)
-                                    );
-                                    if (!isRedundant) { filteredTags.push(tag); }
-                                }
-                                return filteredTags.slice(0, 5).map((tag, idx) => (
-                                    <span key={idx} className="text-[10px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded tracking-tighter">#{tag}</span>
-                                ));
-                            })()}
-                        </div>
-                        <div className="flex items-center mb-3 h-[2.2rem]">
-                            <div className="flex-shrink-0 flex items-center">{getRankDisplay(rank)}</div>
-                            <h3 className="text-xs font-extrabold text-gray-900 leading-tight line-clamp-2 break-keep tracking-tighter">{item.title}</h3>
-                        </div>
-                        <div className="mt-auto w-full">
-                            <div className="flex items-center justify-between mb-3">
-                                {item.starScore && <div className="text-[9px] font-bold text-yellow-500">★ {item.starScore.toFixed(2)}</div>}
-                                <div className="flex gap-1.5 ml-auto">
-                                    <button
-                                        onClick={() => onLike(item.id)}
-                                        title={t.like}
-                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isLiked ? 'bg-primary text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-primary'}`}
-                                    >
-                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"></path></svg>
-                                    </button>
-                                    <button
-                                        onClick={() => onDislike(item.id)}
-                                        title={t.excluded_list}
-                                        className={`w-7 h-7 rounded-full flex items-center justify-center transition-all ${isDisliked ? 'bg-red-500 text-white shadow-md' : 'bg-gray-50 text-gray-300 hover:text-red-500'}`}
-                                    >
-                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M15 3H6c-.83 0-1.54.5-1.84 1.22l-3.02 7.05c-.09.23-.14.47-.14.73v2c0 1.1.9 2 2 2h6.31l-.95 4.57-.03.32c0 .41.17.79.44 1.06L9.83 23l6.59-6.59c.36-.36.58-.86.58-1.41V5c0-1.1-.9-2-2-2zm4 0v12h4V3h-4z"></path></svg>
-                                    </button>
-                                    <button
-                                        onClick={() => onExcludeFromResult(item.id)}
-                                        title={t.exclude_from_reco}
-                                        className="w-7 h-7 rounded-full flex items-center justify-center transition-all bg-gray-50 text-gray-300 hover:bg-gray-200 hover:text-gray-600"
-                                    >
-                                        <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"></path></svg>
-                                    </button>
-                                </div>
+
+                    <div className="flex flex-col gap-1.5">
+                        <div className="flex justify-between items-start">
+                            <h3 className="font-black text-gray-900 text-[15px] truncate group-hover:text-[#00DC64] transition-colors leading-tight">{item.title}</h3>
+                            <div className="flex items-center gap-0.5 text-yellow-400 flex-shrink-0 bg-yellow-50 px-1.5 py-0.5 rounded-lg">
+                                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"></path></svg>
+                                <span className="text-[11px] font-black text-gray-900">{item.starScore ? item.starScore.toFixed(2) : "0.0"}</span>
                             </div>
-                            <a href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`} target="_blank" className="block w-full py-2.5 bg-primary text-white text-center rounded-lg font-bold hover:opacity-90 transition-all text-[13px] flex items-center justify-center gap-1 shadow-sm">
-                                <span>{t.view_now}</span>
-                                <span className="text-[9px] opacity-80 font-medium translate-y-[0.5px]">({item.status === 'FINISHED' ? t.finished : t.ongoing})</span>
-                            </a>
+                        </div>
+                        <p className="text-[12px] text-gray-400 font-bold truncate">{item.author}</p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 mt-2">
+                        <a
+                            href={`https://comic.naver.com/webtoon/list?titleId=${item.id}`}
+                            target="_blank"
+                            className="w-full py-2.5 bg-[#00DC64] hover:bg-[#00c65a] text-white font-black text-[13px] rounded-xl text-center shadow-sm hover:shadow-md transition-all flex items-center justify-center gap-2"
+                        >
+                            <span>{t.view_now}</span>
+                            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                        </a>
+
+                        <div className="flex gap-1.5">
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
+                                className={`flex-1 py-2 rounded-xl font-bold text-[10px] transition-all border flex items-center justify-center gap-1 ${isLiked ? 'bg-red-50 text-red-500 border-red-100' : 'bg-gray-50 text-gray-400 border-transparent hover:bg-gray-100 hover:text-gray-600'}`}
+                            >
+                                <svg viewBox="0 0 24 24" className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : 'fill-none stroke-current stroke-2'}`}><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
+                                {t.like}
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onDislike(item.id); }}
+                                className={`flex-1 py-2 rounded-xl font-bold text-[10px] transition-all border flex items-center justify-center gap-1 ${isDisliked ? 'bg-gray-800 text-white border-gray-800' : 'bg-gray-50 text-gray-400 border-transparent hover:bg-gray-100 hover:text-gray-600'}`}
+                            >
+                                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2"><path d="M10 14h4M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                {t.dislike}
+                            </button>
+                            {onExcludeFromResult && (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); onExcludeFromResult(item.id); }}
+                                    className="flex-1 py-2 rounded-xl font-bold text-[10px] transition-all border bg-gray-50 text-gray-400 border-transparent hover:bg-red-50 hover:text-red-600 hover:border-red-100 flex items-center justify-center gap-1"
+                                >
+                                    <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
+                                    {t.exclude}
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -677,6 +698,7 @@
         };
 
         const ShareModal = ({ isOpen, onClose, t, results }) => {
+            const supabase = supabaseInstance;
             useEffect(() => {
                 if (isOpen) {
                     document.body.classList.add('modal-open');
@@ -724,36 +746,78 @@
             const shareToLine = () => { window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`, '_blank'); };
 
             return (
-                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-6 bg-black/50 backdrop-blur-md" onClick={onClose}>
-                    <div className="bg-white w-full max-w-sm rounded-[56px] shadow-2xl overflow-hidden animate-up" onClick={e => e.stopPropagation()}>
-                        <div className="pt-12 pb-10 px-8">
-                            <h3 className="text-2xl font-black text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
-                            <div className="grid grid-cols-2 gap-4 mb-8">
-                                <button onClick={shareToKakao} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[24px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" className="w-10 h-10 object-contain" alt="Kakao" /></div>
-                                    <span className="text-sm font-black text-gray-700">{t.share_to_kakao}</span>
-                                </button>
-                                <button onClick={shareToLine} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" className="w-10 h-10 object-contain" alt="LINE" /></div>
-                                    <span className="text-sm font-black text-gray-700">{t.share_to_line}</span>
-                                </button>
-                                <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm overflow-hidden"><img src="https://www.logo.wine/a/logo/TikTok/TikTok-Icon-Logo.wine.svg" className="w-[85%] h-[85%] object-contain" alt="TikTok" style={{ filter: 'brightness(1.5)' }} /></div>
-                                    <span className="text-sm font-black text-gray-700">{t.share_to_tiktok}</span>
-                                </button>
-                                <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
-                                    <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm overflow-hidden text-slate-600"><svg viewBox="0 0 24 24" className="w-8 h-8 fill-current"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg></div>
-                                    <span className="text-sm font-black text-gray-700">{t.share_to_text}</span>
-                                </button>
+                <div className="modal-container" onClick={onClose}>
+                    <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                        <div className="bg-white w-full max-w-sm rounded-[56px] shadow-2xl overflow-hidden animate-up">
+                            <div className="pt-12 pb-10 px-8">
+                                <h3 className="text-2xl font-black text-center mb-10 tracking-tight">{t.share_modal_title}</h3>
+                                <div className="grid grid-cols-2 gap-4 mb-8">
+                                    <button onClick={shareToKakao} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
+                                        <div className="w-16 h-16 flex items-center justify-center bg-[#FEE500] rounded-[24px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/e/e3/KakaoTalk_logo.svg" className="w-10 h-10 object-contain" alt="Kakao" /></div>
+                                        <span className="text-sm font-black text-gray-700">{t.share_to_kakao}</span>
+                                    </button>
+                                    <button onClick={shareToLine} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
+                                        <div className="w-16 h-16 flex items-center justify-center bg-[#06C755] rounded-[22px] shadow-sm overflow-hidden"><img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" className="w-10 h-10 object-contain" alt="LINE" /></div>
+                                        <span className="text-sm font-black text-gray-700">{t.share_to_line}</span>
+                                    </button>
+                                    <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
+                                        <div className="w-16 h-16 flex items-center justify-center bg-black rounded-[22px] shadow-sm overflow-hidden"><img src="https://www.logo.wine/a/logo/TikTok/TikTok-Icon-Logo.wine.svg" className="w-[85%] h-[85%] object-contain" alt="TikTok" style={{ filter: 'brightness(1.5)' }} /></div>
+                                        <span className="text-sm font-black text-gray-700">{t.share_to_tiktok}</span>
+                                    </button>
+                                    <button onClick={copyToClip} className="premium-gray-btn flex flex-col items-center gap-4 p-8 rounded-[36px]">
+                                        <div className="w-16 h-16 flex items-center justify-center bg-slate-200 rounded-[22px] shadow-sm overflow-hidden text-slate-600"><svg viewBox="0 0 24 24" className="w-8 h-8 fill-current"><path d="M7 6V3C7 2.44772 7.44772 2 8 2H20C20.5523 2 21 2.44772 21 3V17C21 17.5523 20.5523 18 20 18H17V21C17 21.5523 16.5523 22 16 22H4C3.44772 22 3 21.5523 3 21V7C3 6.44772 3.44772 6 4 6H7ZM9 6H16V16H17V4H9V6ZM5 8V20H15V8H5Z"></path></svg></div>
+                                        <span className="text-sm font-black text-gray-700">{t.share_to_text}</span>
+                                    </button>
+                                </div>
+                                <button onClick={onClose} className="w-full py-5 bg-gray-50 rounded-2xl text-gray-400 font-black">CLOSE</button>
                             </div>
-                            <button onClick={onClose} className="w-full py-5 bg-gray-50 rounded-2xl text-gray-400 font-black">CLOSE</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        const HelpModal = ({ isOpen, onClose, t }) => {
+            const supabase = supabaseInstance;
+            if (!isOpen) return null;
+            return (
+                <div className="modal-container" onClick={onClose}>
+                    <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                        <div className="bg-white w-full max-w-2xl rounded-[40px] shadow-2xl p-10 animate-up">
+                            <h3 className="text-3xl font-black mb-8 text-primary">N웹툰 파인더 가이드 📘</h3>
+
+                            <div className="space-y-6">
+                                <div className="p-5 bg-gray-50 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2">1. 🔍 똑똑한 검색</h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed">제목이나 작가는 물론, "먼치킨", "회귀", "로맨스" 같은 키워드로도 검색할 수 있어요. 원하는 취향을 입력만 하세요!</p>
+                                </div>
+
+                                <div className="p-5 bg-gray-50 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2">2. ✨ 맞춤 추천받기</h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed">'추천받기' 메뉴에서 4단계의 간단한 질문에 답해보세요. AI가 수천 개의 웹툰 중 당신에게 딱 맞는 작품을 찾아드립니다.</p>
+                                </div>
+
+                                <div className="p-5 bg-gray-50 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2">3. 🏆 웹툰 월드컵</h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed">최대 2048강까지! 나만의 최애 웹툰을 뽑는 토너먼트를 즐겨보세요. 우승작은 당신의 취향 분석에도 반영됩니다.</p>
+                                </div>
+
+                                <div className="p-5 bg-gray-50 rounded-3xl">
+                                    <h4 className="font-black text-lg mb-2">4. 📚 나만의 컬렉션 공유</h4>
+                                    <p className="text-gray-600 text-sm leading-relaxed">마음에 드는 작품은 썸네일의 '❤️' 버튼을 눌러 컬렉션에 추가하세요. '내 정보 {'>'} 나의 컬렉션'에서 친구들에게 리스트를 공유할 수 있습니다.</p>
+                                </div>
+                            </div>
+
+                            <button onClick={onClose} className="w-full mt-8 py-4 bg-black text-white font-black rounded-2xl text-lg hover:scale-[1.02] active:scale-95 transition-all">
+                                확인했어요!
+                            </button>
                         </div>
                     </div>
                 </div>
             );
         };
 
-        const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult }) => {
+        const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult, isViewMode = false }) => {
+            const supabase = supabaseInstance;
             const [stage, setStage] = useState('select'); // 'select', 'playing', 'result'
             const [selectedRound, setSelectedRound] = useState(16);
             const [matches, setMatches] = useState([]);
@@ -762,24 +826,18 @@
             const [finalWinner, setFinalWinner] = useState(null);
 
             useEffect(() => {
-                if (isOpen) {
+                if (isOpen && !isViewMode) {
                     document.body.classList.add('modal-open');
                 } else {
                     document.body.classList.remove('modal-open');
-                    // Reset on close
-                    setStage('select');
-                    setMatches([]);
-                    setCurrentMatchIndex(0);
-                    setWinners([]);
-                    setFinalWinner(null);
                 }
                 return () => document.body.classList.remove('modal-open');
-            }, [isOpen]);
+            }, [isOpen, isViewMode]);
 
             if (!isOpen) return null;
 
             const startWorldcup = () => {
-                const rawData = window.WEBTOON_DATA || [];
+                const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                 if (rawData.length < selectedRound) {
                     alert(`웹툰 데이터가 부족합니다. 최소 ${selectedRound}개 필요합니다.`);
                     return;
@@ -839,7 +897,7 @@
                     created_at: new Date().toISOString()
                 };
 
-                await supabase.from('worldcup_results').insert(result);
+                await supabaseClient.from('worldcup_results').insert(result);
                 if (onSaveResult) onSaveResult(result);
             };
 
@@ -849,106 +907,84 @@
                 return `${remaining}${t.worldcup_round}`;
             };
 
-            const currentMatch = matches[currentMatchIndex];
+            const rounds = [8, 16, 32, 64, 128, 256, 512, 1024, 2048];
 
-            return (
-                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
-                    <div className="bg-white w-full max-w-xl rounded-[28px] shadow-2xl overflow-hidden animate-up max-h-[85vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            const content = (
+                <div className={`${isViewMode ? 'bg-transparent' : 'bg-white w-full max-w-4xl rounded-[56px] shadow-2xl overflow-hidden'} animate-up`}>
+                    <div className="p-10">
                         {stage === 'select' && (
-                            <div className="p-6">
-                                <h2 className="text-xl font-black text-center mb-4 tracking-tight">{t.worldcup_title}</h2>
-                                <p className="text-center text-gray-500 mb-6 font-medium text-sm">{t.worldcup_select_round}</p>
-                                <div className="grid grid-cols-4 gap-2 mb-6">
-                                    {[16, 32, 64, 128, 256, 512, 1024, 2048].map(round => (
-                                        <button
-                                            key={round}
-                                            onClick={() => setSelectedRound(round)}
-                                            className={`py-3 px-2 rounded-xl font-bold text-sm transition-all ${selectedRound === round
-                                                ? 'bg-primary text-white shadow-lg scale-105'
-                                                : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
-                                                }`}
-                                        >
-                                            {round}{t.worldcup_round}
-                                        </button>
+                            <div className="text-center py-10">
+                                <h3 className="text-3xl font-black mb-10 tracking-tight italic border-b-2 border-primary/10 inline-block">{t.worldcup_title}</h3>
+                                <p className="text-gray-400 font-medium mb-10 italic">{t.worldcup_desc}</p>
+                                <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 max-w-2xl mx-auto mb-12">
+                                    {rounds.map(r => (
+                                        <button key={r} onClick={() => setSelectedRound(r)} className={`px-4 py-3 rounded-2xl font-black transition-all ${selectedRound === r ? 'bg-primary text-white shadow-xl scale-105' : 'bg-gray-50 text-gray-300 hover:bg-gray-100'}`}>{r}{t.worldcup_round}</button>
                                     ))}
                                 </div>
-                                <div className="flex gap-3">
-                                    <button onClick={onClose} className="flex-1 py-3 bg-gray-100 text-gray-500 font-bold rounded-xl text-sm">닫기</button>
-                                    <button onClick={startWorldcup} className="flex-[2] py-3 bg-primary text-white font-black rounded-xl shadow-lg text-sm">{t.worldcup_start}</button>
-                                </div>
+                                <button onClick={startWorldcup} className="w-full max-w-sm py-6 bg-primary text-white font-black rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all text-xl uppercase tracking-widest">
+                                    {t.start || "시작하기"}
+                                </button>
                             </div>
                         )}
 
-                        {stage === 'playing' && currentMatch && (
-                            <div className="p-4">
-                                <div className="text-center mb-4">
-                                    <h3 className="text-lg font-black mb-1">{getCurrentRound()}</h3>
-                                    <p className="text-gray-400 font-medium text-sm">{currentMatchIndex + 1} / {matches.length}</p>
-                                </div>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {currentMatch.map((webtoon, idx) => (
-                                        <>
-                                            <button
-                                                key={idx}
-                                                onClick={() => selectWinner(webtoon)}
-                                                className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 hover:border-primary"
-                                            >
-                                                <div className="aspect-[3/4] overflow-hidden bg-gray-100">
-                                                    <img
-                                                        src={webtoon.thumbnailUrl || webtoon.thumbnail}
-                                                        referrerPolicy="no-referrer"
-                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                        onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
-                                                    />
-                                                </div>
-                                                <div className="p-3 bg-gradient-to-t from-white to-transparent">
-                                                    <h4 className="text-xs font-black text-gray-900 line-clamp-2 mb-1">{webtoon.titleName || webtoon.title}</h4>
-                                                    <div className="flex flex-wrap gap-0.5">
-                                                        {(webtoon.tags || []).slice(0, 2).map((tag, i) => (
-                                                            <span key={i} className="text-[8px] font-bold text-primary bg-orange-50 px-1.5 py-0.5 rounded">#{tag}</span>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </button>
-                                            {idx === 0 && <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"><span className="text-2xl font-black text-primary bg-white px-4 py-2 rounded-xl shadow-lg">{t.worldcup_vs}</span></div>}
-                                        </>
+                        {stage === 'playing' && (
+                            <div className="text-center py-10">
+                                <div className="mb-8"><span className="px-6 py-2 bg-primary text-white text-sm font-black rounded-full shadow-md uppercase tracking-widest">{getCurrentRound()}</span></div>
+                                <div className="flex flex-col md:flex-row items-center justify-center gap-12 sm:gap-20">
+                                    {matches[currentMatchIndex].map((w, idx) => (
+                                        <div key={idx} onClick={() => selectWinner(w)} className="group cursor-pointer transform transition-all hover:scale-105 active:scale-95 duration-500">
+                                            <div className="relative w-56 sm:w-72 aspect-[3/4] rounded-[48px] overflow-hidden shadow-2xl border-8 border-transparent group-hover:border-primary/20 transition-all bg-gray-100">
+                                                <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-12"><span className="px-8 py-3 bg-white text-primary font-black rounded-full shadow-xl text-lg uppercase tracking-tighter italic">CHOOSE</span></div>
+                                            </div>
+                                            <h4 className="mt-8 text-xl font-black text-gray-800 tracking-tighter italic leading-tight max-w-[280px] mx-auto line-clamp-2">{w.titleName || w.title}</h4>
+                                            <p className="mt-2 text-primary font-black text-[12px] opacity-0 group-hover:opacity-100 transition-all uppercase tracking-widest">{w.author}</p>
+                                        </div>
                                     ))}
+                                    <div className="absolute text-5xl font-black text-primary/10 italic select-none hidden md:block">VS</div>
                                 </div>
-                                <div className="text-center my-3"><span className="text-2xl font-black text-primary">{t.worldcup_vs}</span></div>
                             </div>
                         )}
 
                         {stage === 'result' && finalWinner && (
-                            <div className="p-6 text-center">
-                                <div className="text-4xl mb-4">🏆</div>
-                                <h2 className="text-xl font-black mb-3">{t.worldcup_winner}</h2>
-                                <div className="max-w-[200px] mx-auto mb-6">
-                                    <div className="bg-white rounded-2xl overflow-hidden shadow-lg border-2 border-primary">
-                                        <div className="aspect-[3/4] overflow-hidden bg-gray-100">
-                                            <img
-                                                src={finalWinner.thumbnailUrl || finalWinner.thumbnail}
-                                                referrerPolicy="no-referrer"
-                                                className="w-full h-full object-cover"
-                                                onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
-                                            />
-                                        </div>
-                                        <div className="p-4">
-                                            <h3 className="text-base font-black text-gray-900 mb-2">{finalWinner.titleName || finalWinner.title}</h3>
-                                            <p className="text-xs text-gray-500 font-medium">{selectedRound}{t.worldcup_round} {t.worldcup_winner}</p>
-                                        </div>
+                            <div className="text-center py-10">
+                                <div className="mb-6"><span className="px-6 py-2 bg-yellow-400 text-white text-sm font-black rounded-full shadow-md uppercase tracking-widest italic">{t.worldcup_winner}</span></div>
+                                <div className="mb-10 transform scale-110">
+                                    <div className="relative w-64 sm:w-80 aspect-[3/4] mx-auto rounded-[64px] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] border-[12px] border-yellow-400/20 bg-gray-100">
+                                        <img src={finalWinner.thumbnailUrl || finalWinner.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                        <div className="absolute top-6 right-6 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-xl animate-bounce"><span className="text-3xl">🏆</span></div>
                                     </div>
+                                    <h4 className="mt-12 text-3xl font-black text-gray-900 tracking-tighter italic leading-tight">{finalWinner.titleName || finalWinner.title}</h4>
+                                    <p className="mt-3 text-gray-400 font-bold uppercase tracking-widest">{finalWinner.author}</p>
                                 </div>
-                                <button onClick={onClose} className="px-10 py-3 bg-primary text-white font-black rounded-xl shadow-lg hover:scale-105 transition-transform text-sm">완료</button>
+                                <div className="flex gap-4 justify-center">
+                                    <button onClick={() => setStage('select')} className="px-10 py-5 bg-gray-50 text-gray-500 font-black rounded-full hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">{t.retry}</button>
+                                    <a href={`https://comic.naver.com/webtoon/list?titleId=${finalWinner.titleId || finalWinner.id}`} target="_blank" className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-sm italic">{t.view_now}</a>
+                                </div>
                             </div>
                         )}
+                    </div>
+                </div>
+            );
+
+            if (isViewMode) return content;
+
+            return (
+                <div className="modal-container" onClick={onClose}>
+                    <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                        {content}
                     </div>
                 </div>
             );
         };
 
         const App = () => {
+            const supabase = supabaseInstance;
             const [lang, setLang] = useState('ko');
+            const [view, setView] = useState('home'); // 'home', 'recommend', 'worldcup', 'search'
             const [step, setStep] = useState(1);
+            const [searchQuery, setSearchQuery] = useState('');
+            const [searchResults, setSearchResults] = useState([]);
             const [selectedG, setSelectedG] = useState([]);
             const [excludedG, setExcludedG] = useState([]); // Non-preferred tastes
             const [favTitle, setFavTitle] = useState("");
@@ -958,27 +994,86 @@
             const [dislikedIds, setDislikedIds] = useState(() => {
                 try { return JSON.parse(localStorage.getItem('excludedWebtoons')) || []; } catch (e) { return []; }
             });
-            const [showExcludePopup, setShowExcludePopup] = useState(false);
-            const [showShareModal, setShowShareModal] = useState(false);
-            const [showAuthModal, setShowAuthModal] = useState(false);
-            const [showProfileModal, setShowProfileModal] = useState(false);
-            const [user, setUser] = useState(null);
             const [likedIds, setLikedIds] = useState([]);
-            const [conflictTag, setConflictTag] = useState(null); // Tag causing conflict
-            const [profileTab, setProfileTab] = useState('liked'); // 'liked' or 'excluded'
-            const [authMode, setAuthMode] = useState('login'); // 'login' or 'signup'
+            const [excludedFromRecoIds, setExcludedFromRecoIds] = useState([]);
+            const [user, setUser] = useState(null);
+            const [showAuthModal, setShowAuthModal] = useState(false);
+            const [authMode, setAuthMode] = useState('login');
             const [email, setEmail] = useState('');
             const [password, setPassword] = useState('');
             const [confirmPassword, setConfirmPassword] = useState('');
-            const [showWorldcupModal, setShowWorldcupModal] = useState(false);
-            const [worldcupRound, setWorldcupRound] = useState(16);
-            const [worldcupMatches, setWorldcupMatches] = useState([]);
-            const [worldcupCurrentMatch, setWorldcupCurrentMatch] = useState(0);
-            const [worldcupWinners, setWorldcupWinners] = useState([]);
+            const [showProfileModal, setShowProfileModal] = useState(false);
+            const [profileTab, setProfileTab] = useState('liked');
             const [worldcupHistory, setWorldcupHistory] = useState([]);
-            const [excludedFromRecoIds, setExcludedFromRecoIds] = useState([]);
+            const [showWorldcupModal, setShowWorldcupModal] = useState(false);
+            const [showShareModal, setShowShareModal] = useState(false);
+            const [conflictTag, setConflictTag] = useState(null);
+            const [showExcludePopup, setShowExcludePopup] = useState(false);
+            const [showHelpModal, setShowHelpModal] = useState(false);
             const [todayVisitors, setTodayVisitors] = useState(0);
             const [totalVisitors, setTotalVisitors] = useState(0);
+
+            // Compute Top 5 Lists for Genres
+            const { topWebtoons, fantasyTop, romanceTop, martialTop, sliceTop } = useMemo(() => {
+                const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                const sorted = [...rawData].sort((a, b) => (b.starScore || 0) - (a.starScore || 0));
+
+                const getTopByGenre = (genreKeyword) => {
+                    return sorted
+                        .filter(w => (w.tags || []).some(t => t.includes(genreKeyword)))
+                        .slice(0, 5)
+                        .map(item => ({
+                            id: item.titleId || item.id,
+                            title: item.titleName || item.title,
+                            thumbnail: item.thumbnailUrl || item.thumbnail,
+                            tags: item.tags || [item.author],
+                            status: item.status,
+                            author: item.author,
+                            starScore: item.starScore
+                        }));
+                };
+
+                return {
+                    topWebtoons: sorted.slice(0, 5).map(item => ({
+                        id: item.titleId || item.id,
+                        title: item.titleName || item.title,
+                        thumbnail: item.thumbnailUrl || item.thumbnail,
+                        tags: item.tags || [item.author],
+                        status: item.status,
+                        author: item.author,
+                        starScore: item.starScore
+                    })),
+                    fantasyTop: getTopByGenre('판타지'),
+                    romanceTop: getTopByGenre('로맨스'),
+                    martialTop: getTopByGenre('무협'), // '무협/사극' usually
+                    sliceTop: getTopByGenre('일상')
+                };
+            }, []);
+
+            const handleSearch = (q) => {
+                setSearchQuery(q);
+                if (!q.trim()) {
+                    setSearchResults([]);
+                    if (view === 'search') setView('home');
+                    return;
+                }
+                const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                const filtered = rawData.filter(w =>
+                    (w.titleName || w.title).toLowerCase().includes(q.toLowerCase()) ||
+                    (w.author || '').toLowerCase().includes(q.toLowerCase()) ||
+                    (w.tags || []).some(t => t.toLowerCase().includes(q.toLowerCase()))
+                ).map(item => ({
+                    id: item.titleId || item.id,
+                    title: item.titleName || item.title,
+                    thumbnail: item.thumbnailUrl || item.thumbnail,
+                    tags: (item.tags && item.tags.length > 0) ? item.tags : [item.author],
+                    status: item.status,
+                    author: item.author,
+                    starScore: item.starScore
+                }));
+                setSearchResults(filtered);
+                setView('search');
+            };
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
 
@@ -1012,7 +1107,7 @@
                         localStorage.setItem(visitorKey, 'true');
 
                         // Increment visitor count in Supabase
-                        await supabase.rpc('increment_visitor', { visit_date: today });
+                        await supabaseClient.rpc('increment_visitor', { visit_date: today });
                     }
 
                     // Fetch visitor counts
@@ -1034,17 +1129,17 @@
             }, []);
 
             const loadUserData = async (userId) => {
-                const { data: exData } = await supabase.from('excluded_webtoons').select('webtoon_id').eq('user_id', userId);
+                const { data: exData } = await supabaseClient.from('excluded_webtoons').select('webtoon_id').eq('user_id', userId);
                 if (exData) setDislikedIds(exData.map(d => d.webtoon_id));
-                const { data: favData } = await supabase.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
+                const { data: favData } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
                 if (favData) setLikedIds(favData.map(d => d.webtoon_id));
 
                 // Load worldcup history
-                const { data: wcData } = await supabase.from('worldcup_results').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+                const { data: wcData } = await supabaseClient.from('worldcup_results').select('*').eq('user_id', userId).order('created_at', { ascending: false });
                 if (wcData) setWorldcupHistory(wcData);
 
                 // Load excluded from recommendations
-                const { data: exRecoData } = await supabase.from('excluded_from_recommendations').select('webtoon_id').eq('user_id', userId);
+                const { data: exRecoData } = await supabaseClient.from('excluded_from_recommendations').select('webtoon_id').eq('user_id', userId);
                 if (exRecoData) setExcludedFromRecoIds(exRecoData.map(d => d.webtoon_id));
             };
 
@@ -1052,12 +1147,12 @@
                 if (!user) { setShowAuthModal(true); return; }
                 const isLiked = likedIds.includes(id);
                 if (isLiked) {
-                    await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                    await supabaseClient.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
                     setLikedIds(prev => prev.filter(it => it !== id));
                 } else {
                     // Remove from dislikes if it was disliked
                     if (dislikedIds.includes(id)) toggleDislike(id);
-                    await supabase.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: id });
+                    await supabaseClient.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: id });
                     setLikedIds(prev => [...prev, id]);
                 }
             };
@@ -1066,7 +1161,7 @@
                 const newEx = [...dislikedIds, id];
                 setDislikedIds(newEx);
                 localStorage.setItem('excludedWebtoons', JSON.stringify(newEx));
-                if (user) { await supabase.from('excluded_webtoons').upsert({ user_id: user.id, webtoon_id: id }); }
+                if (user) { await supabaseClient.from('excluded_webtoons').upsert({ user_id: user.id, webtoon_id: id }); }
                 setResults(scoredPool.filter(x => !newEx.includes(x.id)).slice(0, 10));
                 setShowExcludePopup(true);
                 setTimeout(() => setShowExcludePopup(false), 2000);
@@ -1173,14 +1268,14 @@
                 if (!user) { setShowAuthModal(true); return; }
                 const isDisliked = dislikedIds.includes(id);
                 if (isDisliked) {
-                    await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                    await supabaseClient.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
                     const newDislikedIds = dislikedIds.filter(it => it !== id);
                     setDislikedIds(newDislikedIds);
                     localStorage.setItem('excludedWebtoons', JSON.stringify(newDislikedIds));
                 } else {
                     // Remove from likes if it was liked
                     if (likedIds.includes(id)) toggleLike(id);
-                    await supabase.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: id });
+                    await supabaseClient.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: id });
                     const newDislikedIds = [...dislikedIds, id];
                     setDislikedIds(newDislikedIds);
                     localStorage.setItem('excludedWebtoons', JSON.stringify(newDislikedIds));
@@ -1211,125 +1306,211 @@
 
             return (
                 <div className="min-h-screen">
-                    <header>
-                        <div className="max-w-[1600px] mx-auto px-10 py-4 flex items-center justify-between relative">
-                            {/* Left: Language Selection */}
-                            <div className="flex items-center gap-1.5 min-w-[120px]">
-                                {[{ code: 'ko', label: 'KO' }, { code: 'en', label: 'EN' }, { code: 'zh', label: 'ZH' }, { code: 'ja', label: 'JA' }].map(l => (
-                                    <button key={l.code} onClick={() => setLang(l.code)}
-                                        className={`px-2.5 py-1.5 rounded-lg border text-[10px] font-black transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-md' : 'bg-white text-gray-300 border-gray-100 hover:text-gray-500'}`}>
-                                        {l.label}
-                                    </button>
-                                ))}
+                    <header className="!bg-white shadow-[0_1px_0_0_rgba(0,0,0,0.08)] sticky top-0 z-[100000]">
+                        <div className="max-w-[1500px] mx-auto px-6 h-16 flex items-center justify-between gap-8">
+                            {/* Left: Brand & Nav */}
+                            <div className="flex items-center gap-8 flex-shrink-0">
+                                <button onClick={() => setView('home')} className="flex items-center gap-1 group">
+                                    <span className="text-xl font-black text-[#00DC64] tracking-tighter italic group-hover:scale-105 transition-transform">N웹툰</span>
+                                    <span className="text-xl font-black text-gray-900 tracking-tighter italic group-hover:scale-105 transition-transform">파인더</span>
+                                </button>
+                                <nav className="hidden md:flex items-center gap-6">
+                                    <button onClick={() => setView('home')} className={`text-sm font-bold transition-colors ${view === 'home' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>{lang === 'ko' ? '홈' : 'Home'}</button>
+                                    <button onClick={() => { setView('recommend'); setStep(1); }} className={`text-sm font-bold transition-colors ${view === 'recommend' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>{lang === 'ko' ? '추천받기' : 'Recommend'}</button>
+                                    <button onClick={() => {
+                                        setView('worldcup');
+                                        if (!user) alert(lang === 'ko' ? "로그인 시 내 취향에 반영됩니다!" : "Login to reflect in your preferences!");
+                                    }} className={`text-sm font-bold transition-colors ${view === 'worldcup' ? 'text-gray-900' : 'text-gray-400 hover:text-gray-600'}`}>{lang === 'ko' ? '웹툰월드컵' : 'World Cup'}</button>
+                                    <button onClick={() => setShowHelpModal(true)} className="text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">도움말</button>
+                                </nav>
                             </div>
 
-                            {/* Center: Title (Hidden on small mobile) */}
-                            <div className="absolute left-1/2 -translate-x-1/2 text-center hidden sm:block">
-                                <h1 className="text-xl font-black text-gray-800 tracking-tighter italic border-b-2 border-primary/10">{t.subtitle}</h1>
+                            {/* Center: Search */}
+                            <div className="flex-grow max-w-xl relative">
+                                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
+                                </div>
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => handleSearch(e.target.value)}
+                                    placeholder={lang === 'ko' ? '작가, 장르, 키워드 등을 입력해보세요' : 'Search titles, authors, keywords'}
+                                    className="w-full bg-gray-100 rounded-lg py-2 pl-12 pr-4 text-sm font-medium outline-none focus:bg-gray-200 transition-all border border-transparent focus:border-gray-300"
+                                />
                             </div>
 
-                            {/* Right: Icons */}
-                            <div className="flex gap-2.5 items-center min-w-[120px] justify-end">
+                            {/* Right: Actions */}
+                            <div className="flex items-center gap-4 flex-shrink-0">
+                                <div className="flex items-center gap-1 scale-90 border-r border-gray-100 pr-4 mr-2">
+                                    {[{ code: 'ko', label: 'KO' }, { code: 'en', label: 'EN' }, { code: 'zh', label: 'ZH' }, { code: 'ja', label: 'JA' }].map(l => (
+                                        <button key={l.code} onClick={() => setLang(l.code)}
+                                            className={`px-2 py-1 rounded-md border text-[9px] font-black transition-all ${lang === l.code ? 'bg-primary border-primary text-white shadow-sm' : 'bg-white text-gray-300 border-gray-100'}`}>
+                                            {l.label}
+                                        </button>
+                                    ))}
+                                </div>
                                 {user ? (
-                                    <>
-                                        <button onClick={() => setShowWorldcupModal(true)} title={t.worldcup} className="w-10 h-10 flex items-center justify-center bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-100 shadow-sm transition-all hover:-translate-y-0.5">
-                                            <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current"><path d="M20 2H4c-1.1 0-2 .9-2 2v2c0 1.86 1.28 3.41 3 3.86V16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-6.14c1.72-.45 3-2 3-3.86V4c0-1.1-.9-2-2-2zm-2 14H6v-4h12v4zm2-10c0 .55-.45 1-1 1h-2V4h3v2zM4 4h3v3H5c-.55 0-1-.45-1-1V4zm8 11c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4z"></path></svg>
-                                        </button>
-                                        <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-10 h-10 flex items-center justify-center bg-gray-50 text-gray-500 rounded-xl hover:bg-primary/10 hover:text-primary shadow-sm transition-all hover:-translate-y-0.5">
-                                            <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
-                                        </button>
-                                        <button onClick={() => supabase.auth.signOut()} title={t.logout} className="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-red-500 transition-all">
-                                            <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"></path></svg>
-                                        </button>
-                                    </>
+                                    <div className="flex items-center gap-4">
+                                        <button onClick={() => setShowProfileModal(true)} className="text-sm font-bold text-gray-500 hover:text-gray-900">{lang === 'ko' ? '내 정보' : 'Profile'}</button>
+                                        <button onClick={() => supabase.auth.signOut()} className="text-sm font-bold text-gray-400 hover:text-red-500">{lang === 'ko' ? '로그아웃' : 'Logout'}</button>
+                                    </div>
                                 ) : (
-                                    <button onClick={() => setShowAuthModal(true)} className="px-5 py-2.5 bg-primary text-white text-[11px] font-black rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95 uppercase tracking-widest">{t.login}</button>
-                                )}
-                                {step < 4 ? (
-                                    <button onClick={reset} title={t.main} className={`w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-50 hover:bg-gray-50 transition-all ${step > 1 ? 'visible' : 'hidden'}`}>
-                                        <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-gray-300"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"></path></svg>
-                                    </button>
-                                ) : (
-                                    !loading && (
-                                        <button onClick={() => setShowShareModal(true)} title={t.share} className="w-10 h-10 flex items-center justify-center bg-primary text-white rounded-xl shadow-md hover:scale-105 transition-transform animate-blink">
-                                            <svg viewBox="0 0 24 24" className="w-4.5 h-4.5 fill-current"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"></path></svg>
-                                        </button>
-                                    )
+                                    <div className="flex items-center gap-2">
+                                        <button onClick={() => { setShowAuthModal(true); setAuthMode('login'); }} className="text-xs font-black bg-black text-white px-4 py-2 rounded-full hover:scale-105 transition-transform">{lang === 'ko' ? '로그인' : 'Log In'}</button>
+                                        <button onClick={() => { setShowAuthModal(true); setAuthMode('signup'); email && setAuthMode('signup'); }} className="text-xs font-black bg-[#00DC64] text-white px-4 py-2 rounded-full hover:scale-105 transition-transform">{lang === 'ko' ? '회원가입' : 'Sign Up'}</button>
+                                    </div>
                                 )}
                             </div>
                         </div>
                     </header>
                     <main className="max-w-[1500px] mx-auto px-10 py-10">
-                        <ProgressBar step={step} t={t} />
-                        {step === 1 && (
-                            <div className="animate-up max-w-4xl mx-auto">
-                                <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-600 italic font-bold">{t.step1_desc}</p></div>
-                                <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
-                                <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase tracking-widest">NEXT</button></div>
-                            </div>
-                        )}
-                        {step === 2 && (
-                            <div className="animate-up max-w-4xl mx-auto">
-                                <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step2_title}</h2><p className="text-gray-600 italic font-bold">{t.step2_desc}</p></div>
-                                <div className="space-y-10">
-                                    {categories.map(cat => (
-                                        <div key={cat.name} className="space-y-5">
-                                            <h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3>
-                                            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
-                                                {cat.genres.map((g, idx) => {
-                                                    const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g;
-                                                    const isPreferred = selectedG.includes(g);
-                                                    return (
-                                                        <button
-                                                            key={g}
-                                                            onClick={() => {
-                                                                if (isPreferred) {
-                                                                    setConflictTag(g);
-                                                                } else {
-                                                                    setExcludedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g]);
-                                                                }
-                                                            }}
-                                                            className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${excludedG.includes(g) ? 'bg-red-500 border-red-500 text-white shadow-xl scale-[0.98]' : isPreferred ? 'bg-gray-100 border-gray-100 text-gray-300' : 'bg-white border-gray-100 text-gray-500'}`}
-                                                        >
-                                                            #{label}
-                                                        </button>
-                                                    );
-                                                })}
-                                            </div>
-                                        </div>
-                                    ))}
+                        {view === 'home' && (
+                            <div className="animate-up space-y-16">
+                                <div className="">
+                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-[#00DC64] pl-3">{lang === 'ko' ? '네이버 웹툰 별점 Top 5' : 'Naver Webtoon Top 5'}</h2>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                        {topWebtoons.map((w, idx) => (
+                                            <WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
+                                        ))}
+                                    </div>
                                 </div>
-                                <div className="mt-20 flex gap-4 justify-center"><button onClick={prevStep} className="px-16 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
-                            </div>
-                        )}
-                        {step === 3 && (
-                            <div className="animate-up max-w-2xl mx-auto py-10 px-6">
-                                <div className="text-center mb-12">
-                                    <h2 className="text-3xl font-black mb-4 tracking-tight">{t.step3_title}</h2>
-                                    <p className="text-gray-400 font-medium italic opacity-80 decoration-primary/30 decoration-2">{t.step3_desc || ""}</p>
+
+                                <div className="">
+                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-purple-500 pl-3">🔮 {lang === 'ko' ? '판타지 Top 5' : 'Fantasy Top 5'}</h2>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                        {fantasyTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                    </div>
                                 </div>
-                                <div className="space-y-8">
-                                    <input
-                                        type="text"
-                                        value={favTitle}
-                                        onChange={e => setFavTitle(e.target.value)}
-                                        placeholder={t.step3_placeholder}
-                                        className="w-full py-5 px-8 rounded-3xl bg-white border-2 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-center text-lg shadow-sm transition-all font-bold placeholder:text-gray-200"
-                                    />
-                                    <div className="flex gap-3">
-                                        <button onClick={prevStep} className="flex-1 py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">BACK</button>
-                                        <button
-                                            onClick={handleAnalyze}
-                                            className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
-                                        >
-                                            ANALYZE
-                                        </button>
+
+                                <div className="">
+                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-pink-500 pl-3">💖 {lang === 'ko' ? '로맨스 Top 5' : 'Romance Top 5'}</h2>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                        {romanceTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-orange-500 pl-3">⚔️ {lang === 'ko' ? '무협/사극 Top 5' : 'Martial Arts Top 5'}</h2>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                        {martialTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
+                                    </div>
+                                </div>
+
+                                <div className="">
+                                    <h2 className="text-xl font-black mb-6 text-gray-900 border-l-4 border-yellow-500 pl-3">🌱 {lang === 'ko' ? '일상 Top 5' : 'Slice of Life Top 5'}</h2>
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                        {sliceTop.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}
                                     </div>
                                 </div>
                             </div>
                         )}
-                        {step === 4 && (
-                            <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up max-w-[1400px] mx-auto pb-40 px-6"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
+
+                        {view === 'search' && (
+                            <div className="animate-up">
+                                <div className="mb-10">
+                                    <h2 className="text-xl font-black mb-6 text-gray-900">{lang === 'ko' ? `'${searchQuery}' 검색 결과` : `Search results for '${searchQuery}'`}</h2>
+                                    {searchResults.length === 0 ? (
+                                        <div className="py-20 text-center text-gray-300 font-bold">{t.no_data || 'No results found.'}</div>
+                                    ) : (
+                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                                            {searchResults.map((w, idx) => (
+                                                <WebtoonCard key={w.id} item={w} rank={0} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'worldcup' && (
+                            <div className="animate-up">
+                                <div className="max-w-4xl mx-auto py-10">
+                                    <WorldcupModal
+                                        isOpen={true}
+                                        onClose={() => setView('home')}
+                                        t={t}
+                                        user={user}
+                                        onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
+                                        isViewMode={true}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {view === 'recommend' && (
+                            <>
+                                <ProgressBar step={step} t={t} />
+                                {step === 1 && (
+                                    <div className="animate-up max-w-4xl mx-auto">
+                                        <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step1_title}</h2><p className="text-gray-600 italic font-bold">{t.step1_desc}</p></div>
+                                        <div className="space-y-10">{categories.map(cat => (<div key={cat.name} className="space-y-5"><h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3><div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">{cat.genres.map((g, idx) => { const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g; return (<button key={g} onClick={() => setSelectedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g])} className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${selectedG.includes(g) ? 'bg-primary border-primary text-white shadow-xl scale-[0.98]' : 'bg-white border-gray-100 text-gray-500'}`}>#{label}</button>); })}</div></div>))}</div>
+                                        <div className="mt-20 text-center"><button disabled={selectedG.length === 0} onClick={nextStep} className="w-full sm:w-auto px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl disabled:opacity-20 text-lg uppercase tracking-widest">NEXT</button></div>
+                                    </div>
+                                )}
+                                {step === 2 && (
+                                    <div className="animate-up max-w-4xl mx-auto">
+                                        <div className="text-center mb-14"><h2 className="text-3xl sm:text-4xl font-black mb-4 tracking-tight">{t.step2_title}</h2><p className="text-gray-600 italic font-bold">{t.step2_desc}</p></div>
+                                        <div className="space-y-10">
+                                            {categories.map(cat => (
+                                                <div key={cat.name} className="space-y-5">
+                                                    <h3 className="text-sm font-black text-gray-600 uppercase tracking-widest px-1">{cat.name}</h3>
+                                                    <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                                                        {cat.genres.map((g, idx) => {
+                                                            const label = lang === 'en' ? cat.en[idx] : lang === 'zh' ? cat.zh[idx] : lang === 'ja' ? cat.ja[idx] : g;
+                                                            const isPreferred = selectedG.includes(g);
+                                                            return (
+                                                                <button
+                                                                    key={g}
+                                                                    onClick={() => {
+                                                                        if (isPreferred) {
+                                                                            setConflictTag(g);
+                                                                        } else {
+                                                                            setExcludedG(prev => prev.includes(g) ? prev.filter(it => it !== g) : [...prev, g]);
+                                                                        }
+                                                                    }}
+                                                                    className={`py-4 px-4 rounded-[24px] text-[13px] font-bold border-2 transition-all ${excludedG.includes(g) ? 'bg-red-500 border-red-500 text-white shadow-xl scale-[0.98]' : isPreferred ? 'bg-gray-100 border-gray-100 text-gray-300' : 'bg-white border-gray-100 text-gray-500'}`}
+                                                                >
+                                                                    #{label}
+                                                                </button>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <div className="mt-20 flex gap-4 justify-center"><button onClick={prevStep} className="px-16 py-5 bg-gray-100 text-gray-500 font-bold rounded-full uppercase">BACK</button><button onClick={nextStep} className="px-16 py-5 bg-primary text-white font-black rounded-full shadow-2xl uppercase">CONTINUE</button></div>
+                                    </div>
+                                )}
+                                {step === 3 && (
+                                    <div className="animate-up max-w-2xl mx-auto py-10 px-6">
+                                        <div className="text-center mb-12">
+                                            <h2 className="text-3xl font-black mb-4 tracking-tight">{t.step3_title}</h2>
+                                            <p className="text-gray-400 font-medium italic opacity-80 decoration-primary/30 decoration-2">{t.step3_desc || ""}</p>
+                                        </div>
+                                        <div className="space-y-8">
+                                            <input
+                                                type="text"
+                                                value={favTitle}
+                                                onChange={e => setFavTitle(e.target.value)}
+                                                placeholder={t.step3_placeholder}
+                                                className="w-full py-5 px-8 rounded-3xl bg-white border-2 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none text-center text-lg shadow-sm transition-all font-bold placeholder:text-gray-200"
+                                            />
+                                            <div className="flex gap-3">
+                                                <button onClick={prevStep} className="flex-1 py-4 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">BACK</button>
+                                                <button
+                                                    onClick={handleAnalyze}
+                                                    className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all uppercase tracking-widest"
+                                                >
+                                                    ANALYZE
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                                {step === 4 && (
+                                    <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[8px] border-gray-100 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-300 font-black tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up max-w-[1400px] mx-auto pb-40 px-6"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 italic tracking-tight">{t.result_title}</h2><p className="text-gray-400 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-gray-200 text-gray-300 font-black rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
+                                )}
+                            </>
                         )}
                     </main>
                     {showExcludePopup && (<div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[1000] animate-up"><div className="bg-gray-900/95 backdrop-blur-md text-white px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-3"><span className="text-2xl">🚫</span><p className="font-bold text-sm tracking-tight">{t.exclude_msg}</p></div></div>)}
@@ -1337,48 +1518,53 @@
                     {/* Conflict Confirmation Modal */}
                     {
                         conflictTag && (
-                            <div className="fixed inset-0 z-[110000] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
-                                <div className="bg-white w-full max-w-xs rounded-[40px] shadow-2xl overflow-hidden animate-up p-8 text-center mt-[15vh]">
-                                    <span className="text-3xl mb-4 block">⚠️</span>
-                                    <p className="text-gray-800 font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
-                                    <div className="flex gap-3">
-                                        <button
-                                            onClick={() => {
-                                                setSelectedG(prev => prev.filter(it => it !== conflictTag));
-                                                setExcludedG(prev => [...prev, conflictTag]);
-                                                setConflictTag(null);
-                                            }}
-                                            className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
-                                        >
-                                            {t.yes}
-                                        </button>
-                                        <button
-                                            onClick={() => setConflictTag(null)}
-                                            className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-transform"
-                                        >
-                                            {t.no}
-                                        </button>
+                            <div className="modal-container" onClick={() => setConflictTag(null)}>
+                                <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                                    <div className="bg-white w-full max-w-xs rounded-[40px] shadow-2xl p-8 text-center animate-up">
+                                        <span className="text-3xl mb-4 block">⚠️</span>
+                                        <p className="text-gray-800 font-bold text-sm leading-relaxed mb-8 whitespace-pre-wrap">{t.conflict_msg}</p>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedG(prev => prev.filter(it => it !== conflictTag));
+                                                    setExcludedG(prev => [...prev, conflictTag]);
+                                                    setConflictTag(null);
+                                                }}
+                                                className="flex-1 py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
+                                            >
+                                                {t.yes}
+                                            </button>
+                                            <button
+                                                onClick={() => setConflictTag(null)}
+                                                className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl active:scale-95 transition-transform"
+                                            >
+                                                {t.no}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )
                     }
 
-                    <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={results} />
+                    <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={profileTab === 'liked' ? likedIds.map(id => (window.WEBTOON_DATA || MOCK_WEBTOONS).find(w => (w.titleId || w.id) == id)).filter(Boolean) : results} />
+                    <HelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} t={t} />
 
-                    {showWorldcupModal && (
-                        <div className="modal-container" onClick={() => setShowWorldcupModal(false)}>
-                            <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                <WorldcupModal
-                                    isOpen={showWorldcupModal}
-                                    onClose={() => setShowWorldcupModal(false)}
-                                    t={t}
-                                    user={user}
-                                    onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
-                                />
+                    {
+                        showWorldcupModal && (
+                            <div className="modal-container" onClick={() => setShowWorldcupModal(false)}>
+                                <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                                    <WorldcupModal
+                                        isOpen={showWorldcupModal}
+                                        onClose={() => setShowWorldcupModal(false)}
+                                        t={t}
+                                        user={user}
+                                        onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
+                                    />
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )
+                    }
 
                     {/* Authentication Modal */}
                     {/* Authentication Modal */}
@@ -1423,7 +1609,7 @@
                                                 <div className="flex flex-col gap-4">
                                                     <button
                                                         onClick={async () => {
-                                                            const { error } = await supabase.auth.signInWithPassword({ email, password });
+                                                            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
                                                             if (error) alert(t.login_error_msg || error.message); else setShowAuthModal(false);
                                                         }}
                                                         className="w-full py-4 bg-primary text-white font-black rounded-2xl shadow-lg active:scale-95 transition-transform"
@@ -1439,7 +1625,7 @@
                                                     <button
                                                         onClick={async () => {
                                                             if (!email) { alert("Please enter your email first"); return; }
-                                                            const { error } = await supabase.auth.resetPasswordForEmail(email);
+                                                            const { error } = await supabaseClient.auth.resetPasswordForEmail(email);
                                                             if (error) alert(error.message); else alert(t.reset_pw_msg);
                                                         }}
                                                         className="w-full text-center text-[11px] font-bold text-gray-400 hover:text-primary transition-colors pt-2 border-t border-gray-50 mt-2"
@@ -1452,7 +1638,7 @@
                                                     <button
                                                         disabled={!email || password.length < 6 || password !== confirmPassword}
                                                         onClick={async () => {
-                                                            const { error } = await supabase.auth.signUp({ email, password });
+                                                            const { error } = await supabaseClient.auth.signUp({ email, password });
                                                             if (error) alert(error.message);
                                                             else {
                                                                 alert(t.signup_confirm_msg);
@@ -1493,12 +1679,19 @@
                                         <div className="p-10 pb-6 flex flex-col items-center flex-shrink-0">
                                             <h3 className="text-2xl font-black mb-6 tracking-tighter">{t.my_info}</h3>
                                             <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl w-full">
-                                                <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'liked' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.liked_list}</button>
+                                                <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'liked' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>📚 {lang === 'ko' ? '나의 컬렉션' : 'My Collection'}</button>
                                                 <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'excluded' ? 'bg-white text-red-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.excluded_list}</button>
                                                 <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'worldcup' ? 'bg-white text-yellow-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>🏆 {t.worldcup_history}</button>
                                             </div>
                                         </div>
                                         <div className="flex-grow overflow-y-auto px-10 no-scrollbar">
+                                            {profileTab === 'liked' && (
+                                                <div className="mb-6">
+                                                    <button onClick={() => setShowShareModal(true)} className="w-full py-4 bg-primary/10 text-primary font-black rounded-2xl hover:bg-primary/20 transition-all flex items-center justify-center gap-2">
+                                                        <span>🔗</span> 컬렉션 공유하기
+                                                    </button>
+                                                </div>
+                                            )}
                                             {profileTab === 'worldcup' ? (
                                                 <div className="space-y-4 pb-10">
                                                     {worldcupHistory.length === 0 ? (
@@ -1549,10 +1742,10 @@
                                                                         <button
                                                                             onClick={async () => {
                                                                                 if (profileTab === 'liked') {
-                                                                                    await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                                    await supabaseClient.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
                                                                                     setLikedIds(prev => prev.filter(it => it !== id));
                                                                                 } else {
-                                                                                    await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                                    await supabaseClient.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
                                                                                     setDislikedIds(prev => prev.filter(it => it !== id));
                                                                                 }
                                                                             }}
@@ -1569,10 +1762,10 @@
                                                                                 onChange={async (e) => {
                                                                                     const checked = e.target.checked;
                                                                                     if (checked) {
-                                                                                        await supabase.from('excluded_from_recommendations').insert({ user_id: user.id, webtoon_id: id });
+                                                                                        await supabaseClient.from('excluded_from_recommendations').insert({ user_id: user.id, webtoon_id: id });
                                                                                         setExcludedFromRecoIds(prev => [...prev, id]);
                                                                                     } else {
-                                                                                        await supabase.from('excluded_from_recommendations').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                                        await supabaseClient.from('excluded_from_recommendations').delete().eq('user_id', user.id).eq('webtoon_id', id);
                                                                                         setExcludedFromRecoIds(prev => prev.filter(it => it !== id));
                                                                                     }
                                                                                 }}
@@ -1593,9 +1786,9 @@
                                             <button
                                                 onClick={async () => {
                                                     if (confirm(t.delete_confirm)) {
-                                                        await supabase.from('favorite_webtoons').delete().eq('user_id', user.id);
-                                                        await supabase.from('excluded_webtoons').delete().eq('user_id', user.id);
-                                                        await supabase.auth.signOut();
+                                                        await supabaseClient.from('favorite_webtoons').delete().eq('user_id', user.id);
+                                                        await supabaseClient.from('excluded_webtoons').delete().eq('user_id', user.id);
+                                                        await supabaseClient.auth.signOut();
                                                         alert("All data cleared. Your account is now inactive.");
                                                         setShowProfileModal(false);
                                                     }

@@ -193,7 +193,19 @@
                 go_to_login: "이미 계정이 있으신가요? 로그인",
                 signup_confirm_msg: "가입 확인 메일이 발송되었습니다! 메일함을 확인해주세요.",
                 login_error_msg: "로그인 정보가 올바르지 않습니다.",
-                signup_success: "회원가입이 완료되었습니다!"
+                signup_success: "회원가입이 완료되었습니다!",
+                worldcup: "웹툰 월드컵",
+                worldcup_title: "웹툰 이상형 월드컵",
+                worldcup_select_round: "라운드 선택",
+                worldcup_start: "시작하기",
+                worldcup_vs: "VS",
+                worldcup_round: "강",
+                worldcup_final: "결승",
+                worldcup_winner: "우승",
+                worldcup_result: "월드컵 결과",
+                worldcup_history: "월드컵 기록",
+                exclude_from_reco: "추천 제외",
+                exclude_from_reco_desc: "선호도에는 영향을 주지만 추천 결과에서는 제외됩니다"
             },
             en: {
                 subtitle: "Find Naver Webtoons That Match Your Taste(With AI)",
@@ -262,7 +274,19 @@
                 go_to_login: "Already have an account? Login",
                 signup_confirm_msg: "Confirmation email sent! Please check your inbox.",
                 login_error_msg: "Invalid login credentials.",
-                signup_success: "Sign-up completed successfully!"
+                signup_success: "Sign-up completed successfully!",
+                worldcup: "Webtoon Worldcup",
+                worldcup_title: "Webtoon Ideal Type Worldcup",
+                worldcup_select_round: "Select Round",
+                worldcup_start: "Start",
+                worldcup_vs: "VS",
+                worldcup_round: "Round",
+                worldcup_final: "Final",
+                worldcup_winner: "Winner",
+                worldcup_result: "Worldcup Result",
+                worldcup_history: "Worldcup History",
+                exclude_from_reco: "Exclude from Recommendations",
+                exclude_from_reco_desc: "Affects preference but excluded from recommendation results"
             },
             zh: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -331,7 +355,19 @@
                 go_to_login: "已有账号？登录",
                 signup_confirm_msg: "确认邮件已发送！请检查您的收件箱。",
                 login_error_msg: "登录信息无效。",
-                signup_success: "注册成功！"
+                signup_success: "注册成功！",
+                worldcup: "漫画世界杯",
+                worldcup_title: "漫画理想型世界杯",
+                worldcup_select_round: "选择轮次",
+                worldcup_start: "开始",
+                worldcup_vs: "VS",
+                worldcup_round: "强",
+                worldcup_final: "决赛",
+                worldcup_winner: "冠军",
+                worldcup_result: "世界杯结果",
+                worldcup_history: "世界杯记录",
+                exclude_from_reco: "排除推荐",
+                exclude_from_reco_desc: "影响偏好但不在推荐结果中显示"
             },
             ja: {
                 subtitle: "My Pick Naver WebToon(with AI)",
@@ -400,7 +436,19 @@
                 go_to_login: "すでにアカウントをお持ちですか？ ログイン",
                 signup_confirm_msg: "確認メールを送信しました！メールボックスを確認してください。",
                 login_error_msg: "ログイン情報が正しくありません。",
-                signup_success: "会員登録が完了しました！"
+                signup_success: "会員登録が完了しました！",
+                worldcup: "ウェブトゥーンワールドカップ",
+                worldcup_title: "ウェブトゥーン理想型ワールドカップ",
+                worldcup_select_round: "ラウンド選択",
+                worldcup_start: "スタート",
+                worldcup_vs: "VS",
+                worldcup_round: "強",
+                worldcup_final: "決勝",
+                worldcup_winner: "優勝",
+                worldcup_result: "ワールドカップ結果",
+                worldcup_history: "ワールドカップ記録",
+                exclude_from_reco: "推薦除外",
+                exclude_from_reco_desc: "好みに影響するが推薦結果からは除外されます"
             }
         };
 
@@ -585,6 +633,199 @@
             );
         };
 
+        const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult }) => {
+            const [stage, setStage] = useState('select'); // 'select', 'playing', 'result'
+            const [selectedRound, setSelectedRound] = useState(16);
+            const [matches, setMatches] = useState([]);
+            const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+            const [winners, setWinners] = useState([]);
+            const [finalWinner, setFinalWinner] = useState(null);
+
+            useEffect(() => {
+                if (isOpen) {
+                    document.body.classList.add('modal-open');
+                } else {
+                    document.body.classList.remove('modal-open');
+                    // Reset on close
+                    setStage('select');
+                    setMatches([]);
+                    setCurrentMatchIndex(0);
+                    setWinners([]);
+                    setFinalWinner(null);
+                }
+                return () => document.body.classList.remove('modal-open');
+            }, [isOpen]);
+
+            if (!isOpen) return null;
+
+            const startWorldcup = () => {
+                const rawData = window.WEBTOON_DATA || [];
+                if (rawData.length < selectedRound) {
+                    alert(`웹툰 데이터가 부족합니다. 최소 ${selectedRound}개 필요합니다.`);
+                    return;
+                }
+
+                // Shuffle and select webtoons
+                const shuffled = [...rawData].sort(() => Math.random() - 0.5);
+                const selected = shuffled.slice(0, selectedRound);
+
+                // Create initial matches
+                const initialMatches = [];
+                for (let i = 0; i < selected.length; i += 2) {
+                    initialMatches.push([selected[i], selected[i + 1]]);
+                }
+
+                setMatches(initialMatches);
+                setCurrentMatchIndex(0);
+                setWinners([]);
+                setStage('playing');
+            };
+
+            const selectWinner = (webtoon) => {
+                const newWinners = [...winners, webtoon];
+
+                if (currentMatchIndex + 1 < matches.length) {
+                    // Move to next match
+                    setCurrentMatchIndex(currentMatchIndex + 1);
+                    setWinners(newWinners);
+                } else {
+                    // Round complete
+                    if (newWinners.length === 1) {
+                        // Tournament complete!
+                        setFinalWinner(newWinners[0]);
+                        setStage('result');
+                        saveWorldcupResult(newWinners[0], selectedRound);
+                    } else {
+                        // Start next round
+                        const nextMatches = [];
+                        for (let i = 0; i < newWinners.length; i += 2) {
+                            nextMatches.push([newWinners[i], newWinners[i + 1]]);
+                        }
+                        setMatches(nextMatches);
+                        setCurrentMatchIndex(0);
+                        setWinners([]);
+                    }
+                }
+            };
+
+            const saveWorldcupResult = async (winner, round) => {
+                if (!user) return;
+
+                const result = {
+                    user_id: user.id,
+                    winner_id: winner.titleId || winner.id,
+                    winner_title: winner.titleName || winner.title,
+                    round: round,
+                    created_at: new Date().toISOString()
+                };
+
+                await supabase.from('worldcup_results').insert(result);
+                if (onSaveResult) onSaveResult(result);
+            };
+
+            const getCurrentRound = () => {
+                const remaining = matches.length * 2;
+                if (remaining === 2) return t.worldcup_final;
+                return `${remaining}${t.worldcup_round}`;
+            };
+
+            const currentMatch = matches[currentMatchIndex];
+
+            return (
+                <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={onClose}>
+                    <div className="bg-white w-full max-w-4xl rounded-[40px] shadow-2xl overflow-hidden animate-up max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                        {stage === 'select' && (
+                            <div className="p-10">
+                                <h2 className="text-3xl font-black text-center mb-8 tracking-tight">{t.worldcup_title}</h2>
+                                <p className="text-center text-gray-500 mb-10 font-medium">{t.worldcup_select_round}</p>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+                                    {[16, 32, 64, 128, 256, 512, 1024, 2048].map(round => (
+                                        <button
+                                            key={round}
+                                            onClick={() => setSelectedRound(round)}
+                                            className={`py-6 px-4 rounded-2xl font-black text-lg transition-all ${selectedRound === round
+                                                ? 'bg-primary text-white shadow-xl scale-105'
+                                                : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            {round}{t.worldcup_round}
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="flex gap-4">
+                                    <button onClick={onClose} className="flex-1 py-4 bg-gray-100 text-gray-500 font-bold rounded-2xl">닫기</button>
+                                    <button onClick={startWorldcup} className="flex-[2] py-4 bg-primary text-white font-black rounded-2xl shadow-xl">{t.worldcup_start}</button>
+                                </div>
+                            </div>
+                        )}
+
+                        {stage === 'playing' && currentMatch && (
+                            <div className="p-10">
+                                <div className="text-center mb-8">
+                                    <h3 className="text-2xl font-black mb-2">{getCurrentRound()}</h3>
+                                    <p className="text-gray-400 font-medium">{currentMatchIndex + 1} / {matches.length}</p>
+                                </div>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {currentMatch.map((webtoon, idx) => (
+                                        <>
+                                            <button
+                                                key={idx}
+                                                onClick={() => selectWinner(webtoon)}
+                                                className="group relative bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100 hover:border-primary"
+                                            >
+                                                <div className="aspect-[3/4] overflow-hidden bg-gray-100">
+                                                    <img
+                                                        src={webtoon.thumbnailUrl || webtoon.thumbnail}
+                                                        referrerPolicy="no-referrer"
+                                                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                        onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
+                                                    />
+                                                </div>
+                                                <div className="p-6 bg-gradient-to-t from-white to-transparent">
+                                                    <h4 className="text-lg font-black text-gray-900 line-clamp-2 mb-2">{webtoon.titleName || webtoon.title}</h4>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {(webtoon.tags || []).slice(0, 3).map((tag, i) => (
+                                                            <span key={i} className="text-[10px] font-bold text-primary bg-orange-50 px-2 py-0.5 rounded-md">#{tag}</span>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            </button>
+                                            {idx === 0 && <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"><span className="text-4xl font-black text-primary bg-white px-6 py-3 rounded-2xl shadow-xl">{t.worldcup_vs}</span></div>}
+                                        </>
+                                    ))}
+                                </div>
+                                <div className="md:hidden text-center my-6"><span className="text-4xl font-black text-primary">{t.worldcup_vs}</span></div>
+                            </div>
+                        )}
+
+                        {stage === 'result' && finalWinner && (
+                            <div className="p-10 text-center">
+                                <div className="text-6xl mb-6">🏆</div>
+                                <h2 className="text-3xl font-black mb-4">{t.worldcup_winner}</h2>
+                                <div className="max-w-sm mx-auto mb-8">
+                                    <div className="bg-white rounded-3xl overflow-hidden shadow-xl border-4 border-primary">
+                                        <div className="aspect-[3/4] overflow-hidden bg-gray-100">
+                                            <img
+                                                src={finalWinner.thumbnailUrl || finalWinner.thumbnail}
+                                                referrerPolicy="no-referrer"
+                                                className="w-full h-full object-cover"
+                                                onError={(e) => { e.target.src = "https://via.placeholder.com/400?text=No Image"; }}
+                                            />
+                                        </div>
+                                        <div className="p-6">
+                                            <h3 className="text-2xl font-black text-gray-900 mb-3">{finalWinner.titleName || finalWinner.title}</h3>
+                                            <p className="text-sm text-gray-500 font-medium">{selectedRound}{t.worldcup_round} {t.worldcup_winner}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onClick={onClose} className="px-16 py-4 bg-primary text-white font-black rounded-2xl shadow-xl hover:scale-105 transition-transform">완료</button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
         const App = () => {
             const [lang, setLang] = useState('ko');
             const [step, setStep] = useState(1);
@@ -609,6 +850,13 @@
             const [email, setEmail] = useState('');
             const [password, setPassword] = useState('');
             const [confirmPassword, setConfirmPassword] = useState('');
+            const [showWorldcupModal, setShowWorldcupModal] = useState(false);
+            const [worldcupRound, setWorldcupRound] = useState(16);
+            const [worldcupMatches, setWorldcupMatches] = useState([]);
+            const [worldcupCurrentMatch, setWorldcupCurrentMatch] = useState(0);
+            const [worldcupWinners, setWorldcupWinners] = useState([]);
+            const [worldcupHistory, setWorldcupHistory] = useState([]);
+            const [excludedFromRecoIds, setExcludedFromRecoIds] = useState([]);
 
             const t = TRANSLATIONS[lang] || TRANSLATIONS.ko;
 
@@ -636,6 +884,14 @@
                 if (exData) setDislikedIds(exData.map(d => d.webtoon_id));
                 const { data: favData } = await supabase.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
                 if (favData) setLikedIds(favData.map(d => d.webtoon_id));
+
+                // Load worldcup history
+                const { data: wcData } = await supabase.from('worldcup_results').select('*').eq('user_id', userId).order('created_at', { ascending: false });
+                if (wcData) setWorldcupHistory(wcData);
+
+                // Load excluded from recommendations
+                const { data: exRecoData } = await supabase.from('excluded_from_recommendations').select('webtoon_id').eq('user_id', userId);
+                if (exRecoData) setExcludedFromRecoIds(exRecoData.map(d => d.webtoon_id));
             };
 
             const toggleLike = async (id) => {
@@ -679,6 +935,9 @@
                 const likedWebtoons = rawData.filter(w => likedIds.includes(w.titleId || w.id));
                 const preferredLegacyTags = likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []);
 
+                // Get worldcup winners for bonus scoring
+                const worldcupWinnerIds = worldcupHistory.map(h => h.winner_id);
+
                 const scoredData = rawData.map(item => {
                     const webtoon = {
                         id: item.titleId || item.id,
@@ -715,10 +974,15 @@
                         score += (overlap * 5);
                     }
 
+                    // Bonus for worldcup winners
+                    if (worldcupWinnerIds.includes(webtoon.id)) {
+                        score += 15;
+                    }
+
                     return { ...webtoon, match: Math.min(99, score + (Math.random() * 5)) };
                 });
 
-                const sorted = scoredData.filter(w => w.match > 0).sort((a, b) => {
+                const sorted = scoredData.filter(w => w.match > 0 && !excludedFromRecoIds.includes(w.id)).sort((a, b) => {
                     let scoreA = a.match;
                     let scoreB = b.match;
                     if (dislikedIds.includes(a.id)) scoreA -= 50;
@@ -737,12 +1001,16 @@
                 const isDisliked = dislikedIds.includes(id);
                 if (isDisliked) {
                     await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
-                    setDislikedIds(prev => prev.filter(it => it !== id));
+                    const newDislikedIds = dislikedIds.filter(it => it !== id);
+                    setDislikedIds(newDislikedIds);
+                    localStorage.setItem('excludedWebtoons', JSON.stringify(newDislikedIds));
                 } else {
                     // Remove from likes if it was liked
                     if (likedIds.includes(id)) toggleLike(id);
                     await supabase.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: id });
-                    setDislikedIds(prev => [...prev, id]);
+                    const newDislikedIds = [...dislikedIds, id];
+                    setDislikedIds(newDislikedIds);
+                    localStorage.setItem('excludedWebtoons', JSON.stringify(newDislikedIds));
                 }
             };
 
@@ -767,6 +1035,9 @@
                                     <div className="flex gap-2 items-center">
                                         {user ? (
                                             <>
+                                                <button onClick={() => setShowWorldcupModal(true)} title={t.worldcup} className="w-9 h-9 flex items-center justify-center bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-100 transition-all">
+                                                    <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M20 2H4c-1.1 0-2 .9-2 2v2c0 1.86 1.28 3.41 3 3.86V16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-6.14c1.72-.45 3-2 3-3.86V4c0-1.1-.9-2-2-2zm-2 14H6v-4h12v4zm2-10c0 .55-.45 1-1 1h-2V4h3v2zM4 4h3v3H5c-.55 0-1-.45-1-1V4zm8 11c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4z"></path></svg>
+                                                </button>
                                                 <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-500 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
                                                     <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
                                                 </button>
@@ -808,6 +1079,9 @@
                                 <div className="flex gap-2 items-center">
                                     {user ? (
                                         <>
+                                            <button onClick={() => setShowWorldcupModal(true)} title={t.worldcup} className="w-9 h-9 flex items-center justify-center bg-yellow-50 text-yellow-600 rounded-xl hover:bg-yellow-100 transition-all">
+                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M20 2H4c-1.1 0-2 .9-2 2v2c0 1.86 1.28 3.41 3 3.86V16c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-6.14c1.72-.45 3-2 3-3.86V4c0-1.1-.9-2-2-2zm-2 14H6v-4h12v4zm2-10c0 .55-.45 1-1 1h-2V4h3v2zM4 4h3v3H5c-.55 0-1-.45-1-1V4zm8 11c-2.21 0-4 1.79-4 4h8c0-2.21-1.79-4-4-4z"></path></svg>
+                                            </button>
                                             <button onClick={() => setShowProfileModal(true)} title={t.my_info} className="w-9 h-9 flex items-center justify-center bg-gray-50 text-gray-500 rounded-xl hover:bg-primary/10 hover:text-primary transition-all">
                                                 <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
                                             </button>
@@ -942,6 +1216,14 @@
 
                     <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={results} />
 
+                    <WorldcupModal
+                        isOpen={showWorldcupModal}
+                        onClose={() => setShowWorldcupModal(false)}
+                        t={t}
+                        user={user}
+                        onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
+                    />
+
                     {/* Authentication Modal */}
                     {/* Authentication Modal */}
                     {
@@ -1054,45 +1336,99 @@
                                         <div className="flex gap-2 p-1.5 bg-gray-100 rounded-2xl w-full">
                                             <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'liked' ? 'bg-white text-primary shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.liked_list}</button>
                                             <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'excluded' ? 'bg-white text-red-500 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>{t.excluded_list}</button>
+                                            <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all ${profileTab === 'worldcup' ? 'bg-white text-yellow-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>🏆 {t.worldcup_history}</button>
                                         </div>
                                     </div>
                                     <div className="flex-grow overflow-y-auto px-10 no-scrollbar">
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-10">
-                                            {(profileTab === 'liked' ? likedIds : excludedIds).length === 0 ? (
-                                                <div className="col-span-full py-20 text-center text-gray-300 font-bold">{t.no_data}</div>
-                                            ) : (
-                                                (profileTab === 'liked' ? likedIds : excludedIds).map(id => {
-                                                    const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                                                    const w = rawData.find(it => (it.titleId || it.id) == id);
-                                                    if (!w) return null;
-                                                    return (
-                                                        <div key={id} className="flex gap-4 p-4 rounded-[28px] border border-gray-50 bg-gray-50/50 hover:bg-white hover:shadow-soft transition-all group">
-                                                            <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
-                                                                <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                        {profileTab === 'worldcup' ? (
+                                            <div className="space-y-4 pb-10">
+                                                {worldcupHistory.length === 0 ? (
+                                                    <div className="py-20 text-center text-gray-300 font-bold">{t.no_data}</div>
+                                                ) : (
+                                                    worldcupHistory.map((record, idx) => {
+                                                        const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                                                        const w = rawData.find(it => (it.titleId || it.id) == record.winner_id);
+                                                        return (
+                                                            <div key={idx} className="flex gap-4 p-4 rounded-[28px] border border-yellow-100 bg-yellow-50/30 hover:bg-yellow-50 transition-all">
+                                                                {w && (
+                                                                    <>
+                                                                        <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                                                                            <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                                                        </div>
+                                                                        <div className="flex flex-col justify-center min-w-0 flex-grow">
+                                                                            <h4 className="font-extrabold text-gray-900 text-sm truncate tracking-tight">{record.winner_title}</h4>
+                                                                            <p className="text-[10px] font-bold text-yellow-600 uppercase mt-1">🏆 {record.round}{t.worldcup_round} {t.worldcup_winner}</p>
+                                                                            <p className="text-[9px] text-gray-400 mt-1">{new Date(record.created_at).toLocaleDateString()}</p>
+                                                                        </div>
+                                                                    </>
+                                                                )}
                                                             </div>
-                                                            <div className="flex flex-col justify-center min-w-0 flex-grow">
-                                                                <h4 className="font-extrabold text-gray-900 text-sm truncate tracking-tight">{w.titleName || w.title}</h4>
-                                                                <p className="text-[10px] font-bold text-gray-400 uppercase mt-1">{(w.tags || []).slice(0, 2).join(' ')}</p>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-10">
+                                                {(profileTab === 'liked' ? likedIds : dislikedIds).length === 0 ? (
+                                                    <div className="col-span-full py-20 text-center text-gray-300 font-bold">{t.no_data}</div>
+                                                ) : (
+                                                    (profileTab === 'liked' ? likedIds : dislikedIds).map(id => {
+                                                        const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                                                        const w = rawData.find(it => (it.titleId || it.id) == id);
+                                                        if (!w) return null;
+                                                        const isExcludedFromReco = excludedFromRecoIds.includes(id);
+                                                        return (
+                                                            <div key={id} className="flex flex-col gap-3 p-4 rounded-[28px] border border-gray-50 bg-gray-50/50 hover:bg-white hover:shadow-soft transition-all group">
+                                                                <div className="flex gap-4">
+                                                                    <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                                                                        <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                                                    </div>
+                                                                    <div className="flex flex-col justify-center min-w-0 flex-grow">
+                                                                        <h4 className="font-extrabold text-gray-900 text-sm truncate tracking-tight">{w.titleName || w.title}</h4>
+                                                                        <p className="text-[10px] font-bold text-gray-400 uppercase mt-1">{(w.tags || []).slice(0, 2).join(' ')}</p>
+                                                                    </div>
+                                                                    <button
+                                                                        onClick={async () => {
+                                                                            if (profileTab === 'liked') {
+                                                                                await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                                setLikedIds(prev => prev.filter(it => it !== id));
+                                                                            } else {
+                                                                                await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                                setDislikedIds(prev => prev.filter(it => it !== id));
+                                                                            }
+                                                                        }}
+                                                                        className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-300 hover:text-red-500 shadow-sm transition-all"
+                                                                    >
+                                                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
+                                                                    </button>
+                                                                </div>
+                                                                <div className="flex items-center justify-between px-2 pt-2 border-t border-gray-100">
+                                                                    <label className="flex items-center gap-2 cursor-pointer group/toggle">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={isExcludedFromReco}
+                                                                            onChange={async (e) => {
+                                                                                const checked = e.target.checked;
+                                                                                if (checked) {
+                                                                                    await supabase.from('excluded_from_recommendations').insert({ user_id: user.id, webtoon_id: id });
+                                                                                    setExcludedFromRecoIds(prev => [...prev, id]);
+                                                                                } else {
+                                                                                    await supabase.from('excluded_from_recommendations').delete().eq('user_id', user.id).eq('webtoon_id', id);
+                                                                                    setExcludedFromRecoIds(prev => prev.filter(it => it !== id));
+                                                                                }
+                                                                            }}
+                                                                            className="w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                                                        />
+                                                                        <span className="text-[10px] font-bold text-gray-500 group-hover/toggle:text-gray-700">{t.exclude_from_reco}</span>
+                                                                    </label>
+                                                                    <span className="text-[9px] text-gray-400">{t.exclude_from_reco_desc}</span>
+                                                                </div>
                                                             </div>
-                                                            <button
-                                                                onClick={async () => {
-                                                                    if (profileTab === 'liked') {
-                                                                        await supabase.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
-                                                                        setLikedIds(prev => prev.filter(it => it !== id));
-                                                                    } else {
-                                                                        await supabase.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
-                                                                        setExcludedIds(prev => prev.filter(it => it !== id));
-                                                                    }
-                                                                }}
-                                                                className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full bg-white text-gray-300 hover:text-red-500 shadow-sm transition-all"
-                                                            >
-                                                                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
-                                                            </button>
-                                                        </div>
-                                                    );
-                                                })
-                                            )}
-                                        </div>
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                     <div className="p-10 pt-6 border-t border-gray-50 flex flex-col gap-4 flex-shrink-0">
                                         <button

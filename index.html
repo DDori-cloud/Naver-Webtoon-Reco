@@ -485,6 +485,57 @@
             }
         ];
 
+        // 유사 장르 매핑 - 메인 장르 선택 시 관련 태그도 함께 반영
+        const RELATED_GENRES = {
+            // 메인 장르
+            "로맨스": ["순정", "러브", "연애", "설렘", "달달", "소개팅", "짝사랑", "청춘로맨스", "학원로맨스", "리얼로맨스", "고자극로맨스", "혐관로맨스", "선결로맨스", "로코", "러블리", "직진남", "직진녀", "순애", "감성로맨스"],
+            "판타지": ["마법", "던전", "이세계", "헌터물", "중세판타지", "동양풍판타지", "액션판타지", "다크판타지", "게임판타지", "판무", "용사", "마왕", "신화", "세계관", "이능력", "초능력", "마검"],
+            "액션": ["배틀", "전투", "격투", "격투기", "이능력배틀물", "액션판타지", "액션아포칼립스", "싸움", "전쟁", "열혈", "소년왕도물"],
+            "드라마": ["감성드라마", "성장드라마", "직업드라마", "고자극드라마", "감동", "하이퍼리얼리즘", "인간드라마", "사회고발", "사연"],
+            "스릴러": ["공포", "호러", "미스터리", "서스펜스", "고자극스릴러", "범죄", "추리", "긴장감", "오컬트", "귀신", "살인", "잔혹"],
+            "무협/사극": ["무협", "사극", "정통무협", "시대물", "동양", "동양풍판타지", "판무", "중국", "조선", "궁중"],
+            "개그": ["코미디", "병맛", "일상개그", "판타지개그", "일상개그힐링", "개그물", "웃긴", "유머", "4차원", "공감성수치"],
+            "일상": ["일상물", "슬라이스오브라이프", "힐링", "잔잔", "공감", "가벼운", "무해한", "소소한", "컷툰"],
+            "감성": ["감성적인", "감동", "눈물", "힐링", "따뜻한", "잔잔", "심쿵", "설렘"],
+            "스포츠": ["운동", "축구", "야구", "농구", "배구", "격투기", "복싱", "무술"],
+            // 인기 소재
+            "회귀": ["타임슬립", "시간이동", "과거회귀", "환생", "리셋", "다시시작", "두번째인생"],
+            "빙의": ["빙의물", "영혼이동", "트랜스", "몸바꿈", "환생", "전생"],
+            "먼치킨": ["사기캐", "최강", "무쌍", "고인물", "힘숨찐", "압도적", "성장물"],
+            "아이돌": ["연예인", "아이돌물", "스타", "팬덤", "셀럽", "연예계"],
+            "게임판타지": ["게임", "상태창", "레벨업", "시스템", "스탯", "헌터물", "던전물", "플레이어"],
+            "복수": ["복수극", "복수물", "사이다", "피카레스크", "참교육"],
+            "학원물": ["학교", "학생", "고등학교", "대학교", "청춘", "하이틴", "교복"],
+            "오피스": ["회사", "직장", "사무실", "직장인", "비즈니스", "CEO", "재벌"],
+            "로판": ["로맨스판타지", "성장로판", "여주", "공작", "황제", "황녀", "왕족/귀족", "빙의"],
+            "이세계": ["이세계물", "차원이동", "소환", "다른세계", "평행세계", "이계"],
+            // 스토리 특징
+            "사이다": ["통쾌", "시원", "참교육", "복수", "피카레스크"],
+            "힐링": ["힐링물", "따뜻한", "잔잔", "무해한", "휴식", "위로", "일상개그힐링"],
+            "성장물": ["성장", "성장드라마", "성장로판", "소년왕도물", "주인공성장"],
+            "두뇌싸움": ["심리전", "전략", "마인드게임", "지능전", "계략", "음모"],
+            "서스펜스": ["긴장감", "미스터리", "스릴러", "추리", "반전"]
+        };
+
+        // 선택한 장르를 확장하여 관련 장르 키워드 배열 반환
+        const expandGenres = (selectedGenres) => {
+            const expanded = new Set();
+            selectedGenres.forEach(genre => {
+                // 원본 장르 추가
+                if (genre.includes('/')) {
+                    genre.split('/').forEach(g => expanded.add(g.trim()));
+                } else {
+                    expanded.add(genre);
+                }
+                // 관련 장르 추가
+                const related = RELATED_GENRES[genre];
+                if (related) {
+                    related.forEach(r => expanded.add(r));
+                }
+            });
+            return Array.from(expanded);
+        };
+
         const MOCK_WEBTOONS = [
             { id: "641253", title: "외모지상주의", tags: ["에피소드", "액션", "박태준", "금요웹툰"], thumbnail: "https://image-comic.pstatic.net/webtoon/641253/thumbnail/thumbnail_IMAG21_d894f11f-668a-4046-8692-730a961f7743.jpg", match: 98, status: 'ONGOING' },
             { id: "183559", title: "신의 탑", tags: ["판타지", "먼치킨", "장대한서사"], thumbnail: "https://image-comic.pstatic.net/webtoon/183559/thumbnail/thumbnail_IMAG21_56133031-69f8-45a7-96a9-858348b4e720.jpg", match: 96, status: 'ONGOING' }
@@ -993,21 +1044,40 @@
                     };
 
                     if (dislikedIds.includes(webtoon.id)) return { ...webtoon, match: 0 };
-                    if (excludedG.length > 0) {
-                        const hasExcludedTag = excludedG.some(ex =>
-                            webtoon.tags.some(t => String(t).includes(ex)) || webtoon.title.includes(ex)
-                        );
-                        if (hasExcludedTag) return { ...webtoon, match: 0 };
-                    }
 
                     let score = 50;
                     if (statusFilters.length > 0) {
                         const myStatus = webtoon.status === 'FINISHED' ? '완결' : '연재중';
                         if (!statusFilters.includes(myStatus)) return { ...webtoon, match: 0 };
                     }
+
+                    // 확장된 장르 매칭 (유사 장르 포함)
+                    const expandedPrefs = expandGenres(genrePreferences);
+                    const expandedExcluded = expandGenres(excludedG);
+
+                    // 비선호 장르 체크 (확장된 키워드 적용)
+                    if (expandedExcluded.length > 0) {
+                        const hasExcludedTag = expandedExcluded.some(ex =>
+                            webtoon.tags.some(t => String(t).toLowerCase().includes(ex.toLowerCase())) ||
+                            webtoon.title.toLowerCase().includes(ex.toLowerCase())
+                        );
+                        if (hasExcludedTag) return { ...webtoon, match: 0 };
+                    }
+
+                    // 선호 장르 점수 계산 (확장된 키워드 적용)
+                    expandedPrefs.forEach(pref => {
+                        if (webtoon.tags.some(t => String(t).toLowerCase().includes(pref.toLowerCase())) ||
+                            webtoon.title.toLowerCase().includes(pref.toLowerCase())) {
+                            score += 15; // 유사 장르는 약간 낮은 점수
+                        }
+                    });
+
+                    // 원본 선호 장르는 추가 보너스
                     genrePreferences.forEach(pref => {
                         const keywords = pref.includes('/') ? pref.split('/') : [pref];
-                        if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) score += 20;
+                        if (keywords.some(k => webtoon.tags.some(t => String(t).includes(k)) || webtoon.title.includes(k))) {
+                            score += 10; // 원본 매칭 보너스
+                        }
                     });
 
                     // Bonus for similarity to liked webtoons

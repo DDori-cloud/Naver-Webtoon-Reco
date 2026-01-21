@@ -33,6 +33,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    /* 모바일 터치 하이라이트 제거 */
 }
 
 body {
@@ -625,28 +627,197 @@ body {
 }
 
 /* ============================================
-   Responsive
+   Responsive & Mobile Optimization
    ============================================ */
 @media (max-width: 768px) {
+
+    /* Main Layout */
+    main {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+        margin-top: 60px !important;
+        /* 헤더 높이 반영 */
+    }
+
+    /* Header Layout */
+    header {
+        position: fixed;
+        width: 100%;
+        z-index: 100000;
+    }
+
+    header>div {
+        height: auto !important;
+        /* 고정 높이 해제 */
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+        padding: 0.75rem 1rem !important;
+        justify-content: space-between;
+    }
+
+    /* Header: Logo */
+    header>div>div:nth-child(1) {
+        order: 1;
+        width: auto;
+    }
+
+    /* Header: Right Actions (Lang, Login) */
+    header>div>div:last-child {
+        order: 2;
+        margin-left: auto;
+    }
+
+    /* Header: Navigation (Hidden by tailwind logic, force show as scrollable row) */
+    header nav {
+        display: flex !important;
+        order: 3;
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+        margin-top: 4px;
+        gap: 1.5rem !important;
+        -ms-overflow-style: none;
+        /* Icon hidden */
+        scrollbar-width: none;
+        white-space: nowrap;
+        justify-content: flex-start;
+    }
+
+    header nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    header nav button {
+        flex-shrink: 0;
+        font-size: 0.9rem !important;
+        padding: 4px 0;
+    }
+
+    /* Header: Search Bar */
+    header>div>.flex-grow {
+        order: 4;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-top: 0.5rem;
+    }
+
+    header .flex-grow input {
+        font-size: 16px !important;
+        /* iOS 줌 방지 */
+    }
+
+    /* Hero Section */
+    .hero-section {
+        padding: 40px 0 !important;
+        text-align: center;
+    }
+
     .hero-headline {
-        font-size: 1.75rem;
+        font-size: 1.8rem !important;
+        line-height: 1.3 !important;
+        word-break: keep-all;
+        /* 단어 단위 줄바꿈 */
+        margin-bottom: 1rem !important;
     }
 
-    .horizontal-scroll .webtoon-card {
-        flex: 0 0 160px;
+    /* Hero Description */
+    .hero-section p {
+        font-size: 0.95rem !important;
+        max-width: 90%;
+        margin: 0 auto 2rem auto !important;
     }
 
+    /* Hero Covers override scale adjustments */
+    .hero-covers {
+        margin-top: 2rem !important;
+        transform: scale(0.9);
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* Center align hero content strictly */
+    .hero-section .flex-col {
+        align-items: center !important;
+        padding-left: 0 !important;
+    }
+
+    .hero-section button.btn-cta {
+        margin: 0 auto;
+        /* 버튼 중앙 정렬 */
+    }
+
+    /* Worldcup VS Section */
     .worldcup-vs {
-        flex-direction: column;
-        gap: 24px;
+        flex-direction: column !important;
+        gap: 20px !important;
+        padding: 20px !important;
     }
 
     .worldcup-card .cover {
-        width: 200px;
-        height: 280px;
+        width: 180px !important;
+        height: 240px !important;
     }
 
     .vs-text {
-        font-size: 32px;
+        font-size: 2.5rem !important;
+        margin: 10px 0;
+    }
+
+    /* Horizontal Slider Cards */
+    .horizontal-scroll .webtoon-card {
+        flex: 0 0 150px !important;
+    }
+
+    .horizontal-scroll {
+        gap: 12px !important;
+        padding-right: 20px;
+        /* 끝에 여백 */
+    }
+
+    /* Grid Layouts (Recommendations) */
+    .grid-cols-1,
+    .sm\:grid-cols-2,
+    .lg\:grid-cols-3 {
+        /* Tailwind classes override via basic grid logic if needed, but Tailwind should handle it. 
+           Adding explicit fallback just in case. */
+    }
+
+    /* Modal Fullscreen feel */
+    .modal-container {
+        padding-top: 0 !important;
+        align-items: center !important;
+        padding: 10px !important;
+    }
+
+    .modal-content-box {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+
+    .modal-content-box>div {
+        border-radius: 20px !important;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    /* Genre Selection Buttons */
+    .genre-card {
+        padding: 12px 10px !important;
+        font-size: 0.9rem !important;
+    }
+
+    .grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Progress Bar */
+    .mb-10 {
+        margin-bottom: 1.5rem !important;
+    }
+
+    .px-6 {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 }

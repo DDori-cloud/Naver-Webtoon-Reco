@@ -301,7 +301,7 @@
     <script src="data.js"></script>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+        const { useState, useEffect, useMemo, useRef } = React;
 
         // --- Supabase Config ---
         const SUPABASE_URL = 'https://vxzdgyentxxipjervdzq.supabase.co';
@@ -1186,7 +1186,7 @@
             if (!isOpen || !recs || recs.length < 2) return null;
 
             return (
-                <div className="modal-container z-[100]" onClick={handleClose}>
+                <div className="modal-container" onClick={handleClose}>
                     <div className="modal-content-box" onClick={e => e.stopPropagation()}>
                         <div className="bg-[#161B28] w-[90%] max-w-[440px] rounded-[40px] shadow-2xl p-7 animate-up border border-white/10">
                             <div className="flex items-center gap-2 mb-1">
@@ -1427,6 +1427,66 @@
             );
         };
 
+        const HorizontalSlider = ({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, likedIds, dislikedIds }) => {
+            const scrollRef = React.useRef(null);
+            const [showLeft, setShowLeft] = React.useState(false);
+
+            const scroll = (dir) => {
+                if (scrollRef.current) {
+                    const containerWidth = scrollRef.current.offsetWidth;
+                    const amount = dir === 'left' ? -containerWidth : containerWidth;
+                    scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+                }
+            };
+
+            const handleScroll = () => {
+                if (scrollRef.current) {
+                    setShowLeft(scrollRef.current.scrollLeft > 10);
+                }
+            };
+
+            return (
+                <div className="relative group/slider">
+                    {showLeft && (
+                        <button
+                            onClick={() => scroll('left')}
+                            className="absolute left-1 md:left-[-20px] top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 bg-black/60 md:bg-black/90 text-white rounded-full flex items-center justify-center border border-white/10 hover:bg-primary transition-all shadow-2xl opacity-100 md:opacity-0 md:group-hover/slider:opacity-100"
+                        >
+                            <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 fill-current rotate-180"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                        </button>
+                    )}
+                    <button
+                        onClick={() => scroll('right')}
+                        className="absolute right-1 md:right-[-20px] top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 bg-black/60 md:bg-black/90 text-white rounded-full flex items-center justify-center border border-white/10 hover:bg-primary transition-all shadow-2xl opacity-100 md:opacity-0 md:group-hover/slider:opacity-100"
+                    >
+                        <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
+                    </button>
+
+                    <div
+                        ref={scrollRef}
+                        onScroll={handleScroll}
+                        className="flex overflow-x-auto gap-5 pb-6 scroll-smooth snap-x snap-mandatory no-scrollbar"
+                    >
+                        {items.map((w, idx) => (
+                            <div key={w.id} className="flex-shrink-0 w-[calc((100%-20px)/2)] md:w-[calc((100%-80px)/5)] snap-start">
+                                <WebtoonCard
+                                    item={w}
+                                    rank={rankOffset === -1 ? 0 : rankOffset + idx + 1}
+                                    onDislike={toggleDislike}
+                                    onLike={toggleLike}
+                                    onExcludeFromResult={excludeFromResult}
+                                    isLiked={likedIds.some(lid => String(lid) === String(w.id))}
+                                    isDisliked={dislikedIds.some(did => String(did) === String(w.id))}
+                                    t={t}
+                                    homeMode={true}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            );
+        };
+
         const App = () => {
             const supabase = supabaseInstance;
             const [lang, setLang] = useState('ko');
@@ -1478,6 +1538,7 @@
             const [hasTriggeredPopup, setHasTriggeredPopup] = useState(false);
 
             const [isRandomLoading, setIsRandomLoading] = useState(false);
+            const prevViewRef = useRef(view);
 
             const handleRandomPick = async (minScore, maxScore, genres) => {
                 setIsRandomLoading(true);
@@ -1559,12 +1620,20 @@
                     });
 
                     // 홈 진입 시 추천 팝업 트리거 (데이터가 나중에 로딩될 경우 대비)
-                    if (!hasTriggeredPopup && user) {
+                    if (!hasTriggeredPopup && user && window.WEBTOON_DATA) {
                         triggerPersonalPopup(user.id);
                     }
 
                     // 탭 이동 시에만 최상단으로 스크롤 (단순 리렌더링 시엔 제외)
-                    window.scrollTo(0, 0);
+                    if (prevViewRef.current !== view) {
+                        window.scrollTo(0, 0);
+                        prevViewRef.current = view;
+                    }
+                } else {
+                    if (prevViewRef.current !== view) {
+                        window.scrollTo(0, 0);
+                        prevViewRef.current = view;
+                    }
                 }
             }, [view, user, hasTriggeredPopup]);
 
@@ -1739,52 +1808,73 @@
             };
 
             const triggerPersonalPopup = async (userId) => {
+                console.log("Triggering personal popup for user:", userId);
                 const hiddenDate = localStorage.getItem('hide_reco_popup_date');
-                if (hiddenDate === new Date().toDateString()) return;
+                if (hiddenDate === new Date().toDateString()) {
+                    console.log("Popup hidden for today per user choice.");
+                    return;
+                }
 
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                if (!rawData || rawData.length === 0) return;
+                if (!rawData || rawData.length === 0) {
+                    console.log("No webtoon data available for popup.");
+                    return;
+                }
 
                 // 이미 가져온 데이터나 history 활용
-                const { data: favs } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
-                const { data: wc } = await supabaseClient.from('worldcup_results').select('winner_id').eq('user_id', userId);
+                try {
+                    const { data: favs } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
+                    const { data: wc } = await supabaseClient.from('worldcup_results').select('winner_id').eq('user_id', userId);
 
-                const curLikedIds = favs ? favs.map(f => f.webtoon_id) : [];
-                const curWcIds = wc ? wc.map(w => w.winner_id) : [];
+                    const curLikedIds = favs ? favs.map(f => f.webtoon_id) : [];
+                    const curWcIds = wc ? wc.map(w => w.winner_id) : [];
 
-                if (curLikedIds.length === 0 && curWcIds.length === 0) return;
+                    console.log("User preferences:", { likes: curLikedIds.length, wcWins: curWcIds.length });
 
-                const likedWebtoons = rawData.filter(w => curLikedIds.includes(w.titleId || w.id));
-                const preferredTags = new Set(likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []));
-                const worldcupWinnerIds = new Set(curWcIds);
-
-                const scored = rawData.map(item => {
-                    const webtoonId = item.titleId || item.id;
-                    if (curLikedIds.includes(webtoonId)) return null;
-
-                    let score = (item.starScore || 0) * 2;
-                    const webtoonTags = item.tags || [];
-
-                    if (preferredTags.size > 0) {
-                        const overlap = webtoonTags.filter(t => preferredTags.has(t)).length;
-                        score += (overlap * 5);
+                    if (curLikedIds.length === 0 && curWcIds.length === 0) {
+                        console.log("User has no preference data yet.");
+                        return;
                     }
-                    if (worldcupWinnerIds.has(webtoonId)) score += 30;
 
-                    if (score <= (item.starScore || 0) * 2) return null; // 선호도가 반영되지 않은 작품은 제외
+                    const likedWebtoons = rawData.filter(w => curLikedIds.includes(w.titleId || w.id));
+                    const preferredTags = new Set(likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []));
+                    const worldcupWinnerIds = new Set(curWcIds);
 
-                    return { ...item, webtoonId, matchValue: score + (Math.random() * 5) };
-                }).filter(Boolean).sort((a, b) => b.matchValue - a.matchValue);
+                    const scored = rawData.map(item => {
+                        const webtoonId = item.titleId || item.id;
+                        if (curLikedIds.includes(webtoonId)) return null;
 
-                if (scored.length >= 2) {
-                    setPersonalRecs(scored.slice(0, 2).map(w => ({
-                        id: w.webtoonId,
-                        title: w.titleName || w.title,
-                        author: w.author,
-                        thumbnail: w.thumbnailUrl || w.thumbnail
-                    })));
-                    setHasTriggeredPopup(true);
-                    setTimeout(() => setShowPersonalPopup(true), 1500);
+                        let score = (item.starScore || 0) * 2;
+                        const webtoonTags = item.tags || [];
+
+                        if (preferredTags.size > 0) {
+                            const overlap = webtoonTags.filter(t => preferredTags.has(t)).length;
+                            score += (overlap * 5);
+                        }
+                        if (worldcupWinnerIds.has(webtoonId)) score += 30;
+
+                        if (score <= (item.starScore || 0) * 2) return null; // 선호도가 반영되지 않은 작품은 제외
+
+                        return { ...item, webtoonId, matchValue: score + (Math.random() * 5) };
+                    }).filter(Boolean).sort((a, b) => b.matchValue - a.matchValue);
+
+                    console.log("Scored candidates for popup:", scored.length);
+
+                    if (scored.length >= 2) {
+                        setPersonalRecs(scored.slice(0, 2).map(w => ({
+                            id: w.webtoonId,
+                            title: w.titleName || w.title,
+                            author: w.author,
+                            thumbnail: w.thumbnailUrl || w.thumbnail
+                        })));
+                        setHasTriggeredPopup(true);
+                        console.log("Personal popup prepared. showing in 1.5s...");
+                        setTimeout(() => setShowPersonalPopup(true), 1500);
+                    } else {
+                        console.log("Not enough scored candidates to show popup.");
+                    }
+                } catch (err) {
+                    console.error("Error triggering personal popup:", err);
                 }
             };
 
@@ -1971,65 +2061,7 @@
                 setTimeout(() => setShowExcludePopup(false), 2000);
             };
 
-            const HorizontalSlider = ({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, likedIds, dislikedIds }) => {
-                const scrollRef = React.useRef(null);
-                const [showLeft, setShowLeft] = React.useState(false);
 
-                const scroll = (dir) => {
-                    if (scrollRef.current) {
-                        const containerWidth = scrollRef.current.offsetWidth;
-                        const amount = dir === 'left' ? -containerWidth : containerWidth;
-                        scrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
-                    }
-                };
-
-                const handleScroll = () => {
-                    if (scrollRef.current) {
-                        setShowLeft(scrollRef.current.scrollLeft > 10);
-                    }
-                };
-
-                return (
-                    <div className="relative group/slider">
-                        {showLeft && (
-                            <button
-                                onClick={() => scroll('left')}
-                                className="absolute left-1 md:left-[-20px] top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 bg-black/60 md:bg-black/90 text-white rounded-full flex items-center justify-center border border-white/10 hover:bg-primary transition-all shadow-2xl opacity-100 md:opacity-0 md:group-hover/slider:opacity-100"
-                            >
-                                <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 fill-current rotate-180"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
-                            </button>
-                        )}
-                        <button
-                            onClick={() => scroll('right')}
-                            className="absolute right-1 md:right-[-20px] top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-11 md:h-11 bg-black/60 md:bg-black/90 text-white rounded-full flex items-center justify-center border border-white/10 hover:bg-primary transition-all shadow-2xl opacity-100 md:opacity-0 md:group-hover/slider:opacity-100"
-                        >
-                            <svg viewBox="0 0 24 24" className="w-5 h-5 md:w-6 md:h-6 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
-                        </button>
-
-                        <div
-                            ref={scrollRef}
-                            onScroll={handleScroll}
-                            className="flex overflow-x-auto gap-5 pb-6 scroll-smooth snap-x snap-mandatory no-scrollbar"
-                        >
-                            {items.map((w, idx) => (
-                                <div key={w.id} className="flex-shrink-0 w-[calc((100%-20px)/2)] md:w-[calc((100%-80px)/5)] snap-start">
-                                    <WebtoonCard
-                                        item={w}
-                                        rank={rankOffset === -1 ? 0 : rankOffset + idx + 1}
-                                        onDislike={toggleDislike}
-                                        onLike={toggleLike}
-                                        onExcludeFromResult={excludeFromResult}
-                                        isLiked={likedIds.some(lid => String(lid) === String(w.id))}
-                                        isDisliked={dislikedIds.some(did => String(did) === String(w.id))}
-                                        t={t}
-                                        homeMode={true}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                );
-            };
 
             return (
                 <div className="min-h-screen">
@@ -2632,17 +2664,13 @@
 
                     {
                         showWorldcupModal && (
-                            <div className="modal-container" onClick={() => setShowWorldcupModal(false)}>
-                                <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <WorldcupModal
-                                        isOpen={showWorldcupModal}
-                                        onClose={() => setShowWorldcupModal(false)}
-                                        t={t}
-                                        user={user}
-                                        onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
-                                    />
-                                </div>
-                            </div>
+                            <WorldcupModal
+                                isOpen={showWorldcupModal}
+                                onClose={() => setShowWorldcupModal(false)}
+                                t={t}
+                                user={user}
+                                onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
+                            />
                         )
                     }
 

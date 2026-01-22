@@ -1413,7 +1413,14 @@
 
             useEffect(() => {
                 if (isOpen && (stage === 'result' || showReport)) {
-                    if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                    // 렌더링 및 애니메이션 타이밍 고려하여 지연 스크롤
+                    const timer = setTimeout(() => {
+                        if (containerRef.current) {
+                            containerRef.current.scrollTo({ top: 0, behavior: 'instant' });
+                        }
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }, 50);
+                    return () => clearTimeout(timer);
                 }
             }, [stage, showReport, isOpen]);
 

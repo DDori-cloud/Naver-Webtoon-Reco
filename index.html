@@ -2735,6 +2735,9 @@
                                                 </div>
                                             ) : (
                                                 <div className="flex flex-col gap-4">
+                                                    <p className="text-[10px] text-gray-500 font-bold text-center mb-2 break-keep">
+                                                        {lang === 'ko' ? '* 이메일 인증만으로 1초 만에 간편하게 가입할 수 있습니다.' : '* Simple signup with email verification in just 1 second.'}
+                                                    </p>
                                                     <button
                                                         disabled={!email || password.length < 6 || password !== confirmPassword}
                                                         onClick={async () => {
@@ -2907,16 +2910,25 @@
 
                     {/* Footer with Visitor Counter */}
                     <footer className="fixed bottom-0 left-0 right-0 bg-[#0B0F1A]/90 backdrop-blur-md border-t border-white/5 py-3 px-4 z-[900]">
-                        <div className="max-w-7xl mx-auto flex items-center justify-center gap-6">
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.today_visitors}</span>
-                                <span className="text-sm font-bold text-primary">{todayVisitors.toLocaleString()}</span>
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-3 md:gap-8">
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.today_visitors}</span>
+                                    <span className="text-sm font-bold text-primary">{todayVisitors.toLocaleString()}</span>
+                                </div>
+                                <div className="w-px h-3 bg-white/10"></div>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.total_visitors}</span>
+                                    <span className="text-sm font-bold text-gray-400">{totalVisitors.toLocaleString()}</span>
+                                </div>
                             </div>
-                            <div className="w-px h-4 bg-white/10"></div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.total_visitors}</span>
-                                <span className="text-sm font-bold text-gray-400">{totalVisitors.toLocaleString()}</span>
-                            </div>
+                            <div className="hidden md:block w-px h-4 bg-white/10"></div>
+                            <p className="text-[9px] md:text-[10px] text-gray-500 font-medium text-center break-keep opacity-80 leading-relaxed">
+                                {lang === 'ko'
+                                    ? "본 사이트는 '비공식' 팬 사이트이며, 네이버 웹툰(주) 및 원저작권자와 무관합니다. 모든 콘텐츠의 저작권은 해당 권리자에게 있습니다."
+                                    : "This is an 'UNOFFICIAL' fan site and is not affiliated with NAVER WEBTOON or the original creators. All copyrights belong to their respective owners."
+                                }
+                            </p>
                         </div>
                     </footer>
                 </div >

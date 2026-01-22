@@ -301,7 +301,7 @@
     <script src="data.js"></script>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo, useRef } = React;
+        const { useState, useEffect, useMemo, useRef, useCallback } = React;
 
         // --- Supabase Config ---
         const SUPABASE_URL = 'https://vxzdgyentxxipjervdzq.supabase.co';
@@ -936,7 +936,7 @@
             </div>
         );
 
-        const WebtoonCard = ({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t, simpleMode = false, homeMode = false }) => {
+        const WebtoonCard = React.memo(({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t, simpleMode = false, homeMode = false }) => {
             const isFinished = item.status === 'FINISHED';
             // 1~3등 트로피 이모지
             const getTrophyEmoji = (r) => {
@@ -1034,7 +1034,7 @@
                     </div>
                 </div>
             );
-        };
+        });
 
         const ShareModal = ({ isOpen, onClose, t, results }) => {
             const supabase = supabaseInstance;
@@ -1427,7 +1427,7 @@
             );
         };
 
-        const HorizontalSlider = ({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, likedIds, dislikedIds }) => {
+        const HorizontalSlider = React.memo(({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, likedIds, dislikedIds }) => {
             const scrollRef = React.useRef(null);
             const [showLeft, setShowLeft] = React.useState(false);
 
@@ -1485,7 +1485,7 @@
                     </div>
                 </div>
             );
-        };
+        });
 
         const App = () => {
             const supabase = supabaseInstance;
@@ -1807,58 +1807,77 @@
                 }
             };
 
-            const triggerPersonalPopup = async (userId) => {
-                console.log("Triggering personal popup for user:", userId);
-                const hiddenDate = localStorage.getItem('hide_reco_popup_date');
-                if (hiddenDate === new Date().toDateString()) {
-                    console.log("Popup hidden for today per user choice.");
-                    return;
+            const toggleDislike = useCallback(async (id) => {
+                const sid = String(id);
+                if (!user) { setShowAuthModal(true); return; }
+                const isDisliked = dislikedIds.some(did => String(did) === sid);
+                if (isDisliked) {
+                    await supabaseClient.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', sid);
+                    setDislikedIds(prev => prev.filter(it => String(it) !== sid));
+                } else {
+                    if (likedIds.some(lid => String(lid) === sid)) {
+                        await supabaseClient.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', sid);
+                        setLikedIds(prev => prev.filter(it => String(it) !== sid));
+                    }
+                    await supabaseClient.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: sid });
+                    setDislikedIds(prev => [...prev, sid]);
                 }
+            }, [user, dislikedIds, likedIds, supabaseClient]);
+
+            const toggleLike = useCallback(async (id) => {
+                const sid = String(id);
+                if (!user) { setShowAuthModal(true); return; }
+                const isLiked = likedIds.some(lid => String(lid) === sid);
+                if (isLiked) {
+                    await supabaseClient.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', sid);
+                    setLikedIds(prev => prev.filter(it => String(it) !== sid));
+                } else {
+                    if (dislikedIds.some(did => String(did) === sid)) {
+                        await supabaseClient.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', sid);
+                        setDislikedIds(prev => prev.filter(it => String(it) !== sid));
+                    }
+                    await supabaseClient.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: sid });
+                    setLikedIds(prev => [...prev, sid]);
+                }
+            }, [user, likedIds, dislikedIds, supabaseClient]);
+
+            const triggerPersonalPopup = useCallback(async (userId) => {
+                const sid = String(userId);
+                console.log("Triggering personal popup for user:", sid);
+                const hiddenDate = localStorage.getItem('hide_reco_popup_date');
+                if (hiddenDate === new Date().toDateString()) return;
 
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                if (!rawData || rawData.length === 0) {
-                    console.log("No webtoon data available for popup.");
-                    return;
-                }
+                if (!rawData || rawData.length === 0) return;
 
-                // 이미 가져온 데이터나 history 활용
                 try {
-                    const { data: favs } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
-                    const { data: wc } = await supabaseClient.from('worldcup_results').select('winner_id').eq('user_id', userId);
+                    const { data: favs } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', sid);
+                    const { data: wc } = await supabaseClient.from('worldcup_results').select('winner_id').eq('user_id', sid);
 
-                    const curLikedIds = favs ? favs.map(f => f.webtoon_id) : [];
-                    const curWcIds = wc ? wc.map(w => w.winner_id) : [];
+                    const curLikedIds = favs ? favs.map(f => String(f.webtoon_id)) : [];
+                    const curWcIds = wc ? wc.map(w => String(w.winner_id)) : [];
 
-                    console.log("User preferences:", { likes: curLikedIds.length, wcWins: curWcIds.length });
+                    if (curLikedIds.length === 0 && curWcIds.length === 0) return;
 
-                    if (curLikedIds.length === 0 && curWcIds.length === 0) {
-                        console.log("User has no preference data yet.");
-                        return;
-                    }
-
-                    const likedWebtoons = rawData.filter(w => curLikedIds.includes(w.titleId || w.id));
+                    const likedWebtoons = rawData.filter(w => curLikedIds.includes(String(w.titleId || w.id)));
                     const preferredTags = new Set(likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []));
                     const worldcupWinnerIds = new Set(curWcIds);
 
                     const scored = rawData.map(item => {
-                        const webtoonId = item.titleId || item.id;
+                        const webtoonId = String(item.titleId || item.id);
                         if (curLikedIds.includes(webtoonId)) return null;
 
-                        let score = (item.starScore || 0) * 2;
+                        let score = (item.starScore || 0) * 1.5;
                         const webtoonTags = item.tags || [];
 
                         if (preferredTags.size > 0) {
                             const overlap = webtoonTags.filter(t => preferredTags.has(t)).length;
-                            score += (overlap * 5);
+                            score += (overlap * 8);
                         }
-                        if (worldcupWinnerIds.has(webtoonId)) score += 30;
+                        if (worldcupWinnerIds.has(webtoonId)) score += 35;
 
-                        if (score <= (item.starScore || 0) * 2) return null; // 선호도가 반영되지 않은 작품은 제외
-
-                        return { ...item, webtoonId, matchValue: score + (Math.random() * 5) };
+                        return { ...item, webtoonId, matchValue: score + (Math.random() * 8) };
                     }).filter(Boolean).sort((a, b) => b.matchValue - a.matchValue);
-
-                    console.log("Scored candidates for popup:", scored.length);
 
                     if (scored.length >= 2) {
                         setPersonalRecs(scored.slice(0, 2).map(w => ({
@@ -1868,29 +1887,10 @@
                             thumbnail: w.thumbnailUrl || w.thumbnail
                         })));
                         setHasTriggeredPopup(true);
-                        console.log("Personal popup prepared. showing in 1.5s...");
                         setTimeout(() => setShowPersonalPopup(true), 1500);
-                    } else {
-                        console.log("Not enough scored candidates to show popup.");
                     }
-                } catch (err) {
-                    console.error("Error triggering personal popup:", err);
-                }
-            };
-
-            const toggleLike = async (id) => {
-                if (!user) { setShowAuthModal(true); return; }
-                const isLiked = likedIds.includes(id);
-                if (isLiked) {
-                    await supabaseClient.from('favorite_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
-                    setLikedIds(prev => prev.filter(it => it !== id));
-                } else {
-                    // Remove from dislikes if it was disliked
-                    if (dislikedIds.includes(id)) toggleDislike(id);
-                    await supabaseClient.from('favorite_webtoons').insert({ user_id: user.id, webtoon_id: id });
-                    setLikedIds(prev => [...prev, id]);
-                }
-            };
+                } catch (e) { console.error(e); }
+            }, [supabaseClient]);
 
             const categories = useMemo(() => getGenreCategories(t), [t]);
 
@@ -1928,13 +1928,13 @@
                 const expandedExcluded = expandGenres(excludedGenreTags);
                 const expandedExcludedSet = new Set(expandedExcluded.map(s => s.toLowerCase()));
 
-                const likedWebtoons = rawData.filter(w => likedIds.includes(w.titleId || w.id));
+                const likedWebtoons = rawData.filter(w => likedIds.some(lid => String(lid) === String(w.titleId || w.id)));
                 const preferredLegacyTags = new Set(likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []));
-                const worldcupWinnerIds = new Set(worldcupHistory.map(h => h.winner_id));
+                const worldcupWinnerIds = new Set(worldcupHistory.map(h => String(h.winner_id)));
 
                 const scoredData = rawData.map(item => {
-                    const webtoonId = item.titleId || item.id;
-                    if (dislikedIds.includes(webtoonId)) return null;
+                    const webtoonId = String(item.titleId || item.id);
+                    if (dislikedIds.some(did => String(did) === webtoonId)) return null;
 
                     const webtoonTitle = (item.titleName || item.title || "").toLowerCase();
                     const webtoonDesc = (item.description || "").toLowerCase();
@@ -2021,23 +2021,7 @@
                 setLoading(false);
             };
 
-            const toggleDislike = async (id) => {
-                if (!user) { setShowAuthModal(true); return; }
-                const isDisliked = dislikedIds.includes(id);
-                if (isDisliked) {
-                    await supabaseClient.from('excluded_webtoons').delete().eq('user_id', user.id).eq('webtoon_id', id);
-                    const newDislikedIds = dislikedIds.filter(it => it !== id);
-                    setDislikedIds(newDislikedIds);
-                    localStorage.setItem('excludedWebtoons', JSON.stringify(newDislikedIds));
-                } else {
-                    // Remove from likes if it was liked
-                    if (likedIds.includes(id)) toggleLike(id);
-                    await supabaseClient.from('excluded_webtoons').insert({ user_id: user.id, webtoon_id: id });
-                    const newDislikedIds = [...dislikedIds, id];
-                    setDislikedIds(newDislikedIds);
-                    localStorage.setItem('excludedWebtoons', JSON.stringify(newDislikedIds));
-                }
-            };
+
 
             // 추천 결과에서만 제외 (선호에 영향 없음)
             const excludeFromResult = (id) => {
@@ -2653,7 +2637,15 @@
                         </button>
                     </div>
 
-                    <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={profileTab === 'liked' ? likedIds.map(id => (window.WEBTOON_DATA || MOCK_WEBTOONS).find(w => (w.titleId || w.id) == id)).filter(Boolean) : results} />
+                    <ShareModal
+                        isOpen={showShareModal}
+                        onClose={() => setShowShareModal(false)}
+                        t={t}
+                        results={profileTab === 'liked' ?
+                            likedIds.map(id => (window.WEBTOON_DATA || MOCK_WEBTOONS).find(w => String(w.titleId || w.id) === String(id))).filter(Boolean) :
+                            results
+                        }
+                    />
                     <HelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} t={t} />
                     <PersonalizedPopup
                         isOpen={showPersonalPopup}

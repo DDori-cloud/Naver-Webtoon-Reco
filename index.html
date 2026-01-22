@@ -1522,40 +1522,51 @@
                 }
                 if (view === 'home') {
                     const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                    const cleanHighRated = rawData
-                        .filter(item => {
-                            const combined = ((item.tags || []).join(' ') + (item.description || '') + (item.titleName || item.title)).toLowerCase();
-                            const isClean = !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
-                            const isHighRated = (item.starScore || 0) >= 9.80;
-                            return isClean && isHighRated;
-                        })
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 5)
-                        .map(item => ({
-                            id: item.titleId || item.id,
-                            thumbnail: item.thumbnailUrl || item.thumbnail
-                        }));
-                    setHeroItems(cleanHighRated);
 
-                    // 숨겨진 명작 발굴: 평점 9.97 이상 랜덤 20개
-                    const hiddenGemsData = rawData
-                        .filter(item => (item.starScore || 0) >= 9.97)
-                        .sort(() => 0.5 - Math.random())
-                        .slice(0, 20)
-                        .map(item => ({
-                            id: item.titleId || item.id,
-                            title: item.titleName || item.title,
-                            thumbnail: item.thumbnailUrl || item.thumbnail,
-                            tags: item.tags || [item.author],
-                            status: item.status,
-                            author: item.author,
-                            starScore: item.starScore
-                        }));
-                    setHiddenGemsRandom(hiddenGemsData);
+                    // 홈 진입 시 최초 1회만 설정되도록 (데이터 변경에 의한 리렌더링 시 HERO/숨은명작은 유지)
+                    setHeroItems(prev => {
+                        if (prev.length > 0) return prev;
+                        return rawData
+                            .filter(item => {
+                                const combined = ((item.tags || []).join(' ') + (item.description || '') + (item.titleName || item.title)).toLowerCase();
+                                const isClean = !combined.includes('성인웹툰') && !combined.includes('19금') && !combined.includes('성인') && !combined.includes('고자극');
+                                const isHighRated = (item.starScore || 0) >= 9.80;
+                                return isClean && isHighRated;
+                            })
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 5)
+                            .map(item => ({
+                                id: item.titleId || item.id,
+                                thumbnail: item.thumbnailUrl || item.thumbnail
+                            }));
+                    });
+
+                    setHiddenGemsRandom(prev => {
+                        if (prev.length > 0) return prev;
+                        return rawData
+                            .filter(item => (item.starScore || 0) >= 9.97)
+                            .sort(() => 0.5 - Math.random())
+                            .slice(0, 20)
+                            .map(item => ({
+                                id: item.titleId || item.id,
+                                title: item.titleName || item.title,
+                                thumbnail: item.thumbnailUrl || item.thumbnail,
+                                tags: item.tags || [item.author],
+                                status: item.status,
+                                author: item.author,
+                                starScore: item.starScore
+                            }));
+                    });
+
+                    // 홈 진입 시 추천 팝업 트리거 (데이터가 나중에 로딩될 경우 대비)
+                    if (!hasTriggeredPopup && user) {
+                        triggerPersonalPopup(user.id);
+                    }
+
+                    // 탭 이동 시에만 최상단으로 스크롤 (단순 리렌더링 시엔 제외)
+                    window.scrollTo(0, 0);
                 }
-                // 탭 이동 시 최상단으로 스크롤
-                window.scrollTo(0, 0);
-            }, [view]);
+            }, [view, user, hasTriggeredPopup]);
 
             // Compute Top 5 Lists for Genres
 
@@ -1998,7 +2009,7 @@
                         <div
                             ref={scrollRef}
                             onScroll={handleScroll}
-                            className="flex overflow-x-hidden gap-5 pb-6 scroll-smooth snap-x snap-mandatory"
+                            className="flex overflow-x-auto gap-5 pb-6 scroll-smooth snap-x snap-mandatory no-scrollbar"
                         >
                             {items.map((w, idx) => (
                                 <div key={w.id} className="flex-shrink-0 w-[calc((100%-20px)/2)] md:w-[calc((100%-80px)/5)] snap-start">
@@ -2744,11 +2755,11 @@
                         showProfileModal && (
                             <div className="modal-container" onClick={() => setShowProfileModal(false)}>
                                 <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <div className="bg-[#161B28] w-full max-w-5xl rounded-[48px] shadow-2xl flex flex-col h-[85vh] border border-white/10 overflow-hidden">
+                                    <div className="bg-[#161B28] w-full max-w-6xl rounded-[48px] shadow-2xl flex flex-col h-[85vh] border border-white/10 overflow-hidden">
                                         <div className="p-10 pb-6 flex flex-col items-center flex-shrink-0">
                                             <h3 className="text-2xl font-black mb-6 tracking-tighter text-white">{t.my_info}</h3>
                                             <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl w-full">
-                                                <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all h-full ${profileTab === 'liked' ? 'bg-white/10 text-primary shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>📚 {lang === 'ko' ? '나의 컬렉션' : 'My Collection'}</button>
+                                                <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-2 rounded-xl font-bold text-[11px] sm:text-sm transition-all h-full whitespace-nowrap ${profileTab === 'liked' ? 'bg-white/10 text-primary shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>📚 {lang === 'ko' ? '나의 컬렉션' : 'My Collection'}</button>
                                                 <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-2 rounded-xl font-bold text-[11px] sm:text-sm transition-all h-full whitespace-nowrap ${profileTab === 'excluded' ? 'bg-white/10 text-red-500 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>{lang === 'ko' ? '비선호 작품' : t.excluded_list}</button>
                                                 <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-2 rounded-xl font-bold text-[11px] sm:text-sm transition-all h-full whitespace-nowrap ${profileTab === 'worldcup' ? 'bg-white/10 text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>🏆 {lang === 'ko' ? '토너먼트 기록' : t.worldcup_history}</button>
                                             </div>
@@ -2799,9 +2810,9 @@
                                                             if (!w) return null;
                                                             const isExcludedFromReco = excludedFromRecoIds.includes(id);
                                                             return (
-                                                                <div key={id} className="flex flex-col gap-3 p-4 rounded-[28px] border border-white/5 bg-white/5 hover:bg-white/10 transition-all group">
-                                                                    <div className="flex gap-4">
-                                                                        <div className="w-16 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100">
+                                                                <div key={id} className="flex flex-col gap-2 p-3 rounded-[24px] border border-white/5 bg-white/5 hover:bg-white/10 transition-all group">
+                                                                    <div className="flex gap-3">
+                                                                        <div className="w-14 h-18 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
                                                                             <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
                                                                         </div>
                                                                         <div className="flex flex-col justify-center min-w-0 flex-grow">

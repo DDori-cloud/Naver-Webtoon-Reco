@@ -402,7 +402,7 @@
                 worldcup_history: "토너먼트 기록",
                 worldcup_desc: "최고의 웹툰을 선정해보세요!",
                 exclude_from_reco: "추천 제외",
-                exclude_from_reco_desc: "선호도에는 영향을 주지만 추천 결과에서는 제외됩니다",
+                exclude_from_reco_desc: "선호도엔 반영되나 추천결과에선 제외",
                 today_visitors: "오늘 방문자",
                 total_visitors: "총 방문자",
                 random_mixing: "섞는 중...",
@@ -443,7 +443,13 @@
                 help_s3_desc: "최대 2048강까지! 나만의 최애 웹툰을 뽑는 토너먼트를 즐겨보세요. 우승작은 당신의 취향 분석에도 반영됩니다.",
                 help_s4_title: "4. 📚 나만의 컬렉션",
                 help_s4_desc: "'❤️' 버튼을 눌러 컬렉션에 추가하고, '내 정보 > 나의 컬렉션'에서 친구들에게 리스트를 공유할 수 있습니다.",
-                help_confirm: "확인했어요!"
+                help_confirm: "확인했어요!",
+                reco_popup_title: "이런 웹툰은 어떠세요? ✨",
+                reco_popup_subtitle: "당신의 취향을 분석해 보았어요!",
+                reco_popup_dont_show_today: "오늘 하루 보지 않기",
+                reco_popup_close: "닫기",
+                worldcup_pick: "선택하기",
+                to_start: "처음으로"
             },
             en: {
                 subtitle: "Find Naver Webtoons That Match Your Taste(With AI)",
@@ -567,7 +573,13 @@
                 help_s3_desc: "Up to 2048 rounds! Pick your favorites in our tournament. Winners will affect your AI recommendations.",
                 help_s4_title: "4. 📚 Personal Collection",
                 help_s4_desc: "Tap '❤️' to save to your collection. Share your list with friends in 'My Info > My Collection'.",
-                help_confirm: "Got it!"
+                help_confirm: "Got it!",
+                reco_popup_title: "How about these webtoons? ✨",
+                reco_popup_subtitle: "Analyzed based on your taste!",
+                reco_popup_dont_show_today: "Don't show for today",
+                reco_popup_close: "Close",
+                worldcup_pick: "Pick",
+                to_start: "To Start"
             },
             zh: {
                 subtitle: "我的 AI 网络漫画推荐 (With AI)",
@@ -692,7 +704,13 @@
                 help_s3_desc: "最多支持 2048 强！参加淘汰赛选出您最喜爱的漫画。冠军作品也将反映在您的偏好分析中。",
                 help_s4_title: "4. 📚 我的收藏",
                 help_s4_desc: "点击“❤️”按钮即可收藏。可以在“我的信息 > 我的收藏”中向朋友分享列表。",
-                help_confirm: "我知道了！"
+                help_confirm: "我知道了！",
+                reco_popup_title: "试试这些网漫怎么样？ ✨",
+                reco_popup_subtitle: "根据您的喜好进行了分析！",
+                reco_popup_dont_show_today: "今天不再显示",
+                reco_popup_close: "关闭",
+                worldcup_pick: "选择",
+                to_start: "回到开始"
             },
             ja: {
                 subtitle: "好みに合った Naver WebToon 探し (With AI)",
@@ -816,7 +834,13 @@
                 help_s3_desc: "最大 2048 強まで！お気に入りの作品を選ぶトーナメントを楽しんでください。結果は分析に反映されます。",
                 help_s4_title: "4. 📚 マイコレクション",
                 help_s4_desc: "「❤️」ボタンを押してコレクションに追加。「マイ情報 > マイコレクション」で共有も可能です。",
-                help_confirm: "確認しました！"
+                help_confirm: "確認しました！",
+                reco_popup_title: "こんなウェブトゥーンはいかがですか？ ✨",
+                reco_popup_subtitle: "あなたの好みを分析しました！",
+                reco_popup_dont_show_today: "今日一日表示しない",
+                reco_popup_close: "閉じる",
+                worldcup_pick: "選択",
+                to_start: "最初から"
             },
         };
         const getGenreCategories = (t) => [
@@ -955,7 +979,7 @@
                         {/* Top Right Heart Button */}
                         <button
                             onClick={(e) => { e.stopPropagation(); onLike(item.id); }}
-                            className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-sm transition-all z-10 ${isLiked ? 'bg-red-500 text-white shadow-lg scale-110' : 'bg-white/80 text-gray-400 hover:bg-red-500 hover:text-white'}`}
+                            className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-md transition-all z-10 ${isLiked ? 'bg-white text-red-500 shadow-md scale-110 border border-red-50' : 'bg-white/80 text-gray-400 hover:bg-white hover:text-red-500'}`}
                         >
                             <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path></svg>
                         </button>
@@ -1143,6 +1167,73 @@
             );
         };
 
+        const PersonalizedPopup = ({ isOpen, onClose, recs, t }) => {
+            const [dontShowAgain, setDontShowAgain] = useState(false);
+
+            useEffect(() => {
+                const handleEsc = (e) => { if (e.key === 'Escape') handleClose(); };
+                window.addEventListener('keydown', handleEsc);
+                return () => window.removeEventListener('keydown', handleEsc);
+            }, [onClose]);
+
+            const handleClose = () => {
+                if (dontShowAgain) {
+                    localStorage.setItem('hide_reco_popup_date', new Date().toDateString());
+                }
+                onClose();
+            };
+
+            if (!isOpen || !recs || recs.length < 2) return null;
+
+            return (
+                <div className="modal-container z-[100]" onClick={handleClose}>
+                    <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                        <div className="bg-[#161B28] w-[90%] max-w-[440px] rounded-[40px] shadow-2xl p-7 animate-up border border-white/10">
+                            <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-xl font-black text-primary tracking-tight">{t.reco_popup_title}</h3>
+                            </div>
+                            <p className="text-xs text-gray-400 mb-6 font-medium opacity-80">{t.reco_popup_subtitle}</p>
+
+                            <div className="grid grid-cols-2 gap-4 mb-6">
+                                {recs.map(w => (
+                                    <div key={w.id} className="group cursor-pointer" onClick={() => {
+                                        window.open(`https://comic.naver.com/webtoon/list?titleId=${w.id}`, '_blank');
+                                    }}>
+                                        <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-2 shadow-lg ring-1 ring-white/5 group-hover:ring-primary/50 transition-all">
+                                            <img src={w.thumbnail} alt={w.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
+                                                <span className="text-[10px] font-bold text-white bg-primary px-2 py-1 rounded-full uppercase">{t.view_now}</span>
+                                            </div>
+                                        </div>
+                                        <h4 className="font-bold text-[13px] text-white truncate group-hover:text-primary transition-colors mb-0.5">{w.title}</h4>
+                                        <p className="text-[11px] text-gray-400 truncate opacity-70">{w.author}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className="flex flex-col gap-3">
+                                <label className="flex items-center gap-2 cursor-pointer group w-fit select-none">
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={dontShowAgain}
+                                            onChange={e => setDontShowAgain(e.target.checked)}
+                                            className="w-4 h-4 rounded border-white/10 bg-white/5 text-primary focus:ring-primary/20 accent-primary cursor-pointer"
+                                        />
+                                    </div>
+                                    <span className="text-[11px] text-gray-500 group-hover:text-gray-300 transition-colors font-medium">{t.reco_popup_dont_show_today}</span>
+                                </label>
+
+                                <button onClick={handleClose} className="w-full py-3.5 bg-primary text-white font-black rounded-2xl text-sm hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                                    {t.reco_popup_close}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
         const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult, isViewMode = false }) => {
             const supabase = supabaseInstance;
             const [stage, setStage] = useState('select'); // 'select', 'playing', 'result'
@@ -1249,7 +1340,7 @@
                                     ))}
                                 </div>
                                 <button onClick={startWorldcup} className="w-full max-w-sm py-6 bg-primary text-white font-black rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all text-xl uppercase tracking-widest">
-                                    {t.start || "시작하기"}
+                                    {t.worldcup_start}
                                 </button>
                             </div>
                         )}
@@ -1262,7 +1353,7 @@
                                         className="text-[10px] md:text-sm font-bold text-gray-400 hover:text-primary transition-colors flex items-center gap-1"
                                     >
                                         <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 fill-none stroke-current stroke-3"><path d="M15 18l-6-6 6-6"></path></svg>
-                                        처음으로
+                                        {t.to_start}
                                     </button>
                                     <div className="flex-1 text-center">
                                         <span className="px-3 py-1 bg-primary text-white text-[9px] md:text-[11px] font-black rounded-full shadow-md uppercase tracking-widest whitespace-nowrap">{getCurrentRound()}</span>
@@ -1287,7 +1378,7 @@
 
                                             {/* 선택 버튼 (85% 수준으로 축소) */}
                                             <button className="w-full py-1.5 md:py-2 rounded-lg font-black text-[9px] md:text-xs transition-all bg-white/10 text-white/40 group-hover:bg-primary group-hover:text-white active:scale-95">
-                                                선택하기
+                                                {t.worldcup_pick}
                                             </button>
                                         </div>
                                     ))}
@@ -1382,6 +1473,10 @@
             const [heroItems, setHeroItems] = useState([]);
             const [hiddenGemsRandom, setHiddenGemsRandom] = useState([]);
 
+            const [showPersonalPopup, setShowPersonalPopup] = useState(false);
+            const [personalRecs, setPersonalRecs] = useState([]);
+            const [hasTriggeredPopup, setHasTriggeredPopup] = useState(false);
+
             const [isRandomLoading, setIsRandomLoading] = useState(false);
 
             const handleRandomPick = async (minScore, maxScore, genres) => {
@@ -1403,7 +1498,7 @@
                     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
                 }
 
-                // WebtoonCard 규격에 맞게 데이터 매핑 (titleName -> title, thumbnailUrl -> thumbnail 등)
+                // WebtoonCard 규격에 맞게 데이터 매핑
                 const normalized = shuffled.slice(0, 20).map(item => ({
                     ...item,
                     id: item.titleId || item.id,
@@ -1415,7 +1510,6 @@
                     status: item.status || "ONGOING"
                 }));
 
-                setRandomResults(normalized);
                 setRandomResults(normalized);
                 setHasRandomPicked(true);
                 setIsRandomLoading(false);
@@ -1509,21 +1603,55 @@
                     if (view === 'search') setView('home');
                     return;
                 }
+
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                const filtered = rawData.filter(w =>
-                    (w.titleName || w.title).toLowerCase().includes(q.toLowerCase()) ||
-                    (w.author || '').toLowerCase().includes(q.toLowerCase()) ||
-                    (w.tags || []).some(t => t.toLowerCase().includes(q.toLowerCase())) ||
-                    (w.description || '').toLowerCase().includes(q.toLowerCase())
-                ).map(item => ({
-                    id: item.titleId || item.id,
-                    title: item.titleName || item.title,
-                    thumbnail: item.thumbnailUrl || item.thumbnail,
-                    tags: (item.tags && item.tags.length > 0) ? item.tags : [item.author],
-                    status: item.status,
-                    author: item.author,
-                    starScore: item.starScore
-                }));
+                const normalize = (str) => (str || "").replace(/\s/g, '').toLowerCase();
+                const normalizedQ = normalize(q);
+
+                const scored = rawData.map(item => {
+                    const title = item.titleName || item.title || "";
+                    const author = item.author || "";
+                    const tags = item.tags || [];
+                    const desc = item.description || "";
+
+                    const normalizedTitle = normalize(title);
+                    const normalizedAuthor = normalize(author);
+
+                    let searchScore = 0;
+
+                    // 1. 제목 매칭 (최상위 가중치)
+                    if (normalizedTitle === normalizedQ) searchScore += 100; // 정확히 일치
+                    else if (normalizedTitle.startsWith(normalizedQ)) searchScore += 80; // 접두사 일치
+                    else if (normalizedTitle.includes(normalizedQ)) searchScore += 50; // 포함
+
+                    // 2. 작가 매칭
+                    if (normalizedAuthor === normalizedQ) searchScore += 70;
+                    else if (normalizedAuthor.includes(normalizedQ)) searchScore += 40;
+
+                    // 3. 태그 및 설명 매칭
+                    if (tags.some(t => normalize(t).includes(normalizedQ))) searchScore += 30;
+                    if (normalize(desc).includes(normalizedQ)) searchScore += 10;
+
+                    if (searchScore === 0) return null;
+
+                    return {
+                        id: item.titleId || item.id,
+                        title: title,
+                        thumbnail: item.thumbnailUrl || item.thumbnail,
+                        tags: (tags.length > 0) ? tags : [author],
+                        status: item.status,
+                        author: author,
+                        starScore: item.starScore,
+                        searchScore: searchScore
+                    };
+                }).filter(Boolean);
+
+                // 검색 점수순 -> 평점순 정렬
+                const filtered = scored.sort((a, b) => {
+                    if (b.searchScore !== a.searchScore) return b.searchScore - a.searchScore;
+                    return (b.starScore || 0) - (a.starScore || 0);
+                });
+
                 setSearchResults(filtered);
                 setSearchLimit(10);
                 setView('search');
@@ -1588,13 +1716,65 @@
                 const { data: favData } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
                 if (favData) setLikedIds(favData.map(d => d.webtoon_id));
 
-                // Load worldcup history
                 const { data: wcData } = await supabaseClient.from('worldcup_results').select('*').eq('user_id', userId).order('created_at', { ascending: false });
                 if (wcData) setWorldcupHistory(wcData);
 
-                // Load excluded from recommendations
                 const { data: exRecoData } = await supabaseClient.from('excluded_from_recommendations').select('webtoon_id').eq('user_id', userId);
                 if (exRecoData) setExcludedFromRecoIds(exRecoData.map(d => d.webtoon_id));
+
+                if (!hasTriggeredPopup) {
+                    triggerPersonalPopup(userId);
+                }
+            };
+
+            const triggerPersonalPopup = async (userId) => {
+                const hiddenDate = localStorage.getItem('hide_reco_popup_date');
+                if (hiddenDate === new Date().toDateString()) return;
+
+                const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                if (!rawData || rawData.length === 0) return;
+
+                // 이미 가져온 데이터나 history 활용
+                const { data: favs } = await supabaseClient.from('favorite_webtoons').select('webtoon_id').eq('user_id', userId);
+                const { data: wc } = await supabaseClient.from('worldcup_results').select('winner_id').eq('user_id', userId);
+
+                const curLikedIds = favs ? favs.map(f => f.webtoon_id) : [];
+                const curWcIds = wc ? wc.map(w => w.winner_id) : [];
+
+                if (curLikedIds.length === 0 && curWcIds.length === 0) return;
+
+                const likedWebtoons = rawData.filter(w => curLikedIds.includes(w.titleId || w.id));
+                const preferredTags = new Set(likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []));
+                const worldcupWinnerIds = new Set(curWcIds);
+
+                const scored = rawData.map(item => {
+                    const webtoonId = item.titleId || item.id;
+                    if (curLikedIds.includes(webtoonId)) return null;
+
+                    let score = (item.starScore || 0) * 2;
+                    const webtoonTags = item.tags || [];
+
+                    if (preferredTags.size > 0) {
+                        const overlap = webtoonTags.filter(t => preferredTags.has(t)).length;
+                        score += (overlap * 5);
+                    }
+                    if (worldcupWinnerIds.has(webtoonId)) score += 30;
+
+                    if (score <= (item.starScore || 0) * 2) return null; // 선호도가 반영되지 않은 작품은 제외
+
+                    return { ...item, webtoonId, matchValue: score + (Math.random() * 5) };
+                }).filter(Boolean).sort((a, b) => b.matchValue - a.matchValue);
+
+                if (scored.length >= 2) {
+                    setPersonalRecs(scored.slice(0, 2).map(w => ({
+                        id: w.webtoonId,
+                        title: w.titleName || w.title,
+                        author: w.author,
+                        thumbnail: w.thumbnailUrl || w.thumbnail
+                    })));
+                    setHasTriggeredPopup(true);
+                    setTimeout(() => setShowPersonalPopup(true), 1500);
+                }
             };
 
             const toggleLike = async (id) => {
@@ -1622,104 +1802,119 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 await new Promise(r => setTimeout(r, 1500));
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                const genrePreferences = selectedG; // Step 1 now only contains genres
+                const genrePreferences = selectedG;
                 const manualExcludeTags = manualExcludes.split(',').map(s => s.trim()).filter(Boolean);
                 const allExcludes = [...excludedG, ...manualExcludeTags];
 
-                const excludedStatus = allExcludes.filter(s => ["연재중", "매일+", "완결"].includes(s));
+                const excludedStatus = new Set(allExcludes.filter(s => ["연재중", "매일+", "완결"].includes(s)));
                 const excludedGenreTags = allExcludes.filter(s => !["연재중", "매일+", "완결"].includes(s));
 
-                // Similarity scoring based on liked webtoons
-                const likedWebtoons = rawData.filter(w => likedIds.includes(w.titleId || w.id));
-                const preferredLegacyTags = likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []);
+                // Step 3: Favorite Item Analysis
+                let favWebtoonTags = [];
+                let favAuthor = "";
+                if (favTitle.trim()) {
+                    const found = rawData.find(w =>
+                        (w.titleName || w.title || "").replace(/\s/g, '').includes(favTitle.replace(/\s/g, ''))
+                    );
+                    if (found) {
+                        favWebtoonTags = found.tags || [];
+                        favAuthor = found.author || "";
+                    }
+                }
 
-                // Get worldcup winners for bonus scoring
-                const worldcupWinnerIds = worldcupHistory.map(h => h.winner_id);
+                // Optimization: Process expanded lists once outside the loop
+                const expandedPrefs = expandGenres(genrePreferences);
+                const expandedExcluded = expandGenres(excludedGenreTags);
+                const expandedExcludedSet = new Set(expandedExcluded.map(s => s.toLowerCase()));
+
+                const likedWebtoons = rawData.filter(w => likedIds.includes(w.titleId || w.id));
+                const preferredLegacyTags = new Set(likedWebtoons.reduce((acc, curr) => [...acc, ...(curr.tags || [])], []));
+                const worldcupWinnerIds = new Set(worldcupHistory.map(h => h.winner_id));
 
                 const scoredData = rawData.map(item => {
-                    const webtoon = {
-                        id: item.titleId || item.id,
+                    const webtoonId = item.titleId || item.id;
+                    if (dislikedIds.includes(webtoonId)) return null;
+
+                    const webtoonTitle = (item.titleName || item.title || "").toLowerCase();
+                    const webtoonDesc = (item.description || "").toLowerCase();
+                    const webtoonTags = (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? t.finished : t.ongoing, item.author].filter(Boolean);
+                    const webtoonTagsLower = webtoonTags.map(t => String(t).toLowerCase());
+
+                    let score = 30; // Base score adjusted for more dynamic range
+
+                    // Step 2: Status Filter
+                    const myStatus = item.status === 'FINISHED' ? '완결' : '연재중';
+                    const isDailyPlus = String(item.day || item.category || "").toLowerCase().includes('plus') ||
+                        webtoonTags.some(t => t.includes('매일') || t.includes('플러스'));
+
+                    if (excludedStatus.has(myStatus)) return null;
+                    if (isDailyPlus && excludedStatus.has('매일+')) return null;
+
+                    // Step 2: Genre/Tag Excludes
+                    if (expandedExcludedSet.size > 0) {
+                        const isExcluded = webtoonTagsLower.some(t => expandedExcludedSet.has(t)) ||
+                            expandedExcluded.some(ex => webtoonTitle.includes(ex.toLowerCase()) || webtoonDesc.includes(ex.toLowerCase()));
+                        if (isExcluded) return null;
+                    }
+
+                    // Step 1: Preferred Genres Scoring
+                    expandedPrefs.forEach(pref => {
+                        const prefLower = pref.toLowerCase();
+                        if (webtoonTagsLower.some(t => t.includes(prefLower)) ||
+                            webtoonTitle.includes(prefLower) ||
+                            webtoonDesc.includes(prefLower)) {
+                            score += 12; // Expanded genre match
+                        }
+                    });
+
+                    // Original Preference Bonus
+                    genrePreferences.forEach(pref => {
+                        const keywords = pref.includes('/') ? pref.split('/').map(k => k.trim()) : [pref];
+                        if (keywords.some(k => webtoonTags.some(t => String(t).includes(k)) || webtoonTitle.includes(k.toLowerCase()))) {
+                            score += 8; // Direct/Original match bonus
+                        }
+                    });
+
+                    // Step 3: Favorite Webtoon Similarity Bonus (Author & Tags)
+                    if (favAuthor && item.author === favAuthor) score += 15;
+                    if (favWebtoonTags.length > 0) {
+                        const overlap = webtoonTags.filter(t => favWebtoonTags.includes(t)).length;
+                        score += (overlap * 4);
+                    }
+
+                    // Liked Items Similarity
+                    if (preferredLegacyTags.size > 0) {
+                        const overlap = webtoonTags.filter(tag => preferredLegacyTags.has(tag)).length;
+                        score += (overlap * 3);
+                    }
+
+                    // Worldcup Winners Bonus
+                    if (worldcupWinnerIds.has(webtoonId)) score += 12;
+
+                    // Star Score Balance (Value high ratings proportionally)
+                    const starBoost = Math.max(0, (item.starScore || 0) - 9.0) * 5;
+                    score += starBoost;
+
+                    const finalMatch = Math.min(99, score + (Math.random() * 4));
+                    return {
+                        id: webtoonId,
                         title: item.titleName || item.title,
                         thumbnail: item.thumbnailUrl || item.thumbnail,
-                        tags: (item.tags && item.tags.length > 0) ? item.tags : [item.day, item.status === 'FINISHED' ? t.finished : t.ongoing, item.author].filter(Boolean),
+                        tags: webtoonTags,
                         author: item.author,
                         status: item.status,
-                        description: item.description || "",
                         starScore: item.starScore || 0,
-                        viewCount: item.viewCount || 0
+                        viewCount: item.viewCount || 0,
+                        match: finalMatch
                     };
-
-                    if (dislikedIds.includes(webtoon.id)) return { ...webtoon, match: 0 };
-
-                    let score = 50;
-
-                    // 연재여부 제외 필터 (Step 2)
-                    if (excludedStatus.length > 0) {
-                        const myStatus = webtoon.status === 'FINISHED' ? '완결' : '연재중';
-                        const isDailyPlus = String(item.day || item.category || "").toLowerCase().includes('plus') ||
-                            (item.tags || []).some(t => t.includes('매일') || t.includes('플러스'));
-                        if (excludedStatus.includes(myStatus)) return { ...webtoon, match: 0 };
-                        if (isDailyPlus && excludedStatus.includes('매일+')) return { ...webtoon, match: 0 };
-                    }
-
-                    // 확장된 장르 매칭 (유사 장르 포함)
-                    const expandedPrefs = expandGenres(genrePreferences);
-                    const expandedExcluded = expandGenres(excludedGenreTags);
-
-                    // 비선호 장르 체크 (확장된 키워드 적용)
-                    if (expandedExcluded.length > 0) {
-                        const hasExcludedTag = expandedExcluded.some(ex =>
-                            webtoon.tags.some(t => String(t).toLowerCase().includes(ex.toLowerCase())) ||
-                            webtoon.title.toLowerCase().includes(ex.toLowerCase()) ||
-                            webtoon.description.toLowerCase().includes(ex.toLowerCase())
-                        );
-                        if (hasExcludedTag) return { ...webtoon, match: 0 };
-                    }
-
-                    // 선호 장르 점수 계산 (확장된 키워드 적용)
-                    expandedPrefs.forEach(pref => {
-                        if (webtoon.tags.some(t => String(t).toLowerCase().includes(pref.toLowerCase())) ||
-                            webtoon.title.toLowerCase().includes(pref.toLowerCase()) ||
-                            webtoon.description.toLowerCase().includes(pref.toLowerCase())) {
-                            score += 15; // 유사 장르는 약간 낮은 점수
-                        }
-                    });
-
-                    // 원본 선호 장르는 추가 보너스
-                    genrePreferences.forEach(pref => {
-                        const keywords = pref.includes('/') ? pref.split('/') : [pref];
-                        if (keywords.some(k =>
-                            webtoon.tags.some(t => String(t).includes(k)) ||
-                            webtoon.title.includes(k) ||
-                            webtoon.description.includes(k)
-                        )) {
-                            score += 10; // 원본 매칭 보너스
-                        }
-                    });
-
-                    // Bonus for similarity to liked webtoons
-                    if (preferredLegacyTags.length > 0) {
-                        const overlap = webtoon.tags.filter(tag => preferredLegacyTags.includes(tag)).length;
-                        score += (overlap * 5);
-                    }
-
-                    // Bonus for worldcup winners
-                    if (worldcupWinnerIds.includes(webtoon.id)) {
-                        score += 15;
-                    }
-
-                    return { ...webtoon, match: Math.min(99, score + (Math.random() * 5)) };
-                });
+                }).filter(Boolean);
 
                 const sorted = scoredData.filter(w => w.match > 0 && !excludedFromRecoIds.includes(w.id)).sort((a, b) => {
-                    let scoreA = a.match;
-                    let scoreB = b.match;
-                    if (dislikedIds.includes(a.id)) scoreA -= 50;
-                    if (dislikedIds.includes(b.id)) scoreB -= 50;
-                    if (scoreB !== scoreA) return scoreB - scoreA;
+                    if (b.match !== a.match) return b.match - a.match;
                     if (b.starScore !== a.starScore) return b.starScore - a.starScore;
                     return b.viewCount - a.viewCount;
                 });
+
                 setScoredPool(sorted);
                 setResults(sorted.slice(0, 10));
                 setLoading(false);
@@ -1813,7 +2008,8 @@
                                         onDislike={toggleDislike}
                                         onLike={toggleLike}
                                         onExcludeFromResult={excludeFromResult}
-                                        isDisliked={dislikedIds.includes(w.id)}
+                                        isLiked={likedIds.some(lid => String(lid) === String(w.id))}
+                                        isDisliked={dislikedIds.some(did => String(did) === String(w.id))}
                                         t={t}
                                         homeMode={true}
                                     />
@@ -2121,7 +2317,16 @@
                                             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">
                                                 {randomResults.map((w, idx) => (
                                                     <div key={w.id + idx} className="animate-in fade-in zoom-in duration-500" style={{ animationDelay: `${idx * 50}ms` }}>
-                                                        <WebtoonCard item={w} rank={0} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
+                                                        <WebtoonCard
+                                                            item={w}
+                                                            rank={0}
+                                                            onDislike={toggleDislike}
+                                                            onLike={toggleLike}
+                                                            onExcludeFromResult={excludeFromResult}
+                                                            isLiked={likedIds.some(lid => String(lid) === String(w.id))}
+                                                            isDisliked={dislikedIds.some(did => String(did) === String(w.id))}
+                                                            t={t}
+                                                        />
                                                     </div>
                                                 ))}
                                             </div>
@@ -2157,7 +2362,17 @@
                                             <>
                                                 <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">
                                                     {searchResults.slice(0, searchLimit).map((w, idx) => (
-                                                        <WebtoonCard key={w.id} item={w} rank={0} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />
+                                                        <WebtoonCard
+                                                            key={w.id}
+                                                            item={w}
+                                                            rank={0}
+                                                            onDislike={toggleDislike}
+                                                            onLike={toggleLike}
+                                                            onExcludeFromResult={excludeFromResult}
+                                                            isLiked={likedIds.some(lid => String(lid) === String(w.id))}
+                                                            isDisliked={dislikedIds.some(did => String(did) === String(w.id))}
+                                                            t={t}
+                                                        />
                                                     ))}
                                                 </div>
                                                 {searchResults.length > searchLimit && (
@@ -2330,7 +2545,7 @@
                                         </div>
                                     )}
                                     {step === 4 && (
-                                        <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[6px] border-white/10 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-400 font-bold tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up max-w-[1400px] mx-auto pb-40 px-0 md:px-6"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 tracking-tight text-white">{t.result_title}</h2><p className="text-gray-500 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.includes(w.id)} isDisliked={dislikedIds.includes(w.id)} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-white/10 text-gray-400 font-bold rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
+                                        <div className="animate-up">{loading ? (<div className="flex flex-col items-center justify-center py-40"><div className="w-16 h-16 border-[6px] border-white/10 border-t-primary rounded-full animate-spin mb-10"></div><p className="text-gray-400 font-bold tracking-widest uppercase animate-pulse">{t.computing}</p></div>) : (<div className="animate-up max-w-[1400px] mx-auto pb-40 px-0 md:px-6"><div className="text-center mb-14"><h2 className="text-2xl sm:text-3xl font-black mb-3 tracking-tight text-white">{t.result_title}</h2><p className="text-gray-500 font-medium text-sm">{t.result_desc}</p></div><div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">{results.map((w, idx) => (<WebtoonCard key={w.id} item={w} rank={idx + 1} onDislike={toggleDislike} onLike={toggleLike} onExcludeFromResult={excludeFromResult} isLiked={likedIds.some(lid => String(lid) === String(w.id))} isDisliked={dislikedIds.some(did => String(did) === String(w.id))} t={t} />))}</div><button onClick={reset} className="mt-20 px-12 py-5 border-2 border-white/10 text-gray-400 font-bold rounded-full hover:border-primary hover:text-primary transition-all uppercase block mx-auto tracking-widest text-sm">NEW SEARCH</button></div>)}</div>
                                     )}
                                 </>
                             )
@@ -2397,6 +2612,12 @@
 
                     <ShareModal isOpen={showShareModal} onClose={() => setShowShareModal(false)} t={t} results={profileTab === 'liked' ? likedIds.map(id => (window.WEBTOON_DATA || MOCK_WEBTOONS).find(w => (w.titleId || w.id) == id)).filter(Boolean) : results} />
                     <HelpModal isOpen={showHelpModal} onClose={() => setShowHelpModal(false)} t={t} />
+                    <PersonalizedPopup
+                        isOpen={showPersonalPopup}
+                        onClose={() => setShowPersonalPopup(false)}
+                        recs={personalRecs}
+                        t={t}
+                    />
 
                     {
                         showWorldcupModal && (
@@ -2523,13 +2744,13 @@
                         showProfileModal && (
                             <div className="modal-container" onClick={() => setShowProfileModal(false)}>
                                 <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <div className="bg-[#161B28] w-full max-w-2xl rounded-[48px] shadow-2xl flex flex-col h-[80vh] border border-white/10 overflow-hidden">
+                                    <div className="bg-[#161B28] w-full max-w-5xl rounded-[48px] shadow-2xl flex flex-col h-[85vh] border border-white/10 overflow-hidden">
                                         <div className="p-10 pb-6 flex flex-col items-center flex-shrink-0">
                                             <h3 className="text-2xl font-black mb-6 tracking-tighter text-white">{t.my_info}</h3>
                                             <div className="flex gap-2 p-1.5 bg-white/5 rounded-2xl w-full">
                                                 <button onClick={() => setProfileTab('liked')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all h-full ${profileTab === 'liked' ? 'bg-white/10 text-primary shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>📚 {lang === 'ko' ? '나의 컬렉션' : 'My Collection'}</button>
-                                                <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all h-full whitespace-pre-wrap leading-tight ${profileTab === 'excluded' ? 'bg-white/10 text-red-500 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>{t.excluded_list === '비선호 작품 (싫어요)' ? <>비선호작품<br />(싫어요)</> : t.excluded_list}</button>
-                                                <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-4 rounded-xl font-bold text-sm transition-all h-full whitespace-pre-wrap leading-tight ${profileTab === 'worldcup' ? 'bg-white/10 text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>🏆 {t.worldcup_history === '토너먼트 기록' ? <>토너먼트<br />기록</> : t.worldcup_history}</button>
+                                                <button onClick={() => setProfileTab('excluded')} className={`flex-1 py-3 px-2 rounded-xl font-bold text-[11px] sm:text-sm transition-all h-full whitespace-nowrap ${profileTab === 'excluded' ? 'bg-white/10 text-red-500 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>{lang === 'ko' ? '비선호 작품' : t.excluded_list}</button>
+                                                <button onClick={() => setProfileTab('worldcup')} className={`flex-1 py-3 px-2 rounded-xl font-bold text-[11px] sm:text-sm transition-all h-full whitespace-nowrap ${profileTab === 'worldcup' ? 'bg-white/10 text-yellow-600 shadow-sm' : 'text-gray-500 hover:text-gray-300'}`}>🏆 {lang === 'ko' ? '토너먼트 기록' : t.worldcup_history}</button>
                                             </div>
                                         </div>
                                         <div className="flex-grow overflow-y-auto px-10 no-scrollbar">
@@ -2568,7 +2789,7 @@
                                                     )}
                                                 </div>
                                             ) : (
-                                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-10">
+                                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pb-10">
                                                     {(profileTab === 'liked' ? likedIds : dislikedIds).length === 0 ? (
                                                         <div className="col-span-full py-20 text-center text-gray-300 font-bold">{t.no_data}</div>
                                                     ) : (

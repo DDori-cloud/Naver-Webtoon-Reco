@@ -1459,6 +1459,8 @@
                         }));
                     setHiddenGemsRandom(hiddenGemsData);
                 }
+                // 탭 이동 시 최상단으로 스크롤
+                window.scrollTo(0, 0);
             }, [view]);
 
             // Compute Top 5 Lists for Genres
@@ -1807,7 +1809,7 @@
                                 <div key={w.id} className="flex-shrink-0 w-[calc((100%-20px)/2)] md:w-[calc((100%-80px)/5)] snap-start">
                                     <WebtoonCard
                                         item={w}
-                                        rank={rankOffset + idx + 1}
+                                        rank={rankOffset === -1 ? 0 : rankOffset + idx + 1}
                                         onDislike={toggleDislike}
                                         onLike={toggleLike}
                                         onExcludeFromResult={excludeFromResult}

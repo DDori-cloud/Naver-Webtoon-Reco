@@ -950,7 +950,10 @@
                 <div className="modal-container" onClick={onClose}>
                     <div className="modal-content-box" onClick={e => e.stopPropagation()}>
                         <div className="bg-[#161B28] w-[90%] max-w-lg rounded-[40px] shadow-2xl p-8 animate-up border border-white/10">
-                            <h3 className="text-2xl font-black mb-6 text-primary tracking-tight">N웹툰 파인더 가이드 📘</h3>
+                            <h3 className="text-2xl font-black mb-1 text-primary tracking-tight">N웹툰 파인더 가이드 📘</h3>
+                            <p className="text-[11px] text-gray-400 font-bold mb-6 leading-normal break-keep opacity-90 italic">
+                                * 본 서비스는 네이버 웹툰 공식 서비스가 아니며, 사용자분들의 즐거운 웹툰 감상을 돕기 위해 제작된 비공식 팬 서비스입니다.
+                            </p>
 
                             <div className="space-y-4">
                                 <div className="p-4 bg-white/5 rounded-2xl">
@@ -972,12 +975,6 @@
                                     <h4 className="font-black text-base mb-1 text-white">4. 📚 나만의 컬렉션</h4>
                                     <p className="text-gray-400 text-[13px] leading-relaxed break-keep">'❤️' 버튼을 눌러 컬렉션에 추가하고, '내 정보 {">"} 나의 컬렉션'에서 친구들에게 리스트를 공유할 수 있습니다.</p>
                                 </div>
-                            </div>
-
-                            <div className="mt-6 px-2">
-                                <p className="text-[11px] text-gray-500 leading-normal break-keep opacity-60 italic text-center">
-                                    * 본 서비스는 네이버 웹툰 공식 앱이 아니며, 사용자분들의 즐거운 웹툰 감상을 돕기 위해 제작된 비공식 팬 서비스입니다.
-                                </p>
                             </div>
 
                             <button onClick={onClose} className="w-full mt-6 py-4 bg-white/5 text-white font-black rounded-2xl text-base hover:bg-white/10 active:scale-95 transition-all">

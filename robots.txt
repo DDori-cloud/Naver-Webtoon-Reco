@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://page-naver-webtoon-reco.pages.dev/sitemap.xml

@@ -4,7 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naver Webtoon AI Picker</title>
+    <title>웹툰 추천기 | 내 취향에 맞는 네이버 웹툰 찾기 (AI 분석)</title>
+    <meta name="description"
+        content="AI 기반 웹툰 추천 서비스. 수천 개의 네이버 웹툰 중 당신의 취향을 분석하여 인생 웹툰을 찾아드립니다. 웹툰 월드컵, 취향 MBTI 분석 기능 제공.">
+    <meta name="keywords" content="웹툰 추천, 네이버 웹툰 추천, 웹툰 추천기, 취향 분석 웹툰, 인생 웹툰 찾기, 웹툰 MBTI, 웹툰 월드컵">
+    <link rel="canonical" href="https://page-naver-webtoon-reco.pages.dev/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://page-naver-webtoon-reco.pages.dev/">
+    <meta property="og:title" content="웹툰 추천기 | 내 취향에 맞는 네이버 웹툰 찾기">
+    <meta property="og:description" content="평소 웹툰 취향을 분석해 AI가 당신의 인생 웹툰을 추천해줍니다.">
+    <meta property="og:image" content="https://page-naver-webtoon-reco.pages.dev/og-image.png">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://page-naver-webtoon-reco.pages.dev/">
+    <meta property="twitter:title" content="웹툰 추천기 | 내 취향에 맞는 네이버 웹툰 찾기">
+    <meta property="twitter:description" content="평소 웹툰 취향을 분석해 AI가 당신의 인생 웹툰을 추천해줍니다.">
+    <meta property="twitter:image" content="https://page-naver-webtoon-reco.pages.dev/og-image.png">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -400,7 +418,8 @@
                 worldcup_winner: "우승",
                 worldcup_result: "월드컵 결과",
                 worldcup_history: "토너먼트 기록",
-                worldcup_desc: "최고의 웹툰을 선정해보세요!",
+                worldcup_desc: "최고의 웹툰을 선정하고 취향 리포트를 받아보세요!",
+                worldcup_keyword_placeholder: "장르 또는 키워드 입력 (예: 판타지, 회귀)",
                 exclude_from_reco: "추천 제외",
                 exclude_from_reco_desc: "선호도엔 반영되나 추천결과에선 제외",
                 today_visitors: "오늘 방문자",
@@ -449,7 +468,14 @@
                 reco_popup_dont_show_today: "오늘 하루 보지 않기",
                 reco_popup_close: "닫기",
                 worldcup_pick: "선택하기",
-                to_start: "처음으로"
+                to_start: "처음으로",
+                worldcup_report_title: "취향 분석 리포트",
+                worldcup_report_desc: "토너먼트 선택을 분석한 결과입니다.",
+                worldcup_top_tags: "선호 키워드 TOP 5",
+                worldcup_reco_title: "추천 웹툰",
+                worldcup_view_report: "상세 분석 리포트",
+                worldcup_back_to_winner: "승자 확인",
+                retry: "다시하기"
             },
             en: {
                 subtitle: "Find Naver Webtoons That Match Your Taste(With AI)",
@@ -579,7 +605,14 @@
                 reco_popup_dont_show_today: "Don't show for today",
                 reco_popup_close: "Close",
                 worldcup_pick: "Pick",
-                to_start: "To Start"
+                to_start: "To Start",
+                worldcup_report_title: "Taste Analysis Report",
+                worldcup_report_desc: "Analysis based on your tournament choices.",
+                worldcup_top_tags: "Top 5 Keywords",
+                worldcup_reco_title: "Recommended for You",
+                worldcup_view_report: "View Detailed Report",
+                worldcup_back_to_winner: "Back to Winner",
+                retry: "Retry"
             },
             zh: {
                 subtitle: "我的 AI 网络漫画推荐 (With AI)",
@@ -710,7 +743,14 @@
                 reco_popup_dont_show_today: "今天不再显示",
                 reco_popup_close: "关闭",
                 worldcup_pick: "选择",
-                to_start: "回到开始"
+                to_start: "回到开始",
+                worldcup_report_title: "偏好分析报告",
+                worldcup_report_desc: "基于淘汰赛选择的分析结果。",
+                worldcup_top_tags: "偏好关键词 TOP 5",
+                worldcup_reco_title: "为您推荐",
+                worldcup_view_report: "查看详细报告",
+                worldcup_back_to_winner: "返回冠军页",
+                retry: "重试"
             },
             ja: {
                 subtitle: "好みに合った Naver WebToon 探し (With AI)",
@@ -840,7 +880,14 @@
                 reco_popup_dont_show_today: "今日一日表示しない",
                 reco_popup_close: "閉じる",
                 worldcup_pick: "選択",
-                to_start: "最初から"
+                to_start: "最初から",
+                worldcup_report_title: "好み分析レポート",
+                worldcup_report_desc: "トーナメントの選択を分析した結果です。",
+                worldcup_top_tags: "好みキーワード TOP 5",
+                worldcup_reco_title: "あなたへのおすすめ",
+                worldcup_view_report: "詳細リポートを見る",
+                worldcup_back_to_winner: "勝者に戻る",
+                retry: "やり直し"
             },
         };
         const getGenreCategories = (t) => [
@@ -1234,6 +1281,110 @@
             );
         };
 
+        const WorldcupReport = ({ choices, finalWinner, pool, t, onBack, onRetry }) => {
+            const analysis = useMemo(() => {
+                const tagCounts = {};
+                choices.forEach(w => {
+                    (w.tags || []).forEach(tag => {
+                        if (['연재중', '완결', '매일+', '플러스'].includes(tag)) return;
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 1;
+                    });
+                });
+                if (finalWinner) {
+                    (finalWinner.tags || []).forEach(tag => {
+                        if (['연재중', '완결', '매일+', '플러스'].includes(tag)) return;
+                        tagCounts[tag] = (tagCounts[tag] || 0) + 3;
+                    });
+                }
+                const sortedTags = Object.entries(tagCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5);
+
+                const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
+                const poolIds = new Set(pool.map(w => String(w.titleId || w.id)));
+
+                const rec = rawData
+                    .filter(w => !poolIds.has(String(w.titleId || w.id)))
+                    .map(w => {
+                        let score = 0;
+                        (w.tags || []).forEach(tag => {
+                            if (tagCounts[tag]) score += tagCounts[tag];
+                        });
+                        return { ...w, matchScore: score };
+                    })
+                    .sort((a, b) => b.matchScore - a.matchScore)[0];
+
+                return { topTags: sortedTags, recommendation: rec };
+            }, [choices, finalWinner, pool]);
+
+            if (!analysis) return null;
+
+            return (
+                <div className="animate-up max-w-lg mx-auto mt-2 bg-white/80 backdrop-blur-md rounded-[28px] p-5 md:p-8 border border-white text-left shadow-2xl">
+                    <div className="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 className="text-xl font-black text-gray-900 tracking-tight">{t.worldcup_report_title}</h3>
+                            <p className="text-[11px] text-gray-400 font-bold leading-tight">{t.worldcup_report_desc}</p>
+                        </div>
+                        <button onClick={onBack} className="p-1.5 hover:bg-black/5 rounded-full transition-colors">
+                            <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                    </div>
+
+                    <div className="mb-6">
+                        <h4 className="text-[10px] uppercase tracking-widest font-black text-primary mb-4">{t.worldcup_top_tags}</h4>
+                        <div className="space-y-3">
+                            {analysis.topTags.map(([tag, count], idx) => (
+                                <div key={tag} className="flex items-center gap-3">
+                                    <span className="w-3 text-[10px] font-black text-gray-300">0{idx + 1}</span>
+                                    <div className="flex-grow">
+                                        <div className="flex justify-between mb-0.5">
+                                            <span className="text-xs font-black text-gray-700">{tag}</span>
+                                            <span className="text-[10px] font-bold text-gray-400">{count} pts</span>
+                                        </div>
+                                        <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-primary rounded-full transition-all duration-1000"
+                                                style={{ width: `${Math.min(100, (count / (analysis.topTags[0][1] || 1)) * 100)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {analysis.recommendation && (
+                        <div className="bg-primary/5 rounded-[20px] p-4 border border-primary/10 mb-6">
+                            <h4 className="text-[10px] uppercase tracking-widest font-black text-primary mb-4">{t.worldcup_reco_title}</h4>
+                            <div className="flex gap-4 items-center">
+                                <div className="w-16 aspect-[3/4] rounded-xl overflow-hidden shadow-md flex-shrink-0">
+                                    <img src={analysis.recommendation.thumbnailUrl || analysis.recommendation.thumbnail} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                </div>
+                                <div className="flex-grow min-w-0">
+                                    <h5 className="text-sm font-black text-gray-900 mb-0.5 truncate">{analysis.recommendation.titleName || analysis.recommendation.title}</h5>
+                                    <p className="text-[10px] text-gray-400 font-bold mb-2 truncate">{analysis.recommendation.author}</p>
+                                    <a
+                                        href={`https://comic.naver.com/webtoon/list?titleId=${analysis.recommendation.titleId || analysis.recommendation.id}`}
+                                        target="_blank"
+                                        className="inline-flex items-center gap-1.5 text-primary font-black text-[10px] uppercase tracking-widest hover:gap-2 transition-all"
+                                    >
+                                        {t.view_now}
+                                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="flex gap-3">
+                        <button onClick={onBack} className="flex-1 py-3 bg-gray-50 text-gray-400 font-black rounded-xl hover:bg-gray-100 transition-all text-[10px] uppercase tracking-widest">{t.worldcup_back_to_winner}</button>
+                        <button onClick={onRetry} className="flex-1 py-3 bg-gray-800 text-white font-black rounded-xl hover:bg-gray-900 transition-all text-[10px] uppercase tracking-widest">{t.retry}</button>
+                    </div>
+                </div>
+            );
+        };
+
         const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult, isViewMode = false }) => {
             const supabase = supabaseInstance;
             const [stage, setStage] = useState('select'); // 'select', 'playing', 'result'
@@ -1242,27 +1393,52 @@
             const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
             const [winners, setWinners] = useState([]);
             const [finalWinner, setFinalWinner] = useState(null);
+            const [choiceHistory, setChoiceHistory] = useState([]);
+            const [pool, setPool] = useState([]);
+            const [showReport, setShowReport] = useState(false);
+            const keywordState = useState('');
+            const keyword = keywordState[0];
+            const setKeyword = keywordState[1];
+            const containerRef = useRef(null);
 
             useEffect(() => {
                 if (isOpen && !isViewMode) {
                     document.body.classList.add('modal-open');
+                    if (containerRef.current) containerRef.current.scrollTop = 0;
                 } else {
                     document.body.classList.remove('modal-open');
                 }
                 return () => document.body.classList.remove('modal-open');
             }, [isOpen, isViewMode]);
 
+            useEffect(() => {
+                if (isOpen && (stage === 'result' || showReport)) {
+                    if (containerRef.current) containerRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+                }
+            }, [stage, showReport, isOpen]);
+
             if (!isOpen) return null;
 
             const startWorldcup = () => {
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
-                if (rawData.length < selectedRound) {
-                    alert(`웹툰 데이터가 부족합니다. 최소 ${selectedRound}개 필요합니다.`);
+                // Filter by keyword if provided
+                let filtered = rawData;
+                if (keyword.trim()) {
+                    const k = keyword.trim().toLowerCase();
+                    filtered = rawData.filter(w =>
+                        (w.titleName || w.title || '').toLowerCase().includes(k) ||
+                        (w.tags || []).some(t => String(t).toLowerCase().includes(k)) ||
+                        (w.author || '').toLowerCase().includes(k)
+                    );
+                }
+
+                if (filtered.length < selectedRound) {
+                    alert(`해당 키워드의 웹툰이 부족합니다. (현재 ${filtered.length}개 / 최소 ${selectedRound}개 필요)`);
                     return;
                 }
 
                 // Shuffle and select webtoons
-                const shuffled = [...rawData].sort(() => Math.random() - 0.5);
+                const shuffled = [...filtered].sort(() => Math.random() - 0.5);
                 const selected = shuffled.slice(0, selectedRound);
 
                 // Create initial matches
@@ -1274,10 +1450,14 @@
                 setMatches(initialMatches);
                 setCurrentMatchIndex(0);
                 setWinners([]);
+                setChoiceHistory([]);
+                setPool(selected);
+                setShowReport(false);
                 setStage('playing');
             };
 
             const selectWinner = (webtoon) => {
+                setChoiceHistory(prev => [...prev, webtoon]);
                 const newWinners = [...winners, webtoon];
 
                 if (currentMatchIndex + 1 < matches.length) {
@@ -1339,6 +1519,30 @@
                                         <button key={r} onClick={() => setSelectedRound(r)} className={`px-2 md:px-4 py-3 rounded-2xl font-black transition-all whitespace-nowrap text-sm md:text-base ${selectedRound === r ? 'bg-primary text-white shadow-xl scale-105' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>{r}{t.worldcup_round}</button>
                                     ))}
                                 </div>
+                                <div className="max-w-md mx-auto mb-10">
+                                    <div className="flex flex-wrap justify-center gap-2 mb-4">
+                                        {['로맨스', '판타지', '액션', '일상', '무협'].map(g => (
+                                            <button
+                                                key={g}
+                                                onClick={() => setKeyword(g)}
+                                                className={`px-3 py-1.5 rounded-full text-[10px] font-black transition-all ${keyword === g ? 'bg-primary text-white' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+                                            >
+                                                #{g}
+                                            </button>
+                                        ))}
+                                        {keyword && (
+                                            <button onClick={() => setKeyword('')} className="px-3 py-1.5 rounded-full text-[10px] font-black bg-red-50 text-red-500 hover:bg-red-100">초기화</button>
+                                        )}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={keyword}
+                                        onChange={e => setKeyword(e.target.value)}
+                                        placeholder={t.worldcup_keyword_placeholder}
+                                        className="w-full px-6 py-4 rounded-2xl bg-gray-50 border-2 border-primary/10 outline-none focus:border-primary font-bold text-sm text-center shadow-inner"
+                                    />
+                                    <p className="mt-2 text-[10px] text-gray-400 font-bold">* 입력하지 않으면 모든 웹툰에서 무작위로 추출됩니다.</p>
+                                </div>
                                 <button onClick={startWorldcup} className="w-full max-w-sm py-6 bg-primary text-white font-black rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all text-xl uppercase tracking-widest">
                                     {t.worldcup_start}
                                 </button>
@@ -1396,20 +1600,41 @@
                         )}
 
                         {stage === 'result' && finalWinner && (
-                            <div className="text-center py-10">
-                                <div className="mb-6"><span className="px-6 py-2 bg-yellow-400 text-white text-sm font-black rounded-full shadow-md uppercase tracking-widest italic">{t.worldcup_winner}</span></div>
-                                <div className="mb-10 transform scale-110">
-                                    <div className="relative w-64 sm:w-80 aspect-[3/4] mx-auto rounded-[64px] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] border-[12px] border-yellow-400/20 bg-gray-100">
-                                        <img src={finalWinner.thumbnailUrl || finalWinner.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
-                                        <div className="absolute top-6 right-6 w-16 h-16 bg-yellow-400 rounded-full flex items-center justify-center shadow-xl animate-bounce"><span className="text-3xl">🏆</span></div>
+                            <div className="text-center py-2 md:py-6">
+                                {!showReport ? (
+                                    <div className="animate-up flex flex-col items-center">
+                                        <div className="mb-4"><span className="px-5 py-1.5 bg-yellow-400 text-white text-[11px] font-black rounded-full shadow-md uppercase tracking-widest italic">{t.worldcup_winner}</span></div>
+                                        <div className="mb-6 transform scale-[0.67] md:scale-[0.7] origin-top flex flex-col items-center">
+                                            <div className="relative w-72 md:w-80 aspect-[3/4] mx-auto rounded-[48px] overflow-hidden shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)] border-[10px] border-yellow-400 bg-gray-200">
+                                                <img src={finalWinner.thumbnailUrl || finalWinner.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
+                                                <div className="absolute top-4 right-4 w-14 h-14 bg-yellow-400 rounded-full flex items-center justify-center shadow-xl animate-bounce border-4 border-white"><span className="text-2xl">🏆</span></div>
+                                            </div>
+                                            <h4 className="mt-8 text-4xl font-black text-white tracking-tighter italic leading-tight px-4 drop-shadow-[0_2px_10px_rgba(0,213,100,0.5)]">{finalWinner.titleName || finalWinner.title}</h4>
+                                            <p className="mt-2 text-white/50 font-bold uppercase tracking-widest text-sm mb-6">{finalWinner.author}</p>
+
+                                            {/* 버튼들을 스케일된 영역 내부 하단에 배치하여 거리 조절 */}
+                                            <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center w-full max-w-2xl px-4">
+                                                <button onClick={() => setStage('select')} className="w-full md:w-auto px-10 py-4 bg-white/10 text-white/40 font-black rounded-full hover:bg-white/20 transition-all uppercase tracking-widest text-base">{t.retry}</button>
+                                                <button
+                                                    onClick={(e) => { e.stopPropagation(); setShowReport(true); }}
+                                                    className="w-full md:w-auto px-10 py-4 bg-white text-primary font-black rounded-full hover:scale-105 transition-all uppercase tracking-widest text-base italic shadow-2xl shadow-primary/40 border-none"
+                                                >
+                                                    {t.worldcup_view_report}
+                                                </button>
+                                                <a href={`https://comic.naver.com/webtoon/list?titleId=${finalWinner.titleId || finalWinner.id}`} target="_blank" className="w-full md:w-auto px-14 py-4 bg-primary text-white font-black rounded-full shadow-2xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-base italic">{t.view_now}</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <h4 className="mt-12 text-3xl font-black text-gray-900 tracking-tighter italic leading-tight">{finalWinner.titleName || finalWinner.title}</h4>
-                                    <p className="mt-3 text-gray-400 font-bold uppercase tracking-widest">{finalWinner.author}</p>
-                                </div>
-                                <div className="flex gap-4 justify-center">
-                                    <button onClick={() => setStage('select')} className="px-10 py-5 bg-gray-50 text-gray-500 font-black rounded-full hover:bg-gray-100 transition-all uppercase tracking-widest text-sm">{t.retry}</button>
-                                    <a href={`https://comic.naver.com/webtoon/list?titleId=${finalWinner.titleId || finalWinner.id}`} target="_blank" className="px-12 py-5 bg-primary text-white font-black rounded-full shadow-xl hover:scale-105 active:scale-95 transition-all uppercase tracking-widest text-sm italic">{t.view_now}</a>
-                                </div>
+                                ) : (
+                                    <WorldcupReport
+                                        choices={choiceHistory}
+                                        finalWinner={finalWinner}
+                                        pool={pool}
+                                        t={t}
+                                        onBack={() => setShowReport(false)}
+                                        onRetry={() => setStage('select')}
+                                    />
+                                )}
                             </div>
                         )}
                     </div>
@@ -1419,7 +1644,7 @@
             if (isViewMode) return content;
 
             return (
-                <div className="modal-container" onClick={onClose}>
+                <div className="modal-container !pt-[80px] md:!pt-[100px]" onClick={onClose} ref={containerRef}>
                     <div className="modal-content-box" onClick={e => e.stopPropagation()}>
                         {content}
                     </div>

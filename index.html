@@ -99,7 +99,7 @@
             display: flex;
             justify-content: center;
             align-items: start;
-            padding-top: 10vh;
+            padding-top: 2vh;
             background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(12px);
             overflow-y: auto;
@@ -400,6 +400,7 @@
                 worldcup_winner: "우승",
                 worldcup_result: "월드컵 결과",
                 worldcup_history: "토너먼트 기록",
+                worldcup_desc: "최고의 웹툰을 선정해보세요!",
                 exclude_from_reco: "추천 제외",
                 exclude_from_reco_desc: "선호도에는 영향을 주지만 추천 결과에서는 제외됩니다",
                 today_visitors: "오늘 방문자",
@@ -1077,10 +1078,10 @@
 
             const content = (
                 <div className={`${isViewMode ? 'bg-transparent' : 'bg-white w-full max-w-4xl rounded-[56px] shadow-2xl overflow-hidden'} animate-up`}>
-                    <div className="p-10">
+                    <div className="p-1 md:p-10">
                         {stage === 'select' && (
-                            <div className="text-center py-10">
-                                <h3 className="text-3xl font-black mb-10 tracking-tight italic border-b-2 border-primary/10 inline-block">{t.worldcup_title}</h3>
+                            <div className="text-center py-2 md:py-10">
+                                <h3 className="text-2xl md:text-3xl font-black mb-6 md:mb-10 tracking-tight italic border-b-2 border-primary/10 inline-block">{t.worldcup_title}</h3>
                                 <p className="text-gray-400 font-medium mb-10 italic">{t.worldcup_desc}</p>
                                 <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 md:gap-3 max-w-2xl mx-auto mb-12">
                                     {rounds.map(r => (
@@ -1094,25 +1095,49 @@
                         )}
 
                         {stage === 'playing' && (
-                            <div className="text-center py-10">
-                                <div className="mb-8"><span className="px-6 py-2 bg-primary text-white text-sm font-black rounded-full shadow-md uppercase tracking-widest whitespace-nowrap">{getCurrentRound()}</span></div>
-                                <div className="flex flex-row items-start justify-center gap-8 md:gap-32 relative">
+                            <div className="text-center py-1 md:py-2">
+                                <div className="flex justify-between items-center mb-4 md:mb-6 px-4 max-w-2xl mx-auto">
+                                    <button
+                                        onClick={() => setStage('select')}
+                                        className="text-[10px] md:text-sm font-bold text-gray-400 hover:text-primary transition-colors flex items-center gap-1"
+                                    >
+                                        <svg viewBox="0 0 24 24" className="w-3 h-3 md:w-4 md:h-4 fill-none stroke-current stroke-3"><path d="M15 18l-6-6 6-6"></path></svg>
+                                        처음으로
+                                    </button>
+                                    <div className="flex-1 text-center">
+                                        <span className="px-3 py-1 bg-primary text-white text-[9px] md:text-[11px] font-black rounded-full shadow-md uppercase tracking-widest whitespace-nowrap">{getCurrentRound()}</span>
+                                    </div>
+                                    <div className="w-[60px] md:w-[80px]"></div> {/* Spacer for symmetry */}
+                                </div>
+                                <div className="flex flex-row items-stretch justify-center gap-2 md:gap-4 relative max-w-2xl mx-auto px-4">
                                     {matches[currentMatchIndex].map((w, idx) => (
-                                        <div key={idx} onClick={() => selectWinner(w)} className="group cursor-pointer transform transition-all hover:scale-105 active:scale-95 duration-500 w-[63%] md:w-72 flex flex-col items-center">
-                                            <div className="relative w-full aspect-[2/3] rounded-[24px] md:rounded-[48px] overflow-hidden shadow-2xl border-4 md:border-8 border-transparent group-hover:border-primary/20 transition-all bg-gray-100 flex-shrink-0">
-                                                <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover" />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-6 md:pb-12"><span className="px-4 py-2 md:px-8 md:py-3 bg-white text-primary font-black rounded-full shadow-xl text-sm md:text-lg uppercase tracking-tighter italic">CHOOSE</span></div>
+                                        <div key={idx} onClick={() => selectWinner(w)} className="group cursor-pointer flex flex-col gap-1.5 w-1/2 max-w-[220px]">
+                                            <div className="relative aspect-[2/3.1] rounded-lg md:rounded-[16px] overflow-hidden shadow-lg border border-white/5 transition-all group-hover:border-primary/50">
+                                                <img src={w.thumbnailUrl || w.thumbnail} referrerPolicy="no-referrer" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+
+                                                {/* 텍스트 오버레이 (크기 추가 축소) */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/10 to-transparent flex flex-col justify-end p-2 md:p-4">
+                                                    <h4 className="text-white text-xs md:text-lg font-black tracking-tighter leading-tight break-keep word-break-keep-all drop-shadow-lg mb-0.5">{w.titleName || w.title}</h4>
+                                                    <p className="text-white/60 text-[7px] md:text-[9px] font-bold uppercase tracking-widest">{w.author}</p>
+                                                </div>
+
+                                                {/* 호버 효과 */}
+                                                <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-lg md:rounded-[16px] pointer-events-none"></div>
                                             </div>
-                                            <div className="mt-4 md:mt-8 text-center w-full">
-                                                <h4 className="text-[13px] md:text-xl font-black text-gray-800 tracking-tighter italic leading-tight line-clamp-2 break-keep word-break-keep-all">{w.titleName || w.title}</h4>
-                                                <p className="mt-1 md:mt-2 text-primary font-black text-[10px] md:text-[12px] opacity-0 group-hover:opacity-100 transition-all uppercase tracking-widest truncate w-full">{w.author}</p>
-                                            </div>
+
+                                            {/* 선택 버튼 (85% 수준으로 축소) */}
+                                            <button className="w-full py-1.5 md:py-2 rounded-lg font-black text-[9px] md:text-xs transition-all bg-white/10 text-white/40 group-hover:bg-primary group-hover:text-white active:scale-95">
+                                                선택하기
+                                            </button>
                                         </div>
                                     ))}
-                                    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 pointer-events-none flex flex-col items-center">
-                                        <div className="text-3xl md:text-7xl font-black italic tracking-tighter select-none flex items-center gap-1 md:gap-2">
-                                            <span className="text-primary drop-shadow-[0_0_15px_rgba(0,213,100,0.5)]">V</span>
-                                            <span className="text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]">S</span>
+
+                                    {/* 중앙 VS (크기 85% 축소) */}
+                                    <div className="absolute top-1/2 left-1/2 -translate-x-[51%] -translate-y-1/2 -mt-4 md:-mt-6 z-20 pointer-events-none w-full flex justify-center overflow-visible">
+                                        <div className="text-2xl md:text-5xl font-black italic tracking-tighter select-none flex items-center justify-center filter drop-shadow-[0_0_15px_rgba(0,213,100,0.5)]">
+                                            <span className="bg-gradient-to-b from-white via-primary to-primary-dark bg-clip-text text-transparent transform -skew-x-12 px-2">
+                                                VS
+                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -1717,7 +1742,7 @@
                                 <div className="relative pt-6 pb-12 rounded-3xl overflow-hidden hero-gradient">
                                     <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-0">
                                         <div className="flex-1 space-y-12 z-10 pl-8 lg:pl-16">
-                                            <h1 className="text-3xl lg:text-5xl font-black leading-[1.4] text-white tracking-tight">
+                                            <h1 className="text-3xl lg:text-5xl font-black leading-[2.2] text-white tracking-tight">
                                                 지금, 당신의 심장을 뛰게 할<br />
                                                 <span className="text-primary">웹툰</span>을 찾아보세요
                                             </h1>
@@ -1976,7 +2001,7 @@
 
                         {view === 'worldcup' && (
                             <div className="animate-up">
-                                <div className="max-w-4xl mx-auto py-10">
+                                <div className="max-w-4xl mx-auto -mt-6 md:-mt-10">
                                     <WorldcupModal
                                         isOpen={true}
                                         onClose={() => setView('home')}

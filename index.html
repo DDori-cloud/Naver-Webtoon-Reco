@@ -1416,28 +1416,67 @@
                         </div>
                     </div>
 
-                    {analysis.recommendation && (
-                        <div className="bg-primary/5 rounded-[20px] p-4 border border-primary/10 mb-6">
-                            <h4 className="text-[10px] uppercase tracking-widest font-black text-primary mb-4">{t.worldcup_reco_title}</h4>
-                            <div className="flex gap-4 items-center">
-                                <div className="w-16 aspect-[3/4] rounded-xl overflow-hidden shadow-md flex-shrink-0">
-                                    <img src={analysis.recommendation.thumbnailUrl || analysis.recommendation.thumbnail} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        {analysis.recommendation && (
+                            <div className="bg-primary/5 rounded-[20px] p-4 border border-primary/10">
+                                <h4 className="text-[10px] uppercase tracking-widest font-black text-primary mb-3">{t.worldcup_reco_title}</h4>
+                                <div className="flex gap-3 items-center">
+                                    <div className="w-14 aspect-[3/4] rounded-xl overflow-hidden shadow-md flex-shrink-0">
+                                        <img src={analysis.recommendation.thumbnailUrl || analysis.recommendation.thumbnail} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                    </div>
+                                    <div className="flex-grow min-w-0">
+                                        <h5 className="text-[13px] font-black text-gray-900 mb-0.5 truncate">{analysis.recommendation.titleName || analysis.recommendation.title}</h5>
+                                        <p className="text-[10px] text-gray-400 font-bold mb-2 truncate">{analysis.recommendation.author}</p>
+                                        <a
+                                            href={`https://comic.naver.com/webtoon/list?titleId=${analysis.recommendation.titleId || analysis.recommendation.id}`}
+                                            target="_blank"
+                                            className="inline-flex items-center gap-1 text-primary font-black text-[9px] uppercase tracking-widest hover:gap-1.5 transition-all"
+                                        >
+                                            {t.view_now}
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                                        </a>
+                                    </div>
                                 </div>
-                                <div className="flex-grow min-w-0">
-                                    <h5 className="text-sm font-black text-gray-900 mb-0.5 truncate">{analysis.recommendation.titleName || analysis.recommendation.title}</h5>
-                                    <p className="text-[10px] text-gray-400 font-bold mb-2 truncate">{analysis.recommendation.author}</p>
-                                    <a
-                                        href={`https://comic.naver.com/webtoon/list?titleId=${analysis.recommendation.titleId || analysis.recommendation.id}`}
-                                        target="_blank"
-                                        className="inline-flex items-center gap-1.5 text-primary font-black text-[10px] uppercase tracking-widest hover:gap-2 transition-all"
-                                    >
-                                        {t.view_now}
-                                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-                                    </a>
+                            </div>
+                        )}
+
+                        <div className="bg-gray-800/5 rounded-[20px] p-4 border border-black/5 flex flex-col">
+                            <h4 className="text-[10px] uppercase tracking-widest font-black text-gray-400 mb-3 flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></span>
+                                W-MBTI Dimension Guide
+                            </h4>
+                            <div className="space-y-2.5 flex-grow">
+                                <div className="p-2 bg-white rounded-xl shadow-sm border border-black/5">
+                                    <div className="flex justify-between items-center mb-0.5">
+                                        <span className="text-[11px] font-black text-primary">F vs R</span>
+                                        <span className="text-[8px] font-black text-gray-300 uppercase letter-wider">Dimension</span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-600 font-bold leading-tight">초현실 세계관 vs 현실적 배경</p>
+                                </div>
+                                <div className="p-2 bg-white rounded-xl shadow-sm border border-black/5">
+                                    <div className="flex justify-between items-center mb-0.5">
+                                        <span className="text-[11px] font-black text-primary">E vs T</span>
+                                        <span className="text-[8px] font-black text-gray-300 uppercase">Atmosphere</span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-600 font-bold leading-tight">감성 로맨스 vs 논리 스릴러</p>
+                                </div>
+                                <div className="p-2 bg-white rounded-xl shadow-sm border border-black/5">
+                                    <div className="flex justify-between items-center mb-0.5">
+                                        <span className="text-[11px] font-black text-primary">G vs H</span>
+                                        <span className="text-[8px] font-black text-gray-300 uppercase">Dynamic</span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-600 font-bold leading-tight">강렬한 성장 vs 편안한 힐링</p>
+                                </div>
+                                <div className="p-2 bg-white rounded-xl shadow-sm border border-black/5">
+                                    <div className="flex justify-between items-center mb-0.5">
+                                        <span className="text-[11px] font-black text-primary">S vs D</span>
+                                        <span className="text-[8px] font-black text-gray-300 uppercase">Depth</span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-600 font-bold leading-tight">유쾌한 재미 vs 깊고 묵직함</p>
                                 </div>
                             </div>
                         </div>
-                    )}
+                    </div>
 
                     <div className="flex gap-3">
                         <button onClick={onBack} className="flex-1 py-3 bg-gray-50 text-gray-400 font-black rounded-xl hover:bg-gray-100 transition-all text-[10px] uppercase tracking-widest">{t.worldcup_back_to_winner}</button>
@@ -2055,30 +2094,34 @@
             // Visitor Counter Effect
             useEffect(() => {
                 const trackVisitor = async () => {
-                    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-                    const visitorKey = `visited_${today}`;
+                    try {
+                        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+                        const visitorKey = `visited_${today}`;
 
-                    // Check if already visited today
-                    if (!localStorage.getItem(visitorKey)) {
-                        localStorage.setItem(visitorKey, 'true');
+                        // Check if already visited today
+                        if (!localStorage.getItem(visitorKey)) {
+                            localStorage.setItem(visitorKey, 'true');
 
-                        // Increment visitor count in Supabase
-                        await supabaseClient.rpc('increment_visitor', { visit_date: today });
+                            // Increment visitor count in Supabase
+                            await supabaseClient.rpc('increment_visitor', { visit_date: today });
+                        }
+
+                        // Fetch visitor counts safely using maybeSingle() instead of single()
+                        const { data: todayData } = await supabase
+                            .from('visitor_stats')
+                            .select('count')
+                            .eq('date', today)
+                            .maybeSingle();
+
+                        const { data: totalData } = await supabase
+                            .from('visitor_stats')
+                            .select('count');
+
+                        if (todayData) setTodayVisitors(todayData.count || 0);
+                        if (totalData) setTotalVisitors(totalData.reduce((sum, row) => sum + (row.count || 0), 0));
+                    } catch (err) {
+                        console.error("Visitor tracking error:", err);
                     }
-
-                    // Fetch visitor counts
-                    const { data: todayData } = await supabase
-                        .from('visitor_stats')
-                        .select('count')
-                        .eq('date', today)
-                        .single();
-
-                    const { data: totalData } = await supabase
-                        .from('visitor_stats')
-                        .select('count');
-
-                    if (todayData) setTodayVisitors(todayData.count || 0);
-                    if (totalData) setTotalVisitors(totalData.reduce((sum, row) => sum + (row.count || 0), 0));
                 };
 
                 trackVisitor();
@@ -3203,7 +3246,7 @@
                     }
 
                     {/* Footer with Visitor Counter */}
-                    <footer className="fixed bottom-0 left-0 right-0 bg-[#0B0F1A]/90 backdrop-blur-md border-t border-white/5 py-3 px-4 z-[900]">
+                    <footer className="fixed bottom-[60px] md:bottom-0 left-0 right-0 bg-[#0B0F1A]/90 backdrop-blur-md border-t border-white/5 py-3 px-4 z-[900]">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-3 md:gap-8">
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">

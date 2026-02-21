@@ -2128,19 +2128,22 @@
                             await supabaseClient.rpc('increment_visitor', { visit_date: today });
                         }
 
-                        // Fetch visitor counts safely using maybeSingle() instead of single()
-                        const { data: todayData } = await supabaseClient
-                            .from('visitor_stats')
-                            .select('*')
-                            .eq('date', today)
-                            .maybeSingle();
-
+                        // Fetch all visitor stats (prevents errors if DB has multiple rows for the same date due to race conditions)
                         const { data: totalData } = await supabaseClient
                             .from('visitor_stats')
                             .select('*');
 
-                        if (todayData) setTodayVisitors(todayData.count || todayData.visitor_count || todayData.visits || 0);
-                        if (totalData) setTotalVisitors(totalData.reduce((sum, row) => sum + (row.count || row.visitor_count || row.visits || 0), 0));
+                        if (totalData) {
+                            // Calculate total visitors
+                            const totalSum = totalData.reduce((sum, row) => sum + parseInt(row.count || row.visitor_count || row.visits || 0), 0);
+                            setTotalVisitors(totalSum);
+
+                            // Calculate today's visitors using localized string matching
+                            const todayRows = totalData.filter(row => row.date && String(row.date).startsWith(today));
+                            const todaySum = todayRows.reduce((sum, row) => sum + parseInt(row.count || row.visitor_count || row.visits || 0), 0);
+
+                            setTodayVisitors(todaySum);
+                        }
                     } catch (err) {
                         console.error("Visitor tracking error:", err);
                     }

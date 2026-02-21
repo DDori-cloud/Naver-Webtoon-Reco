@@ -2518,12 +2518,12 @@
                                                     href={`https://comic.naver.com/webtoon/list?titleId=${w.id}`}
                                                     target="_blank"
                                                     key={w.id}
-                                                    className="relative flex-1 group transition-all duration-300 ease-out hover:flex-[3] overflow-hidden cursor-pointer"
+                                                    className="relative flex-1 group transition-[flex-grow] duration-300 ease-out hover:flex-[3] overflow-hidden cursor-pointer will-change-[flex-grow] transform-gpu"
                                                     style={{
                                                         clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)',
                                                     }}
                                                 >
-                                                    <div className="absolute inset-0 transition-all duration-300 ease-out scale-110 group-hover:scale-100">
+                                                    <div className="absolute inset-0 transition-transform duration-300 ease-out scale-110 group-hover:scale-100 will-change-transform transform-gpu">
                                                         <img
                                                             src={w.thumbnail}
                                                             alt={`hero-${i}`}

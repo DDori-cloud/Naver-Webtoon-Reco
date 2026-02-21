@@ -2107,13 +2107,13 @@
                         }
 
                         // Fetch visitor counts safely using maybeSingle() instead of single()
-                        const { data: todayData } = await supabase
+                        const { data: todayData } = await supabaseClient
                             .from('visitor_stats')
                             .select('*')
                             .eq('date', today)
                             .maybeSingle();
 
-                        const { data: totalData } = await supabase
+                        const { data: totalData } = await supabaseClient
                             .from('visitor_stats')
                             .select('*');
 
@@ -3248,7 +3248,7 @@
                     {/* Footer with Visitor Counter */}
                     <footer className="fixed bottom-[60px] md:bottom-0 left-0 right-0 bg-[#0B0F1A]/90 backdrop-blur-md border-t border-white/5 py-3 px-4 z-[900]">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-3 md:gap-8">
-                            <div className="flex items-center gap-4">
+                            <div className="hidden md:flex items-center gap-4">
                                 <div className="flex items-center gap-2">
                                     <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">{t.today_visitors}</span>
                                     <span className="text-sm font-bold text-primary">{todayVisitors.toLocaleString()}</span>

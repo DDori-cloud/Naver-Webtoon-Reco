@@ -2009,6 +2009,18 @@
                 };
             }, []);
 
+            // 초성 추출 함수 추가
+            const getChosung = (str) => {
+                const cho = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+                let result = "";
+                for (let i = 0; i < str.length; i++) {
+                    let code = str.charCodeAt(i) - 44032;
+                    if (code > -1 && code < 11172) result += cho[Math.floor(code / 588)];
+                    else result += str.charAt(i);
+                }
+                return result;
+            };
+
             const handleSearch = (q) => {
                 setSearchQuery(q);
                 if (!q.trim()) {
@@ -2029,6 +2041,7 @@
 
                     const normalizedTitle = normalize(title);
                     const normalizedAuthor = normalize(author);
+                    const chosungTitle = getChosung(title).replace(/\s/g, '');
 
                     let searchScore = 0;
 
@@ -2036,6 +2049,10 @@
                     if (normalizedTitle === normalizedQ) searchScore += 100; // 정확히 일치
                     else if (normalizedTitle.startsWith(normalizedQ)) searchScore += 80; // 접두사 일치
                     else if (normalizedTitle.includes(normalizedQ)) searchScore += 50; // 포함
+                    // 초성 매칭
+                    else if (chosungTitle === normalizedQ) searchScore += 90;
+                    else if (chosungTitle.startsWith(normalizedQ)) searchScore += 70;
+                    else if (chosungTitle.includes(normalizedQ)) searchScore += 40;
 
                     // 2. 작가 매칭
                     if (normalizedAuthor === normalizedQ) searchScore += 70;

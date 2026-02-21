@@ -2042,6 +2042,7 @@
                     const normalizedTitle = normalize(title);
                     const normalizedAuthor = normalize(author);
                     const chosungTitle = getChosung(title).replace(/\s/g, '');
+                    const chosungAuthor = getChosung(author).replace(/\s/g, '');
 
                     let searchScore = 0;
 
@@ -2057,6 +2058,10 @@
                     // 2. 작가 매칭
                     if (normalizedAuthor === normalizedQ) searchScore += 70;
                     else if (normalizedAuthor.includes(normalizedQ)) searchScore += 40;
+                    // 초성 매칭 (작가)
+                    else if (chosungAuthor === normalizedQ) searchScore += 60;
+                    else if (chosungAuthor.startsWith(normalizedQ)) searchScore += 50;
+                    else if (chosungAuthor.includes(normalizedQ)) searchScore += 30;
 
                     // 3. 태그 및 설명 매칭
                     if (tags.some(t => normalize(t).includes(normalizedQ))) searchScore += 30;

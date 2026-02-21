@@ -1685,7 +1685,7 @@
                                                 </div>
 
                                                 {/* 호버 효과 */}
-                                                <div className="absolute inset-0 border-2 border-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-lg md:rounded-[16px] pointer-events-none"></div>
+                                                <div className="absolute inset-0 ring-4 ring-inset ring-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-lg md:rounded-[16px] pointer-events-none"></div>
                                             </div>
 
                                             {/* 선택 버튼 (85% 수준으로 축소) */}
@@ -1798,7 +1798,7 @@
                     <div
                         ref={scrollRef}
                         onScroll={handleScroll}
-                        className="flex overflow-x-auto gap-5 pb-6 scroll-smooth snap-x snap-mandatory no-scrollbar"
+                        className="flex overflow-x-auto gap-5 pt-3 pb-6 px-1 scroll-smooth snap-x snap-mandatory no-scrollbar"
                     >
                         {items.map((w, idx) => (
                             <div key={w.id} className="flex-shrink-0 w-[calc((100%-20px)/2)] md:w-[calc((100%-80px)/5)] snap-start">
@@ -2109,16 +2109,16 @@
                         // Fetch visitor counts safely using maybeSingle() instead of single()
                         const { data: todayData } = await supabase
                             .from('visitor_stats')
-                            .select('count')
+                            .select('*')
                             .eq('date', today)
                             .maybeSingle();
 
                         const { data: totalData } = await supabase
                             .from('visitor_stats')
-                            .select('count');
+                            .select('*');
 
-                        if (todayData) setTodayVisitors(todayData.count || 0);
-                        if (totalData) setTotalVisitors(totalData.reduce((sum, row) => sum + (row.count || 0), 0));
+                        if (todayData) setTodayVisitors(todayData.count || todayData.visitor_count || todayData.visits || 0);
+                        if (totalData) setTotalVisitors(totalData.reduce((sum, row) => sum + (row.count || row.visitor_count || row.visits || 0), 0));
                     } catch (err) {
                         console.error("Visitor tracking error:", err);
                     }
@@ -3009,7 +3009,13 @@
                         showAuthModal && (
                             <div className="modal-container" onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}>
                                 <div className="modal-content-box" onClick={e => e.stopPropagation()}>
-                                    <div className="bg-[#161B28] w-full max-w-sm rounded-[48px] shadow-2xl p-10 flex flex-col items-center border border-white/10">
+                                    <div className="bg-[#161B28] relative w-full max-w-sm rounded-[48px] shadow-2xl p-10 flex flex-col items-center border border-white/10">
+                                        <button
+                                            onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}
+                                            className="absolute top-6 right-6 p-2 bg-white/5 hover:bg-red-500/20 text-gray-400 hover:text-red-400 rounded-full transition-all"
+                                        >
+                                            <svg viewBox="0 0 24 24" className="w-5 h-5 fill-none stroke-current stroke-2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                        </button>
                                         <h3 className="text-2xl font-black mb-8 tracking-tighter text-white">{authMode === 'login' ? t.login : t.signup_btn}</h3>
                                         <div className="w-full space-y-4">
                                             <div className="flex flex-col gap-3">
@@ -3098,12 +3104,6 @@
                                                 </div>
                                             )}
                                         </div>
-                                        <button
-                                            onClick={() => { setShowAuthModal(false); setAuthMode('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }}
-                                            className="mt-8 text-gray-400 font-bold text-xs uppercase"
-                                        >
-                                            CLOSE
-                                        </button>
                                     </div>
                                 </div>
                             </div>

@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "ms-python.python",
+        "bradlc.vscode-tailwindcss",
+        "esbenp.prettier-vscode",
+        "ritwickdey.liveserver",
+        "christian-kohler.path-intellisense",
+        "dsznajder.es7-react-js-snippets"
+    ]
+}

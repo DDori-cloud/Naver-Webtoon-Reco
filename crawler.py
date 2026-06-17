@@ -60,6 +60,36 @@ def fetch_daily_plus_webtoons():
         print(f"Error fetching Daily Plus webtoons: {e}")
         return []
 
+def fetch_new_webtoons():
+    """신작 웹툰 정보를 가져옵니다. (네이버 웹툰 '신작' 카테고리)"""
+    url = "https://comic.naver.com/api/webtoon/titlelist/new"
+    try:
+        response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0'})
+        response.raise_for_status()
+        data = response.json()
+        
+        new_ids = set()
+        webtoons = []
+        if 'titleList' in data:
+            for item in data['titleList']:
+                webtoon = {
+                    'titleId': item['titleId'],
+                    'titleName': item['titleName'],
+                    'author': item['author'],
+                    'thumbnailUrl': item['thumbnailUrl'],
+                    'starScore': item.get('starScore', 0),
+                    'viewCount': item.get('viewCount', 0),
+                    'status': 'ONGOING',
+                    'category': 'NEW',
+                    'isNew': True
+                }
+                webtoons.append(webtoon)
+                new_ids.add(item['titleId'])
+        return webtoons, new_ids
+    except Exception as e:
+        print(f"Error fetching new webtoons: {e}")
+        return [], set()
+
 def fetch_finished_webtoons():
     """완결 웹툰 정보를 페이지별로 순회하며 가져옵니다."""
     base_url = "https://comic.naver.com/api/webtoon/titlelist/finished"
@@ -129,9 +159,10 @@ def main():
     # 1. 각 섹션별 데이터 수집
     ongoing = fetch_weekday_webtoons()
     daily_plus = fetch_daily_plus_webtoons()
+    new_webtoons, new_ids = fetch_new_webtoons()
     finished = fetch_finished_webtoons()
     
-    print(f"일반 연재: {len(ongoing)}개 / 매일+: {len(daily_plus)}개 / 완결: {len(finished)}개")
+    print(f"일반 연재: {len(ongoing)}개 / 매일+: {len(daily_plus)}개 / 신작: {len(new_webtoons)}개 / 완결: {len(finished)}개")
     
     # 2. 데이터 통합 및 중복 제거 (titleId 기준)
     all_webtoons_map = {}
@@ -142,8 +173,18 @@ def main():
         all_webtoons_map[w['titleId']] = w
     for w in daily_plus:
         all_webtoons_map[w['titleId']] = w
-    for w in ongoing:
+    for w in new_webtoons:
         all_webtoons_map[w['titleId']] = w
+    for w in ongoing:
+        # 요일 연재에 있더라도 신작이면 isNew 플래그 유지
+        if w['titleId'] in new_ids:
+            w['isNew'] = True
+        all_webtoons_map[w['titleId']] = w
+        
+    # 신작 플래그가 누락된 웹툰에 isNew 추가 (다른 카테고리에서 덮어쓰인 경우)
+    for tid in new_ids:
+        if tid in all_webtoons_map and 'isNew' not in all_webtoons_map[tid]:
+            all_webtoons_map[tid]['isNew'] = True
         
     all_webtoons = list(all_webtoons_map.values())
     total_count = len(all_webtoons)

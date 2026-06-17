@@ -1,0 +1,10 @@
+{
+  "name": "naver-webtoon-reco",
+  "version": "1.0.0",
+  "description": "AI 기반 네이버 웹툰 추천기",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve . -l 3000",
+    "start": "npx -y serve . -l 3000"
+  }
+}

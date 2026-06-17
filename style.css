@@ -1,52 +1,91 @@
 /* ============================================
-   TOON PICK - Premium Dark Mode Theme
-   Primary: Naver Green #00D564
-   Background: Deep Charcoal #0B0B0B
+   Dual Theme System (Dark/Light)
    ============================================ */
 
-:root {
-    --primary: #00D564;
-    --primary-light: #00FF7A;
-    --primary-dark: #00B856;
-    --primary-glow: rgba(0, 213, 100, 0.4);
-    --bg-dark: #0B0B0B;
-    --bg-card: #141414;
-    --bg-card-hover: #1A1A1A;
-    --bg-glass: rgba(20, 20, 20, 0.8);
-    --text-white: #FFFFFF;
-    --text-gray: #A0A0A0;
-    --text-muted: #606060;
-    --border-dark: #252525;
-    --border-glow: rgba(0, 213, 100, 0.3);
-    --gradient-primary: linear-gradient(135deg, #00D564 0%, #00FF7A 100%);
-    --gradient-hero: linear-gradient(135deg, rgba(0, 213, 100, 0.1) 0%, transparent 50%);
-    --shadow-glow: 0 0 30px rgba(0, 213, 100, 0.3);
-    --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+:root, [data-theme="dark"] {
+    --primary: #00C853;
+    --primary-light: #69F0AE;
+    --primary-dark: #00A844;
+    --primary-glow: rgba(0, 200, 83, 0.25);
+    --bg-main: #0F1117;
+    --bg-dark: #0F1117;
+    --bg-card: #171B26;
+    --bg-card-hover: #1E2333;
+    --bg-glass: rgba(15, 17, 23, 0.85);
+    --bg-elevated: #232838;
+    --text-white: #F1F3F5;
+    --text-primary: #F1F3F5;
+    --text-gray: #8B95A5;
+    --text-secondary: #8B95A5;
+    --text-muted: #5A6474;
+    --border-dark: #2A2F3E;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-glow: rgba(0, 200, 83, 0.25);
+    --gradient-primary: linear-gradient(135deg, #00C853 0%, #69F0AE 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(0, 200, 83, 0.06) 0%, transparent 50%);
+    --shadow-glow: 0 0 20px rgba(0, 200, 83, 0.15);
+    --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.3);
     --radius-sm: 12px;
     --radius-md: 16px;
     --radius-lg: 24px;
     --radius-xl: 32px;
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color-scheme: dark;
 }
+
+[data-theme="light"] {
+    --primary: #00A844;
+    --primary-light: #00C853;
+    --primary-dark: #008836;
+    --primary-glow: rgba(0, 168, 68, 0.15);
+    --bg-main: #F5F7FA;
+    --bg-dark: #F5F7FA;
+    --bg-card: #FFFFFF;
+    --bg-card-hover: #F0F4F8;
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --bg-elevated: #FFFFFF;
+    --text-white: #1A202C;
+    --text-primary: #1A202C;
+    --text-gray: #64748B;
+    --text-secondary: #64748B;
+    --text-muted: #94A3B8;
+    --border-dark: #E2E8F0;
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --border-glow: rgba(0, 168, 68, 0.2);
+    --gradient-primary: linear-gradient(135deg, #00A844 0%, #00C853 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(0, 168, 68, 0.04) 0%, transparent 50%);
+    --shadow-glow: 0 0 16px rgba(0, 168, 68, 0.08);
+    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+    color-scheme: light;
+}
+
+/* ============================================
+   Base Reset & Body
+   ============================================ */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-    /* 모바일 터치 하이라이트 제거 */
 }
 
 body {
     font-family: 'Pretendard', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--bg-dark);
     color: var(--text-white);
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
     line-height: 1.6;
     overflow-x: hidden;
-    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Scrollbar Styling */
+/* ============================================
+   Scrollbar
+   ============================================ */
+
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -66,8 +105,285 @@ body {
 }
 
 /* ============================================
+   Layout
+   ============================================ */
+
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100000;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-dark);
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+main {
+    margin-top: 80px;
+    flex: 1;
+    width: 100%;
+    padding-bottom: 80px;
+}
+
+/* ============================================
+   Modal
+   ============================================ */
+
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 150000;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding-top: 2vh;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    overflow-y: auto;
+}
+
+.modal-content-box {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--border-dark);
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-open {
+    overflow: hidden !important;
+}
+
+/* ============================================
+   Animations
+   ============================================ */
+
+.animate-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 20px var(--primary-glow);
+    }
+    50% {
+        box-shadow: 0 0 40px var(--primary-glow);
+    }
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.03); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-blink {
+    animation: blink 2s infinite ease-in-out;
+}
+
+.animate-fadeInUp {
+    animation: fadeInUp 0.5s ease forwards;
+}
+
+/* ============================================
+   Scrollbar Utilities
+   ============================================ */
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.backdrop-blur-custom {
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+}
+
+/* ============================================
+   Card Hover Effect
+   ============================================ */
+
+.card-hover {
+    transition: var(--transition);
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+}
+
+.card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-card);
+    border-color: var(--primary);
+}
+
+/* ============================================
+   Gradient Text & Buttons
+   ============================================ */
+
+.gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.btn-gradient {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-glow);
+    transition: var(--transition);
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px var(--primary-glow);
+}
+
+/* ============================================
+   Hero Section
+   ============================================ */
+
+.hero-cover {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    transition: var(--transition);
+}
+
+.hero-cover:hover {
+    transform: scale(1.05) rotateY(-5deg);
+}
+
+.hero-gradient {
+    background: var(--gradient-hero);
+}
+
+.hero-section {
+    position: relative;
+    padding: 80px 0;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-hero);
+    pointer-events: none;
+}
+
+.hero-headline {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+}
+
+.hero-headline .highlight {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-covers {
+    position: relative;
+    perspective: 1000px;
+}
+
+/* VS Neon Text */
+.vs-neon {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(255, 107, 107, 0.5);
+}
+
+/* ============================================
+   CTA Button
+   ============================================ */
+
+.btn-cta {
+    background: var(--gradient-primary);
+    color: #000;
+    font-weight: 800;
+    padding: 18px 36px;
+    border-radius: var(--radius-xl);
+    border: none;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-glow);
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-cta:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 0 50px var(--primary-glow);
+}
+
+/* ============================================
    Glassmorphism Navigation
    ============================================ */
+
 .nav-glass {
     background: var(--bg-glass);
     backdrop-filter: blur(20px);
@@ -100,82 +416,9 @@ body {
 }
 
 /* ============================================
-   Hero Section
-   ============================================ */
-.hero-section {
-    position: relative;
-    padding: 80px 0;
-    overflow: hidden;
-}
-
-.hero-section::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--gradient-hero);
-    pointer-events: none;
-}
-
-.hero-headline {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    font-weight: 800;
-    line-height: 1.4;
-    letter-spacing: -0.02em;
-}
-
-.hero-headline .highlight {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* CTA Button with Glow */
-.btn-cta {
-    background: var(--gradient-primary);
-    color: #000;
-    font-weight: 800;
-    padding: 18px 36px;
-    border-radius: var(--radius-xl);
-    border: none;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: var(--shadow-glow);
-    font-size: 16px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-cta:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 0 50px rgba(0, 213, 100, 0.5);
-}
-
-/* Hero Webtoon Covers */
-.hero-covers {
-    position: relative;
-    perspective: 1000px;
-}
-
-.hero-cover {
-    position: absolute;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    box-shadow: var(--shadow-card);
-    transition: var(--transition);
-}
-
-.hero-cover:hover {
-    transform: scale(1.05) rotateY(-5deg);
-}
-
-/* ============================================
    Section Headers
    ============================================ */
+
 .section-header {
     display: flex;
     align-items: center;
@@ -189,12 +432,12 @@ body {
 
 .section-title {
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--text-white);
 }
 
 .section-badge {
-    background: rgba(0, 213, 100, 0.1);
+    background: rgba(0, 200, 83, 0.1);
     color: var(--primary);
     font-size: 11px;
     font-weight: 700;
@@ -204,8 +447,9 @@ body {
 }
 
 /* ============================================
-   Webtoon Card - Dark Theme
+   Webtoon Card
    ============================================ */
+
 .webtoon-card {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
@@ -330,8 +574,9 @@ body {
 }
 
 /* ============================================
-   Horizontal Scroll Section (Trends)
+   Horizontal Scroll Section
    ============================================ */
+
 .horizontal-scroll {
     display: flex;
     gap: 16px;
@@ -352,8 +597,9 @@ body {
 }
 
 /* ============================================
-   Recommendation Wizard Steps
+   Recommendation Wizard
    ============================================ */
+
 .step-progress {
     height: 4px;
     background: var(--border-dark);
@@ -393,7 +639,7 @@ body {
 
 .genre-card:hover {
     border-color: var(--primary);
-    background: rgba(0, 213, 100, 0.05);
+    background: rgba(0, 200, 83, 0.05);
     color: var(--primary);
 }
 
@@ -410,8 +656,9 @@ body {
 }
 
 /* ============================================
-   Webtoon World Cup (VS Screen)
+   Worldcup VS
    ============================================ */
+
 .worldcup-vs {
     display: flex;
     align-items: center;
@@ -492,8 +739,9 @@ body {
 }
 
 /* ============================================
-   Input Fields - Dark Theme
+   Input Fields
    ============================================ */
+
 .input-dark {
     width: 100%;
     padding: 16px 24px;
@@ -513,12 +761,13 @@ body {
 
 .input-dark:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(0, 213, 100, 0.1);
+    box-shadow: 0 0 0 4px var(--primary-glow);
 }
 
 /* ============================================
    Buttons
    ============================================ */
+
 .btn-primary {
     background: var(--gradient-primary);
     color: #000;
@@ -558,33 +807,52 @@ body {
 }
 
 /* ============================================
-   Modal - Dark Theme
+   Dual Range Slider
    ============================================ */
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    padding: 20px;
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    pointer-events: auto;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    border: 2px solid #fff;
+    position: relative;
+    z-index: 50;
+    margin-top: -8px;
 }
 
-.modal-content {
-    background: var(--bg-card);
-    border-radius: var(--radius-xl);
-    border: 1px solid var(--border-dark);
-    max-width: 500px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
+input[type=range]::-moz-range-thumb {
+    pointer-events: auto;
+    height: 20px;
+    width: 20px;
+    border: none;
+    border-radius: 50%;
+    background: var(--primary);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    border: 2px solid #fff;
+    position: relative;
+    z-index: 50;
+}
+
+input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+}
+
+input[type=range]::-moz-range-track {
+    background: transparent;
 }
 
 /* ============================================
-   Footer - Dark Theme
+   Footer
    ============================================ */
+
 .footer-dark {
     background: var(--bg-glass);
     backdrop-filter: blur(20px);
@@ -592,54 +860,50 @@ body {
 }
 
 /* ============================================
-   Animations
+   Theme Toggle Button
    ============================================ */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.theme-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border-dark);
+    background: var(--bg-card);
+    color: var(--text-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
 }
 
-@keyframes pulse-glow {
-
-    0%,
-    100% {
-        box-shadow: 0 0 20px var(--primary-glow);
-    }
-
-    50% {
-        box-shadow: 0 0 40px var(--primary-glow);
-    }
+.theme-toggle:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--bg-card-hover);
 }
 
-.animate-fadeInUp {
-    animation: fadeInUp 0.5s ease forwards;
+.theme-toggle svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
 }
 
-.animate-pulse-glow {
-    animation: pulse-glow 2s infinite;
+.theme-toggle:hover svg {
+    transform: rotate(20deg);
 }
 
 /* ============================================
-   Responsive & Mobile Optimization
+   Responsive & Mobile
    ============================================ */
-@media (max-width: 768px) {
 
-    /* Main Layout */
+@media (max-width: 768px) {
     main {
         padding-left: 1.25rem !important;
         padding-right: 1.25rem !important;
         margin-top: 60px !important;
-        /* 헤더 높이 반영 */
     }
 
-    /* Header Layout */
     header {
         position: fixed;
         width: 100%;
@@ -648,26 +912,22 @@ body {
 
     header>div {
         height: auto !important;
-        /* 고정 높이 해제 */
         flex-wrap: wrap !important;
         gap: 0.75rem !important;
         padding: 0.75rem 1rem !important;
         justify-content: space-between;
     }
 
-    /* Header: Logo */
     header>div>div:nth-child(1) {
         order: 1;
         width: auto;
     }
 
-    /* Header: Right Actions (Lang, Login) */
     header>div>div:last-child {
         order: 2;
         margin-left: auto;
     }
 
-    /* Header: Navigation (Hidden by tailwind logic, force show as scrollable row) */
     header nav {
         display: flex !important;
         order: 3;
@@ -677,7 +937,6 @@ body {
         margin-top: 4px;
         gap: 1.5rem !important;
         -ms-overflow-style: none;
-        /* Icon hidden */
         scrollbar-width: none;
         white-space: nowrap;
         justify-content: flex-start;
@@ -693,7 +952,6 @@ body {
         padding: 4px 0;
     }
 
-    /* Header: Search Bar */
     header>div>.flex-grow {
         order: 4;
         width: 100% !important;
@@ -703,10 +961,8 @@ body {
 
     header .flex-grow input {
         font-size: 16px !important;
-        /* iOS 줌 방지 */
     }
 
-    /* Hero Section */
     .hero-section {
         padding: 40px 0 !important;
         text-align: center;
@@ -716,18 +972,15 @@ body {
         font-size: 1.8rem !important;
         line-height: 1.6 !important;
         word-break: keep-all;
-        /* 단어 단위 줄바꿈 */
         margin-bottom: 1rem !important;
     }
 
-    /* Hero Description */
     .hero-section p {
         font-size: 0.95rem !important;
         max-width: 90%;
         margin: 0 auto 2rem auto !important;
     }
 
-    /* Hero Covers override scale adjustments */
     .hero-covers {
         margin-top: 2rem !important;
         transform: scale(0.9);
@@ -736,7 +989,6 @@ body {
         justify-content: center;
     }
 
-    /* Center align hero content strictly */
     .hero-section .flex-col {
         align-items: center !important;
         padding-left: 0 !important;
@@ -744,10 +996,8 @@ body {
 
     .hero-section button.btn-cta {
         margin: 0 auto;
-        /* 버튼 중앙 정렬 */
     }
 
-    /* Worldcup VS Section */
     .worldcup-vs {
         flex-direction: column !important;
         gap: 20px !important;
@@ -764,7 +1014,6 @@ body {
         margin: 10px 0;
     }
 
-    /* Horizontal Slider Cards */
     .horizontal-scroll .webtoon-card {
         flex: 0 0 150px !important;
     }
@@ -772,18 +1021,8 @@ body {
     .horizontal-scroll {
         gap: 12px !important;
         padding-right: 20px;
-        /* 끝에 여백 */
     }
 
-    /* Grid Layouts (Recommendations) */
-    .grid-cols-1,
-    .sm\:grid-cols-2,
-    .lg\:grid-cols-3 {
-        /* Tailwind classes override via basic grid logic if needed, but Tailwind should handle it. 
-           Adding explicit fallback just in case. */
-    }
-
-    /* Modal Fullscreen feel */
     .modal-container {
         padding-top: 0 !important;
         align-items: center !important;
@@ -801,7 +1040,6 @@ body {
         overflow-y: auto;
     }
 
-    /* Genre Selection Buttons */
     .genre-card {
         padding: 12px 10px !important;
         font-size: 0.9rem !important;
@@ -811,7 +1049,6 @@ body {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    /* Progress Bar */
     .mb-10 {
         margin-bottom: 1.5rem !important;
     }

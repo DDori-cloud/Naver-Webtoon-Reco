@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 
 <head>
@@ -22,6 +22,40 @@
     <meta property="twitter:title" content="웹툰 추천기 | 내 취향에 맞는 네이버 웹툰 찾기">
     <meta property="twitter:description" content="#AI 기반 네이버 웹툰 추천 서비스 #인생웹툰찾기 #웹툰 월드컵 #웹툰랜덤추천">
     <meta property="twitter:image" content="https://page-naver-webtoon-reco.pages.dev/og-image.png">
+
+    <!-- SEO 보강 -->
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="N웹툰 FINDER">
+    <meta name="theme-color" content="#0B0F1A">
+    <meta property="og:locale" content="ko_KR">
+    <meta property="og:site_name" content="N웹툰 FINDER">
+
+    <!-- 네이버/구글 검색 등록 (verification code 확보 후 교체) -->
+    <!-- <meta name="naver-site-verification" content="YOUR_NAVER_CODE" /> -->
+    <!-- <meta name="google-site-verification" content="YOUR_GOOGLE_CODE" /> -->
+
+    <!-- 구조화된 데이터 (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "N웹툰 FINDER - 웹툰 추천기",
+        "url": "https://page-naver-webtoon-reco.pages.dev/",
+        "description": "AI 기반 네이버 웹툰 추천 서비스. 취향 분석, 웹툰 월드컵, 랜덤 추천 등 다양한 방법으로 인생 웹툰을 찾아보세요.",
+        "applicationCategory": "Entertainment",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "KRW"
+        },
+        "inLanguage": ["ko", "en", "zh", "ja"]
+    }
+    </script>
+
+    <!-- Google AdSense - publisher ID 확보 후 주석 해제 -->
+    <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID" crossorigin="anonymous"></script> -->
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -301,6 +335,200 @@
         input[type=range]::-moz-range-track {
             background: transparent;
         }
+
+        /* ===== Light Theme Overrides — Warm Mineral Palette (2025-2026) ===== */
+        .light-theme {
+            background-color: #f8f9fb !important;
+            color: #1a1f36 !important;
+        }
+        .light-theme * {
+            --tw-border-opacity: 1;
+        }
+
+        /* ── Navigation bar: Glass + Shadow + Lavender Border ── */
+        .light-theme > div > div:first-child > div:first-child {
+            background-color: rgba(255,255,255,0.88) !important;
+            backdrop-filter: blur(16px) saturate(1.4) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.4) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+            border-bottom: 1px solid #e8ecf4 !important;
+        }
+        .light-theme header {
+            background: rgba(255,255,255,0.88) !important;
+            backdrop-filter: blur(16px) saturate(1.4) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.4) !important;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+            border-bottom: 1px solid #e8ecf4 !important;
+        }
+
+        /* ── Backgrounds: 3-level depth ── */
+        /* Base layer — page background */
+        .light-theme [class*="bg-[#0B0F1A]"],
+        .light-theme [class*="bg-[#0b0f1a]"] {
+            background-color: #f8f9fb !important;
+        }
+        /* Surface — cards */
+        .light-theme [class*="bg-[#161B28]"],
+        .light-theme [class*="bg-[#161b28]"] {
+            background-color: #ffffff !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03) !important;
+        }
+        /* Elevated — secondary surfaces */
+        .light-theme [class*="bg-[#1E2538]"] {
+            background-color: #f1f3f8 !important;
+        }
+        /* Card hover component */
+        .light-theme .card-hover {
+            background: #ffffff !important;
+            border: 1px solid #e8ecf4 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 0 0 1px rgba(0,0,0,0.03) !important;
+        }
+        .light-theme .card-hover:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08), 0 0 0 1px #00C853 !important;
+            border-color: #00C853 !important;
+        }
+
+        /* ── Text: WCAG AA compliant contrast ── */
+        .light-theme .text-white {
+            color: #1a1f36 !important;
+        }
+        .light-theme .text-gray-400 {
+            color: #4a5568 !important;
+        }
+        .light-theme .text-gray-500 {
+            color: #8892a4 !important;
+        }
+        .light-theme .text-gray-300 {
+            color: #3d4a5c !important;
+        }
+        .light-theme .text-gray-600 {
+            color: #8892a4 !important;
+        }
+
+        /* ── Borders: Lavender tone unified ── */
+        .light-theme [class*="border-white/5"] {
+            border-color: #e8ecf4 !important;
+        }
+        .light-theme [class*="border-white/10"] {
+            border-color: #d1d9e6 !important;
+        }
+        .light-theme [class*="border-white/20"] {
+            border-color: #c5cdd8 !important;
+        }
+
+        /* ── Subtle backgrounds: Visible hover feedback ── */
+        .light-theme [class*="bg-white/5"] {
+            background-color: #f1f3f8 !important;
+        }
+        .light-theme [class*="bg-white/10"] {
+            background-color: #eef1f6 !important;
+        }
+        .light-theme [class*="bg-white/[0.02]"] {
+            background-color: transparent !important;
+        }
+
+        /* ── Cards and modals ── */
+        .light-theme [class*="backdrop-blur"] {
+            background-color: rgba(255,255,255,0.92) !important;
+        }
+        .light-theme .modal-container {
+            background: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        /* ── Input fields: Inset shadow + Focus glow ── */
+        .light-theme input,
+        .light-theme textarea,
+        .light-theme select {
+            background-color: #f8f9fb !important;
+            color: #1a1f36 !important;
+            border-color: #d1d9e6 !important;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.04) !important;
+        }
+        .light-theme input:focus,
+        .light-theme textarea:focus,
+        .light-theme select:focus {
+            border-color: #00C853 !important;
+            box-shadow: 0 0 0 3px rgba(0,200,83,0.1), inset 0 1px 2px rgba(0,0,0,0.04) !important;
+            outline: none !important;
+        }
+        .light-theme input::placeholder,
+        .light-theme textarea::placeholder {
+            color: #8892a4 !important;
+        }
+
+        /* ── Mobile bottom nav ── */
+        .light-theme .md\\:hidden.fixed.bottom-0 {
+            background-color: rgba(255,255,255,0.92) !important;
+            backdrop-filter: blur(16px) saturate(1.4) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.4) !important;
+            border-top: 1px solid #e8ecf4 !important;
+            box-shadow: 0 -1px 2px rgba(0,0,0,0.04) !important;
+        }
+
+        /* ── Scrollbar ── */
+        .light-theme ::-webkit-scrollbar-track {
+            background: #f8f9fb;
+        }
+        .light-theme ::-webkit-scrollbar-thumb {
+            background: #d1d9e6;
+            border-radius: 4px;
+        }
+        .light-theme ::-webkit-scrollbar-thumb:hover {
+            background: #00C853;
+        }
+
+        /* ── Nav brand text ── */
+        .light-theme .text-primary {
+            color: #00C853 !important;
+        }
+
+        /* ── Hover states: Strong visual feedback ── */
+        .light-theme [class*="hover:text-white"]:hover {
+            color: #1a1f36 !important;
+        }
+        .light-theme [class*="hover:bg-white/10"]:hover {
+            background-color: #eef1f6 !important;
+        }
+        .light-theme [class*="hover:bg-white/[0.02]"]:hover {
+            background-color: #f1f3f8 !important;
+        }
+
+        /* ── Footer ── */
+        .light-theme footer,
+        .light-theme [class*="border-t"][class*="border-white"] {
+            border-color: #e8ecf4 !important;
+        }
+
+        /* ── Hero section gradient ── */
+        .light-theme .bg-gradient-to-b.from-\[\#0B0F1A\],
+        .light-theme [class*="bg-gradient-to-b"][class*="from-[#0B0F1A]"] {
+            background: linear-gradient(180deg, #f0f2f7 0%, #f8f9fb 100%) !important;
+        }
+
+        /* ── Gradient button adjustments for light ── */
+        .light-theme .btn-gradient {
+            box-shadow: 0 4px 15px rgba(0, 200, 83, 0.25) !important;
+        }
+        .light-theme .btn-gradient:hover {
+            box-shadow: 0 6px 25px rgba(0, 200, 83, 0.35) !important;
+        }
+
+        /* ── Primary accent: Deeper green for light mode ── */
+        .light-theme .gradient-text {
+            background: linear-gradient(135deg, #00C853 0%, #00A844 100%) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+        }
+
+        /* ── Shadow utilities ── */
+        .light-theme [class*="shadow-soft"] {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06) !important;
+        }
+
+        /* Theme toggle animation */
+        .theme-toggle-icon {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
     </style>
     <!-- Kakao SDK -->
     <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.0/kakao.min.js"></script>
@@ -316,6 +544,7 @@
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone@7.26.9/babel.min.js"></script>
     <script src="data.js"></script>
+    <!-- board.js는 메인 스크립트 내에 인라인으로 포함 -->
 
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef, useCallback } = React;
@@ -325,6 +554,174 @@
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4emRneWVudHh4aXBqZXJ2ZHpxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4MjQ0ODEsImV4cCI6MjA4NDQwMDQ4MX0.HyZIWay1RI7JHVdVYpkWBTtjg9goQH4muUEaqqG6fPU';
         const supabaseInstance = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         const supabaseClient = supabaseInstance;
+
+        // --- SVG Icon System ---
+        const Icon = ({ d, size = 20, color = 'currentColor', className = '', viewBox = '0 0 24 24', fill = 'none', stroke = color, strokeWidth = 2 }) => (
+            <svg width={size} height={size} viewBox={viewBox} fill={fill} stroke={stroke} strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" className={className}>
+                {Array.isArray(d) ? d.map((p, i) => <path key={i} d={p} />) : <path d={d} />}
+            </svg>
+        );
+
+        const Icons = {
+            Flame: (props) => <Icon {...props} d={["M12 12c2-2.96 0-7-1-8 0 3.04-1.5 5.5-3 7.5C6.56 13 5 14.78 5 17c0 3.31 3.13 6 7 6s7-2.69 7-6c0-2-2-5-4-7-0.5 2-1.5 3-3 2z"]} fill={props?.color || '#f97316'} stroke="none" />,
+            PlusCircle: (props) => <Icon {...props} d={["M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z", "M12 8v8", "M8 12h8"]} stroke={props?.color || '#eab308'} fill="none" />,
+            Dragon: (props) => <Icon {...props} d={["M13 2L3 14h9l-1 8 10-12h-9l1-8z"]} fill={props?.color || '#a855f7'} stroke="none" />,
+            Heart: (props) => <Icon {...props} d={["M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"]} fill={props?.color || '#ec4899'} stroke="none" />,
+            Swords: (props) => <Icon {...props} d={["M14.5 17.5L3 6V3h3l11.5 11.5", "M13 19l6-6", "M16 16l4 4", "M19 21l2-2", "M14.5 6.5L18 3h3v3l-3.5 3.5", "M5 14l4 4", "M7 17l-3 3", "M3 19l2 2"]} stroke={props?.color || '#f59e0b'} fill="none" />,
+            Leaf: (props) => <Icon {...props} d={["M11 20A7 7 0 019.8 6.9C15.5 4.9 20 2 20 2s-1.8 5.1-4.2 8.4", "M6.5 12.4L2 17l4 1 1 4 4.5-4.5"]} stroke={props?.color || '#22c55e'} fill="none" />,
+            Diamond: (props) => <Icon {...props} d={["M2.7 10.3a2.41 2.41 0 000 3.41l7.59 7.59a2.41 2.41 0 003.41 0l7.59-7.59a2.41 2.41 0 000-3.41L13.7 2.71a2.41 2.41 0 00-3.41 0z"]} fill={props?.color || '#a78bfa'} stroke="none" />,
+            Sparkles: (props) => <Icon {...props} d={["M12 3l1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3z", "M19 1l.5 2 2 .5-2 .5-.5 2-.5-2-2-.5 2-.5L19 1z"]} fill={props?.color || '#fbbf24'} stroke="none" />,
+        };
+
+        // --- BoardView Component (게시판) ---
+        const BoardView = ({ user, lang, t, supabase }) => {
+            const [activeTab, setActiveTab] = useState('recommend');
+            const [posts, setPosts] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const [selectedPost, setSelectedPost] = useState(null);
+            const [showWriteForm, setShowWriteForm] = useState(false);
+            const [page, setPage] = useState(0);
+            const [hasMore, setHasMore] = useState(true);
+            const [writeTitle, setWriteTitle] = useState('');
+            const [writeContent, setWriteContent] = useState('');
+            const [writeCategory, setWriteCategory] = useState('recommend');
+            const [commentText, setCommentText] = useState('');
+            const [comments, setComments] = useState([]);
+            const [loadingComments, setLoadingComments] = useState(false);
+            const POSTS_PER_PAGE = 15;
+
+            const categories = [
+                { id: 'recommend', label: lang === 'ko' ? '웹툰 추천' : 'Recommendations', icon: '💡' },
+                { id: 'review', label: lang === 'ko' ? '후기' : 'Reviews', icon: '📝' },
+                { id: 'free', label: lang === 'ko' ? '자유' : 'Free Talk', icon: '💬' }
+            ];
+
+            const loadPosts = useCallback(async (category, pageNum = 0, append = false) => {
+                if (!supabase) { setLoading(false); return; }
+                setLoading(true);
+                try {
+                    const from = pageNum * POSTS_PER_PAGE;
+                    const to = from + POSTS_PER_PAGE - 1;
+                    const { data, error } = await supabase.from('board_posts').select('*').eq('category', category).order('created_at', { ascending: false }).range(from, to);
+                    if (!error && data) { setPosts(prev => append ? [...prev, ...data] : data); setHasMore(data.length === POSTS_PER_PAGE); }
+                } catch (e) { console.error('Load posts error:', e); }
+                setLoading(false);
+            }, [supabase]);
+
+            useEffect(() => { setPage(0); setSelectedPost(null); loadPosts(activeTab, 0); }, [activeTab, loadPosts]);
+
+            const openPost = async (post) => {
+                setSelectedPost(post);
+                if (supabase) { try { await supabase.from('board_posts').update({ view_count: (post.view_count || 0) + 1 }).eq('id', post.id); } catch(e){} }
+                if (supabase) { setLoadingComments(true); try { const { data } = await supabase.from('board_comments').select('*').eq('post_id', post.id).order('created_at', { ascending: true }); if (data) setComments(data); } catch(e){} setLoadingComments(false); }
+            };
+
+            const handleSubmitPost = async () => {
+                if (!user) return alert(lang === 'ko' ? '로그인이 필요합니다.' : 'Login required.');
+                if (!writeTitle.trim() || !writeContent.trim()) return alert(lang === 'ko' ? '제목과 내용을 입력해주세요.' : 'Title and content required.');
+                try {
+                    const { error } = await supabase.from('board_posts').insert({ category: writeCategory, title: writeTitle.trim(), content: writeContent.trim(), author_id: user.id, author_name: user.email?.split('@')[0] || '익명', view_count: 0, like_count: 0 });
+                    if (error) throw error;
+                    setWriteTitle(''); setWriteContent(''); setShowWriteForm(false); loadPosts(activeTab, 0);
+                } catch (e) { console.error(e); alert(lang === 'ko' ? '글 작성에 실패했습니다.' : 'Failed.'); }
+            };
+
+            const handleSubmitComment = async () => {
+                if (!user || !commentText.trim()) return;
+                try {
+                    const { error } = await supabase.from('board_comments').insert({ post_id: selectedPost.id, author_id: user.id, author_name: user.email?.split('@')[0] || '익명', content: commentText.trim() });
+                    if (error) throw error;
+                    setCommentText('');
+                    const { data } = await supabase.from('board_comments').select('*').eq('post_id', selectedPost.id).order('created_at', { ascending: true });
+                    if (data) setComments(data);
+                } catch (e) { console.error(e); }
+            };
+
+            const handleLikePost = async (postId) => {
+                if (!supabase || !user) return;
+                const post = posts.find(p => p.id === postId) || selectedPost;
+                if (post) {
+                    try { await supabase.from('board_posts').update({ like_count: (post.like_count || 0) + 1 }).eq('id', postId); } catch(e){}
+                    setPosts(prev => prev.map(p => p.id === postId ? { ...p, like_count: (p.like_count || 0) + 1 } : p));
+                    if (selectedPost?.id === postId) setSelectedPost(prev => ({ ...prev, like_count: (prev.like_count || 0) + 1 }));
+                }
+            };
+
+            const timeAgo = (dateStr) => {
+                const diff = Math.floor((new Date() - new Date(dateStr)) / 1000);
+                if (diff < 60) return lang === 'ko' ? '방금' : 'now';
+                if (diff < 3600) return `${Math.floor(diff / 60)}${lang === 'ko' ? '분 전' : 'm'}`;
+                if (diff < 86400) return `${Math.floor(diff / 3600)}${lang === 'ko' ? '시간 전' : 'h'}`;
+                if (diff < 604800) return `${Math.floor(diff / 86400)}${lang === 'ko' ? '일 전' : 'd'}`;
+                return new Date(dateStr).toLocaleDateString();
+            };
+
+            if (selectedPost) return (
+                <div className="animate-up max-w-3xl mx-auto">
+                    <button onClick={() => { setSelectedPost(null); setComments([]); }} className="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-bold mb-6 transition-colors">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                        {lang === 'ko' ? '목록으로' : 'Back'}
+                    </button>
+                    <div className="bg-[#161B28] rounded-[28px] border border-white/10 overflow-hidden">
+                        <div className="px-6 md:px-8 pt-6 md:pt-8 pb-4 border-b border-white/5">
+                            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary uppercase mb-3 inline-block">{categories.find(c => c.id === selectedPost.category)?.label}</span>
+                            <h2 className="text-lg md:text-xl font-black text-white mb-3 leading-tight">{selectedPost.title}</h2>
+                            <div className="flex items-center gap-3 text-[11px] text-gray-500">
+                                <div className="flex items-center gap-1.5"><div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center"><span className="text-[9px] font-black text-primary">{(selectedPost.author_name || '익')[0]}</span></div><span className="font-bold">{selectedPost.author_name || '익명'}</span></div>
+                                <span>·</span><span>{timeAgo(selectedPost.created_at)}</span><span>·</span><span>{lang === 'ko' ? '조회' : 'Views'} {selectedPost.view_count || 0}</span>
+                            </div>
+                        </div>
+                        <div className="px-6 md:px-8 py-6"><p className="text-[14px] text-gray-300 leading-relaxed whitespace-pre-wrap break-keep">{selectedPost.content}</p></div>
+                        <div className="px-6 md:px-8 pb-4 flex justify-center">
+                            <button onClick={() => handleLikePost(selectedPost.id)} className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-white/5 border border-white/10 hover:border-primary/30 hover:text-primary text-gray-400 font-bold text-xs transition-all">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                                {lang === 'ko' ? '좋아요' : 'Like'} {selectedPost.like_count || 0}
+                            </button>
+                        </div>
+                        <div className="px-6 md:px-8 py-6 border-t border-white/5">
+                            <h4 className="text-[11px] font-black text-gray-400 uppercase tracking-wider mb-4">{lang === 'ko' ? '댓글' : 'Comments'} ({comments.length})</h4>
+                            {loadingComments ? <div className="flex justify-center py-6"><div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div></div> : (
+                                <div className="space-y-3 mb-4">
+                                    {comments.map(c => (<div key={c.id} className="flex gap-2.5"><div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-[9px] font-black text-gray-400">{(c.author_name||'익')[0]}</span></div><div><div className="flex items-center gap-2"><span className="text-[11px] font-bold text-white">{c.author_name||'익명'}</span><span className="text-[9px] text-gray-500">{timeAgo(c.created_at)}</span></div><p className="text-[12px] text-gray-400 mt-0.5 leading-relaxed">{c.content}</p></div></div>))}
+                                    {comments.length === 0 && <p className="text-center text-gray-500 text-[12px] py-4">{lang === 'ko' ? '아직 댓글이 없습니다' : 'No comments yet'}</p>}
+                                </div>
+                            )}
+                            {user ? (<div className="flex gap-2"><input type="text" value={commentText} onChange={e => setCommentText(e.target.value.slice(0,200))} placeholder={lang === 'ko' ? '댓글을 입력하세요 (200자)' : 'Comment (200)'} className="flex-grow px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold outline-none focus:border-primary/50 placeholder-gray-500" onKeyDown={e => { if (e.key === 'Enter') handleSubmitComment(); }} /><button onClick={handleSubmitComment} disabled={!commentText.trim()} className="px-4 py-2.5 bg-primary text-white font-bold text-[11px] rounded-xl hover:brightness-110 transition-all disabled:opacity-30">{lang === 'ko' ? '등록' : 'Post'}</button></div>) : (<p className="text-center text-gray-500 text-[11px]">{lang === 'ko' ? '댓글을 쓰려면 로그인하세요' : 'Login to comment'}</p>)}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            if (showWriteForm) return (
+                <div className="animate-up max-w-3xl mx-auto">
+                    <button onClick={() => setShowWriteForm(false)} className="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-bold mb-6 transition-colors"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>{lang === 'ko' ? '취소' : 'Cancel'}</button>
+                    <div className="bg-[#161B28] rounded-[28px] border border-white/10 p-6 md:p-8">
+                        <h3 className="text-lg font-black text-white mb-6">{lang === 'ko' ? '글 작성' : 'New Post'}</h3>
+                        <div className="flex gap-2 mb-4">{categories.map(cat => (<button key={cat.id} onClick={() => setWriteCategory(cat.id)} className={`px-4 py-2 rounded-full text-[11px] font-bold transition-all border ${writeCategory === cat.id ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}>{cat.icon} {cat.label}</button>))}</div>
+                        <div className="mb-4"><input type="text" value={writeTitle} onChange={e => setWriteTitle(e.target.value.slice(0,50))} placeholder={lang === 'ko' ? '제목 (50자 이내)' : 'Title (max 50)'} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm font-bold outline-none focus:border-primary/50 placeholder-gray-500" /><div className="text-right text-[9px] text-gray-500 mt-1">{writeTitle.length}/50</div></div>
+                        <div className="mb-6"><textarea value={writeContent} onChange={e => setWriteContent(e.target.value.slice(0,1000))} placeholder={lang === 'ko' ? '내용을 입력하세요 (1000자 이내)' : 'Content (max 1000)'} rows={10} className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm outline-none focus:border-primary/50 placeholder-gray-500 resize-none leading-relaxed" /><div className="text-right text-[9px] text-gray-500 mt-1">{writeContent.length}/1000</div></div>
+                        <button onClick={handleSubmitPost} disabled={!writeTitle.trim() || !writeContent.trim()} className="w-full py-3.5 bg-primary text-white font-black rounded-xl text-sm hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-30 disabled:cursor-not-allowed">{lang === 'ko' ? '게시하기' : 'Publish'}</button>
+                    </div>
+                </div>
+            );
+
+            return (
+                <div className="animate-up max-w-3xl mx-auto">
+                    <div className="flex items-center justify-between mb-6">
+                        <div><h2 className="text-2xl font-black text-white tracking-tight">{lang === 'ko' ? '게시판' : 'Board'}</h2><p className="text-[11px] text-gray-500 font-bold mt-0.5">{lang === 'ko' ? '웹툰에 대해 자유롭게 이야기하세요' : 'Talk freely about webtoons'}</p></div>
+                        {user && (<button onClick={() => { setShowWriteForm(true); setWriteCategory(activeTab); }} className="flex items-center gap-1.5 px-4 py-2.5 bg-primary text-white font-bold text-xs rounded-full hover:brightness-110 transition-all"><svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>{lang === 'ko' ? '글쓰기' : 'Write'}</button>)}
+                    </div>
+                    <div className="flex gap-2 mb-6 overflow-x-auto no-scrollbar">{categories.map(cat => (<button key={cat.id} onClick={() => setActiveTab(cat.id)} className={`flex-shrink-0 px-5 py-2.5 rounded-full text-[12px] font-bold transition-all border ${activeTab === cat.id ? 'bg-primary/10 border-primary/30 text-primary' : 'bg-white/5 border-white/10 text-gray-400 hover:text-white'}`}>{cat.icon} {cat.label}</button>))}</div>
+                    <div className="bg-[#161B28] rounded-[28px] border border-white/10 overflow-hidden">
+                        {loading && posts.length === 0 ? (<div className="flex justify-center py-16"><div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div></div>)
+                        : posts.length === 0 ? (<div className="text-center py-16"><p className="text-gray-500 text-sm font-bold">{lang === 'ko' ? '아직 게시글이 없습니다' : 'No posts yet'}</p><p className="text-gray-600 text-[11px] mt-1">{lang === 'ko' ? '첫 번째 글을 작성해보세요!' : 'Be the first!'}</p></div>)
+                        : (<div>{posts.map((post, idx) => (<button key={post.id} onClick={() => openPost(post)} className={`w-full text-left px-5 md:px-6 py-4 hover:bg-white/[0.02] transition-colors flex items-center gap-4 ${idx < posts.length - 1 ? 'border-b border-white/5' : ''}`}><div className="flex-grow min-w-0"><h3 className="text-[13px] md:text-[14px] font-bold text-white truncate leading-tight">{post.title}</h3><div className="flex items-center gap-2 mt-1.5 text-[10px] text-gray-500"><span className="font-bold">{post.author_name||'익명'}</span><span>·</span><span>{timeAgo(post.created_at)}</span></div></div><div className="flex items-center gap-3 text-[10px] text-gray-500 flex-shrink-0"><span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>{post.view_count||0}</span><span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>{post.like_count||0}</span></div></button>))}</div>)}
+                        {hasMore && posts.length > 0 && (<div className="p-4 border-t border-white/5"><button onClick={() => { const next = page + 1; setPage(next); loadPosts(activeTab, next, true); }} disabled={loading} className="w-full py-2.5 text-[11px] font-bold text-primary hover:brightness-125 transition-colors disabled:opacity-30">{loading ? (lang === 'ko' ? '로딩 중...' : 'Loading...') : (lang === 'ko' ? '더보기' : 'Load more')}</button></div>)}
+                    </div>
+                    {!user && (<div className="mt-4 text-center"><p className="text-[11px] text-gray-500">{lang === 'ko' ? '글을 작성하려면 로그인이 필요합니다' : 'Login required to write'}</p></div>)}
+                </div>
+            );
+        };
 
         // --- Kakao Key Management ---
         const KAKAO_JS_KEY = '7716eb056c6c408381180fb2987a0279';
@@ -986,7 +1383,7 @@
             </div>
         );
 
-        const WebtoonCard = React.memo(({ item, rank, onDislike, onLike, onExcludeFromResult, isLiked, isDisliked, t, simpleMode = false, homeMode = false }) => {
+        const WebtoonCard = React.memo(({ item, rank, onDislike, onLike, onExcludeFromResult, onComment, isLiked, isDisliked, t, simpleMode = false, homeMode = false }) => {
             const isFinished = item.status === 'FINISHED';
             // 1~3등 트로피 이모지
             const getTrophyEmoji = (r) => {
@@ -1055,6 +1452,17 @@
                             <span>{t.view_now}</span>
                             <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-current"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"></path></svg>
                         </a>
+
+                        {/* 코멘트 버튼 */}
+                        {onComment && (
+                            <button
+                                onClick={(e) => { e.stopPropagation(); onComment(item.id, item.title); }}
+                                className="w-full py-1.5 rounded-lg font-bold text-[10px] transition-all border bg-white/5 text-gray-400 border-white/10 hover:text-primary hover:border-primary/30 flex items-center justify-center gap-1"
+                            >
+                                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-none stroke-current stroke-2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
+                                한줄평
+                            </button>
+                        )}
 
                         <div className={`flex gap-1 ${homeMode ? 'hidden md:flex' : ''}`}>
                             <button
@@ -1289,7 +1697,250 @@
             );
         };
 
-        const WorldcupReport = ({ choices, finalWinner, pool, t, onBack, onRetry }) => {
+        // --- Comment Modal Component ---
+        const CommentModal = ({ isOpen, onClose, webtoonId, webtoonTitle, t, user, lang }) => {
+            const supabase = supabaseInstance;
+            const [comments, setComments] = useState([]);
+            const [nickname, setNickname] = useState('');
+            const [content, setContent] = useState('');
+            const [captchaCode, setCaptchaCode] = useState('');
+            const [captchaInput, setCaptchaInput] = useState('');
+            const [submitting, setSubmitting] = useState(false);
+            const [loadingComments, setLoadingComments] = useState(false);
+            const [showAll, setShowAll] = useState(false);
+            const canvasRef = useRef(null);
+
+            const generateCaptcha = useCallback(() => {
+                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+                const code = Array.from({length: 5}, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+                setCaptchaCode(code);
+                setCaptchaInput('');
+                return code;
+            }, []);
+
+            const drawCaptcha = useCallback((code) => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#161B28';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                for (let i = 0; i < 5; i++) {
+                    ctx.strokeStyle = `rgba(${Math.random()*100}, ${Math.random()*100+100}, ${Math.random()*100}, 0.3)`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                    ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+                    ctx.stroke();
+                }
+                ctx.font = 'bold 28px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                for (let i = 0; i < code.length; i++) {
+                    ctx.save();
+                    const x = 30 + i * 30;
+                    const y = 25 + Math.random() * 10 - 5;
+                    ctx.translate(x, y);
+                    ctx.rotate((Math.random() - 0.5) * 0.4);
+                    ctx.fillStyle = `hsl(${140 + Math.random()*40}, 80%, ${55 + Math.random()*15}%)`;
+                    ctx.fillText(code[i], 0, 0);
+                    ctx.restore();
+                }
+            }, []);
+
+            useEffect(() => {
+                if (isOpen && webtoonId) {
+                    loadComments();
+                    if (!user) {
+                        const code = generateCaptcha();
+                        setTimeout(() => drawCaptcha(code), 100);
+                    }
+                }
+            }, [isOpen, webtoonId]);
+
+            useEffect(() => {
+                if (captchaCode && canvasRef.current) {
+                    drawCaptcha(captchaCode);
+                }
+            }, [captchaCode]);
+
+            const loadComments = async () => {
+                if (!supabase || !webtoonId) return;
+                setLoadingComments(true);
+                try {
+                    const { data, error } = await supabase
+                        .from('webtoon_comments')
+                        .select('*')
+                        .eq('webtoon_id', String(webtoonId))
+                        .order('created_at', { ascending: false })
+                        .limit(50);
+                    if (!error && data) setComments(data);
+                } catch (e) { console.error(e); }
+                setLoadingComments(false);
+            };
+
+            const handleSubmit = async () => {
+                if (!content.trim()) return alert(lang === 'ko' ? '내용을 입력해주세요.' : 'Please enter content.');
+                if (content.length > 50) return alert(lang === 'ko' ? '50자 이내로 작성해주세요.' : 'Max 50 characters.');
+                if (!user && captchaInput.toUpperCase() !== captchaCode) {
+                    alert(lang === 'ko' ? '보안코드가 일치하지 않습니다.' : 'Security code mismatch.');
+                    const code = generateCaptcha();
+                    setTimeout(() => drawCaptcha(code), 100);
+                    return;
+                }
+                setSubmitting(true);
+                try {
+                    const { error } = await supabase
+                        .from('webtoon_comments')
+                        .insert({
+                            webtoon_id: String(webtoonId),
+                            nickname: nickname.trim() || '익명',
+                            content: content.trim()
+                        });
+                    if (error) throw error;
+                    setContent('');
+                    setNickname('');
+                    setCaptchaInput('');
+                    if (!user) {
+                        const code = generateCaptcha();
+                        setTimeout(() => drawCaptcha(code), 100);
+                    }
+                    await loadComments();
+                } catch (e) {
+                    console.error(e);
+                    alert(lang === 'ko' ? '코멘트 작성에 실패했습니다.' : 'Failed to post comment.');
+                }
+                setSubmitting(false);
+            };
+
+            if (!isOpen) return null;
+
+            const displayComments = showAll ? comments : comments.slice(0, 10);
+            const timeAgo = (dateStr) => {
+                const now = new Date();
+                const date = new Date(dateStr);
+                const diff = Math.floor((now - date) / 1000);
+                if (diff < 60) return lang === 'ko' ? '방금 전' : 'Just now';
+                if (diff < 3600) return `${Math.floor(diff/60)}${lang === 'ko' ? '분 전' : 'm ago'}`;
+                if (diff < 86400) return `${Math.floor(diff/3600)}${lang === 'ko' ? '시간 전' : 'h ago'}`;
+                if (diff < 604800) return `${Math.floor(diff/86400)}${lang === 'ko' ? '일 전' : 'd ago'}`;
+                return date.toLocaleDateString();
+            };
+
+            return (
+                <div className="modal-container" onClick={onClose}>
+                    <div className="modal-content-box" onClick={e => e.stopPropagation()}>
+                        <div className="bg-[#161B28] w-[95%] max-w-[500px] rounded-[40px] shadow-2xl animate-up border border-white/10 overflow-hidden">
+                            {/* Header */}
+                            <div className="px-7 pt-7 pb-4 border-b border-white/5">
+                                <div className="flex justify-between items-start">
+                                    <div>
+                                        <h3 className="text-lg font-black text-white tracking-tight">{lang === 'ko' ? '코멘트' : 'Comments'}</h3>
+                                        <p className="text-[11px] text-gray-500 font-bold mt-0.5 truncate max-w-[280px]">{webtoonTitle}</p>
+                                    </div>
+                                    <button onClick={onClose} className="p-1.5 hover:bg-white/5 rounded-full transition-colors">
+                                        <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </button>
+                                </div>
+                                <div className="flex items-center gap-2 mt-2">
+                                    <span className="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                                        {comments.length} {lang === 'ko' ? '개' : ''}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Comment List */}
+                            <div className="px-7 py-4 max-h-[300px] overflow-y-auto" style={{scrollbarWidth: 'thin'}}>
+                                {loadingComments ? (
+                                    <div className="flex justify-center py-8">
+                                        <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+                                    </div>
+                                ) : displayComments.length === 0 ? (
+                                    <div className="text-center py-10">
+                                        <p className="text-gray-500 text-sm font-bold">{lang === 'ko' ? '아직 코멘트가 없습니다' : 'No comments yet'}</p>
+                                        <p className="text-gray-600 text-[11px] mt-1">{lang === 'ko' ? '첫 번째 코멘트를 남겨보세요!' : 'Be the first to comment!'}</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        {displayComments.map(c => (
+                                            <div key={c.id} className="flex gap-3 group">
+                                                <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <span className="text-[11px] font-black text-primary">{(c.nickname || '익')[0]}</span>
+                                                </div>
+                                                <div className="flex-grow min-w-0">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-[12px] font-bold text-white">{c.nickname || '익명'}</span>
+                                                        <span className="text-[9px] text-gray-500">{timeAgo(c.created_at)}</span>
+                                                    </div>
+                                                    <p className="text-[13px] text-gray-300 mt-0.5 leading-relaxed break-keep">{c.content}</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        {comments.length > 10 && !showAll && (
+                                            <button onClick={() => setShowAll(true)} className="w-full py-2 text-[11px] font-bold text-primary hover:brightness-125 transition-colors">
+                                                {lang === 'ko' ? `더보기 (${comments.length - 10}개)` : `Show more (${comments.length - 10})`}
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Comment Input */}
+                            <div className="px-7 pb-7 pt-4 border-t border-white/5">
+                                <div className="flex gap-2 mb-3">
+                                    <input
+                                        type="text"
+                                        value={nickname}
+                                        onChange={e => setNickname(e.target.value.slice(0, 10))}
+                                        placeholder={lang === 'ko' ? '닉네임 (선택)' : 'Nickname (optional)'}
+                                        className="w-28 px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold outline-none focus:border-primary/50 placeholder-gray-500"
+                                    />
+                                    <div className="flex-grow relative">
+                                        <input
+                                            type="text"
+                                            value={content}
+                                            onChange={e => setContent(e.target.value.slice(0, 50))}
+                                            placeholder={lang === 'ko' ? '코멘트 (50자 이내)' : 'Comment (max 50 chars)'}
+                                            className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold outline-none focus:border-primary/50 placeholder-gray-500 pr-12"
+                                            onKeyDown={e => { if (e.key === 'Enter' && !submitting) handleSubmit(); }}
+                                        />
+                                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-gray-500 font-bold">{content.length}/50</span>
+                                    </div>
+                                </div>
+
+                                {/* Captcha (비로그인 시에만) */}
+                                {!user && (
+                                    <div className="flex items-center gap-2 mb-3">
+                                        <canvas ref={canvasRef} width={180} height={50} className="rounded-lg border border-white/10 flex-shrink-0" style={{imageRendering: 'pixelated'}} />
+                                        <button onClick={() => { const code = generateCaptcha(); setTimeout(() => drawCaptcha(code), 50); }} className="p-1.5 hover:bg-white/5 rounded-lg transition-colors flex-shrink-0" title="Refresh">
+                                            <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        </button>
+                                        <input
+                                            type="text"
+                                            value={captchaInput}
+                                            onChange={e => setCaptchaInput(e.target.value.toUpperCase().slice(0, 5))}
+                                            placeholder={lang === 'ko' ? '보안코드 입력' : 'Enter code'}
+                                            className="flex-grow px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-white text-[12px] font-bold outline-none focus:border-primary/50 placeholder-gray-500 uppercase tracking-widest text-center"
+                                            maxLength={5}
+                                        />
+                                    </div>
+                                )}
+
+                                <button
+                                    onClick={handleSubmit}
+                                    disabled={submitting || !content.trim()}
+                                    className="w-full py-3 bg-primary text-white font-black rounded-xl text-sm hover:brightness-110 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                                >
+                                    {submitting ? (lang === 'ko' ? '전송 중...' : 'Sending...') : (lang === 'ko' ? '코멘트 남기기' : 'Post Comment')}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const WorldcupReport = ({ choices, finalWinner, pool, t, onBack, onRetry, lang }) => {
             const analysis = useMemo(() => {
                 const tagCounts = {};
                 choices.forEach(w => {
@@ -1373,6 +2024,26 @@
                 return { topTags: sortedTags, recommendation: rec, mbti: mbtiResult };
             }, [choices, finalWinner, pool]);
 
+            // 글로벌 토너먼트 통계 로드 (Hooks는 반드시 early return 전에 선언)
+            const [globalStats, setGlobalStats] = useState(null);
+            useEffect(() => {
+                const loadStats = async () => {
+                    try {
+                        if (!supabaseInstance || !finalWinner) return;
+                        const winnerId = String(finalWinner.titleId || finalWinner.id);
+                        const { data, error } = await supabaseInstance
+                            .from('worldcup_global_stats')
+                            .select('*')
+                            .eq('webtoon_id', winnerId)
+                            .maybeSingle();
+                        if (!error && data) setGlobalStats(data);
+                    } catch (e) {
+                        console.log('Global stats not available:', e.message);
+                    }
+                };
+                loadStats();
+            }, [finalWinner]);
+
             if (!analysis) return null;
 
             return (
@@ -1392,6 +2063,32 @@
                         <h4 className="text-2xl font-black text-primary mb-1 tracking-tighter italic">{analysis.mbti.code}</h4>
                         <p className="text-xs font-bold text-gray-700 leading-tight">{analysis.mbti.desc}</p>
                     </div>
+
+                    {/* 글로벌 토너먼트 통계 */}
+                    {globalStats && (
+                        <div className="mb-6 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-[20px] border border-yellow-200/50">
+                            <h4 className="text-[10px] uppercase tracking-widest font-black text-yellow-600 mb-3 flex items-center gap-2">
+                                <span className="text-sm">🏆</span>
+                                {lang === 'ko' ? '글로벌 토너먼트 통계' : 'Global Tournament Stats'}
+                            </h4>
+                            <div className="grid grid-cols-3 gap-3">
+                                <div className="text-center">
+                                    <div className="text-lg font-black text-yellow-600">{globalStats.win_count}</div>
+                                    <div className="text-[9px] font-bold text-gray-400 uppercase">{lang === 'ko' ? '총 우승' : 'Wins'}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-lg font-black text-orange-500">
+                                        {globalStats.appearance_count > 0 ? Math.round((globalStats.pick_count / globalStats.appearance_count) * 100) : 0}%
+                                    </div>
+                                    <div className="text-[9px] font-bold text-gray-400 uppercase">{lang === 'ko' ? '선택률' : 'Pick Rate'}</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-lg font-black text-gray-600">{globalStats.appearance_count}</div>
+                                    <div className="text-[9px] font-bold text-gray-400 uppercase">{lang === 'ko' ? '등장 수' : 'Appearances'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="mb-6">
                         <h4 className="text-[10px] uppercase tracking-widest font-black text-primary mb-4">{t.worldcup_top_tags}</h4>
@@ -1486,7 +2183,7 @@
             );
         };
 
-        const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult, isViewMode = false }) => {
+        const WorldcupModal = ({ isOpen, onClose, t, user, onSaveResult, isViewMode = false, lang }) => {
             const supabase = supabaseInstance;
             const [stage, setStage] = useState('select'); // 'select', 'playing', 'result'
             const [selectedRound, setSelectedRound] = useState(16);
@@ -1739,6 +2436,7 @@
                                         finalWinner={finalWinner}
                                         pool={pool}
                                         t={t}
+                                        lang={lang}
                                         onBack={() => setShowReport(false)}
                                         onRetry={() => setStage('select')}
                                     />
@@ -1760,7 +2458,7 @@
             );
         };
 
-        const HorizontalSlider = React.memo(({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, likedIds, dislikedIds }) => {
+        const HorizontalSlider = React.memo(({ items, rankOffset = 0, t, toggleDislike, toggleLike, excludeFromResult, onComment, likedIds, dislikedIds }) => {
             const scrollRef = React.useRef(null);
             const [showLeft, setShowLeft] = React.useState(false);
 
@@ -1808,6 +2506,7 @@
                                     onDislike={toggleDislike}
                                     onLike={toggleLike}
                                     onExcludeFromResult={excludeFromResult}
+                                    onComment={onComment}
                                     isLiked={likedIds.some(lid => String(lid) === String(w.id))}
                                     isDisliked={dislikedIds.some(did => String(did) === String(w.id))}
                                     t={t}
@@ -1823,7 +2522,22 @@
         const App = () => {
             const supabase = supabaseInstance;
             const [lang, setLang] = useState('ko');
-            const [view, setView] = useState('home'); // 'home', 'recommend', 'worldcup', 'search'
+            const [theme, setTheme] = useState(() => localStorage.getItem('webtoon-theme') || 'dark');
+            const [view, setView] = useState('home'); // 'home', 'recommend', 'worldcup', 'search', 'board'
+
+            // 테마 토글
+            const toggleTheme = useCallback(() => {
+                setTheme(prev => {
+                    const next = prev === 'dark' ? 'light' : 'dark';
+                    localStorage.setItem('webtoon-theme', next);
+                    return next;
+                });
+            }, []);
+
+            useEffect(() => {
+                if (theme === 'light') { document.body.classList.add('light-theme'); }
+                else { document.body.classList.remove('light-theme'); }
+            }, [theme]);
             const [step, setStep] = useState(1);
             const [searchQuery, setSearchQuery] = useState('');
             const [searchResults, setSearchResults] = useState([]);
@@ -1872,6 +2586,17 @@
 
             const [isRandomLoading, setIsRandomLoading] = useState(false);
             const prevViewRef = useRef(view);
+
+            // --- Comment Modal State ---
+            const [showCommentModal, setShowCommentModal] = useState(false);
+            const [commentWebtoonId, setCommentWebtoonId] = useState(null);
+            const [commentWebtoonTitle, setCommentWebtoonTitle] = useState('');
+
+            const openCommentModal = useCallback((id, title) => {
+                setCommentWebtoonId(id);
+                setCommentWebtoonTitle(title);
+                setShowCommentModal(true);
+            }, []);
 
             const handleRandomPick = async (minScore, maxScore, genres) => {
                 setIsRandomLoading(true);
@@ -1937,8 +2662,13 @@
 
                     setHiddenGemsRandom(prev => {
                         if (prev.length > 0) return prev;
-                        return rawData
-                            .filter(item => (item.starScore || 0) >= 9.97)
+                        // 숨겨진 명작: 조회수 > 0인 웹툰 중 하위 10% & 별점 9.9 이상
+                        const withViews = rawData.filter(item => (item.viewCount || 0) > 0);
+                        const sortedByViews = [...withViews].sort((a, b) => (a.viewCount || 0) - (b.viewCount || 0));
+                        const cutoffIdx = Math.floor(sortedByViews.length * 0.1);
+                        const lowViewPool = sortedByViews.slice(0, cutoffIdx);
+                        const gems = lowViewPool
+                            .filter(item => (item.starScore || 0) >= 9.9)
                             .sort(() => 0.5 - Math.random())
                             .slice(0, 20)
                             .map(item => ({
@@ -1950,6 +2680,7 @@
                                 author: item.author,
                                 starScore: item.starScore
                             }));
+                        return gems;
                     });
 
                     // 홈 진입 시 추천 팝업 트리거 (데이터가 나중에 로딩될 경우 대비)
@@ -1973,7 +2704,7 @@
             // Compute Top 5 Lists for Genres
 
             // Compute Top 5 Lists for Genres
-            const { topWebtoons, hiddenGems, fantasyTop, romanceTop, martialTop, sliceTop } = useMemo(() => {
+            const { topWebtoons, hiddenGems, fantasyTop, romanceTop, martialTop, sliceTop, newWebtoons } = useMemo(() => {
                 const rawData = window.WEBTOON_DATA || MOCK_WEBTOONS;
                 const sorted = [...rawData].sort((a, b) => (b.starScore || 0) - (a.starScore || 0));
 
@@ -1992,6 +2723,21 @@
                         }));
                 };
 
+                // 신작 Top 20 (isNew 플래그 기준, 별점 순)
+                const newTop = rawData
+                    .filter(w => w.isNew === true)
+                    .sort((a, b) => (b.starScore || 0) - (a.starScore || 0))
+                    .slice(0, 20)
+                    .map(item => ({
+                        id: item.titleId || item.id,
+                        title: item.titleName || item.title,
+                        thumbnail: item.thumbnailUrl || item.thumbnail,
+                        tags: item.tags || [item.author],
+                        status: item.status,
+                        author: item.author,
+                        starScore: item.starScore
+                    }));
+
                 return {
                     topWebtoons: sorted.slice(0, 20).map(item => ({
                         id: item.titleId || item.id,
@@ -2002,6 +2748,7 @@
                         author: item.author,
                         starScore: item.starScore
                     })),
+                    newWebtoons: newTop,
                     fantasyTop: getTopByGenre('판타지'),
                     romanceTop: getTopByGenre('로맨스'),
                     martialTop: getTopByGenre('무협'), // '무협/사극' usually
@@ -2429,6 +3176,7 @@
                                         setView('worldcup');
                                         if (!user) alert(lang === 'ko' ? "로그인 시 내 취향에 반영됩니다!" : "Login to reflect in your preferences!");
                                     }} className={`text-sm font-semibold transition-colors ${view === 'worldcup' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{t.worldcup}</button>
+                                    <button onClick={() => setView('board')} className={`text-sm font-semibold transition-colors ${view === 'board' ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{lang === 'ko' ? '게시판' : 'Board'}</button>
                                     <button onClick={() => setShowHelpModal(true)} className={`text-sm font-semibold transition-colors ${showHelpModal ? 'text-primary' : 'text-gray-400 hover:text-white'}`}>{t.help}</button>
                                 </nav>
                             </div>
@@ -2464,6 +3212,18 @@
                                         </button>
                                     ))}
                                 </div>
+                                {/* Theme Toggle */}
+                                <button
+                                    onClick={toggleTheme}
+                                    className="hidden md:flex items-center justify-center w-8 h-8 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-all mr-2"
+                                    title={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                                >
+                                    {theme === 'dark' ? (
+                                        <svg className="w-4 h-4 text-yellow-400 theme-toggle-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zM12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" /></svg>
+                                    ) : (
+                                        <svg className="w-4 h-4 text-slate-600 theme-toggle-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                                    )}
+                                </button>
                                 {user ? (
                                     <div className="hidden md:flex items-center gap-4">
                                         <button onClick={() => setShowProfileModal(true)} className="text-sm font-semibold text-gray-500 hover:text-gray-800">{lang === 'ko' ? '내 정보' : 'Profile'}</button>
@@ -2511,17 +3271,21 @@
                                                 지금 바로 추천받기 ✨
                                             </button>
                                         </div>
-                                        {/* 우측 웹툰 커버 - 세련된 사선 슬라이스 배치 */}
+                                        {/* 우측 웹툰 커버 - 사선 슬라이스 배치 */}
                                         <div className="hidden lg:flex flex-1 relative items-stretch overflow-hidden gap-[3px] px-8">
                                             {heroItems.map((w, i) => (
                                                 <a
                                                     href={`https://comic.naver.com/webtoon/list?titleId=${w.id}`}
                                                     target="_blank"
                                                     key={w.id}
-                                                    className="relative flex-1 group transition-[flex-grow] duration-300 ease-out hover:flex-[3] overflow-hidden cursor-pointer will-change-[flex-grow] transform-gpu"
+                                                    className="relative flex-1 group overflow-hidden cursor-pointer will-change-[flex-grow] transform-gpu"
                                                     style={{
                                                         clipPath: 'polygon(8% 0%, 100% 0%, 92% 100%, 0% 100%)',
+                                                        transition: 'flex-grow 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                                                        flexGrow: 1,
                                                     }}
+                                                    onMouseEnter={e => { e.currentTarget.style.flexGrow = '3'; }}
+                                                    onMouseLeave={e => { e.currentTarget.style.flexGrow = '1'; }}
                                                 >
                                                     <div className="absolute inset-0 transition-transform duration-300 ease-out scale-110 group-hover:scale-100 will-change-transform transform-gpu">
                                                         <img
@@ -2531,11 +3295,11 @@
                                                             referrerPolicy="no-referrer"
                                                         />
                                                     </div>
-                                                    {/* 상하 블러 마스크 - 얇게 모서리만 */}
+                                                    {/* 상하 블러 마스크 */}
                                                     <div className="absolute inset-x-0 top-0 h-4 bg-gradient-to-b from-black/60 to-transparent backdrop-blur-[1px]"></div>
                                                     <div className="absolute inset-x-0 bottom-0 h-4 bg-gradient-to-t from-black/60 to-transparent backdrop-blur-[1px]"></div>
                                                     {/* 내부 셰도우 */}
-                                                    <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 group-hover:from-transparent"></div>
+                                                    <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10 group-hover:from-transparent transition-all duration-300"></div>
                                                 </a>
                                             ))}
                                         </div>
@@ -2549,17 +3313,25 @@
                                         <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '평점 Top 20' : 'Star Rating Top 20'}</h2>
                                         <span className="text-[10px] font-bold bg-primary/10 text-primary px-3 py-1 rounded-full uppercase">{lang === 'ko' ? '#추천' : 'Recommended'}</span>
                                     </div>
-                                    <HorizontalSlider items={topWebtoons} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                    <HorizontalSlider items={topWebtoons} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
 
-                                {/* Hidden Gems */}
-                                <div>
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <span className="text-xl">💎</span>
-                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '숨겨진 명작 발굴' : 'Hidden Gems'}</h2>
+                                {/* 🆕 New Webtoons Top 20 */}
+                                {newWebtoons.length > 0 && (
+                                    <div>
+                                        <div className="flex items-center gap-3 mb-6">
+                                            <span className="text-xl">🆕</span>
+                                            <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '신작 Top 20' : 'New Releases Top 20'}</h2>
+                                            <span className="text-[10px] font-bold bg-yellow-500/10 text-yellow-400 px-3 py-1 rounded-full uppercase">NEW</span>
+                                        </div>
+                                        <HorizontalSlider items={newWebtoons} rankOffset={-1} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
                                     </div>
-                                    <HorizontalSlider items={hiddenGemsRandom} rankOffset={-1} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
-                                </div>
+                                )}
+
+                                {/* === 광고 배치 위치 #1 (publisher ID 확보 후 주석 해제) === */}
+                                {/* <div className="my-4 flex justify-center">
+                                    <ins className="adsbygoogle" style={{display:'block'}} data-ad-client="ca-pub-YOUR_PUBLISHER_ID" data-ad-slot="AD_SLOT_1" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                                </div> */}
 
                                 {/* Fantasy Top 20 */}
                                 <div>
@@ -2567,7 +3339,7 @@
                                         <span className="text-xl">🐲</span>
                                         <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '판타지 Top 20' : 'Fantasy Top 20'}</h2>
                                     </div>
-                                    <HorizontalSlider items={fantasyTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                    <HorizontalSlider items={fantasyTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
 
                                 {/* Romance Top 20 */}
@@ -2576,8 +3348,13 @@
                                         <span className="text-xl">💖</span>
                                         <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '로맨스 Top 20' : 'Romance Top 20'}</h2>
                                     </div>
-                                    <HorizontalSlider items={romanceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                    <HorizontalSlider items={romanceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
+
+                                {/* === 광고 배치 위치 #2 (publisher ID 확보 후 주석 해제) === */}
+                                {/* <div className="my-4 flex justify-center">
+                                    <ins className="adsbygoogle" style={{display:'block'}} data-ad-client="ca-pub-YOUR_PUBLISHER_ID" data-ad-slot="AD_SLOT_2" data-ad-format="auto" data-full-width-responsive="true"></ins>
+                                </div> */}
 
                                 {/* Martial Arts Top 20 */}
                                 <div>
@@ -2585,7 +3362,7 @@
                                         <span className="text-xl">⚔️</span>
                                         <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '무협/사극 Top 20' : 'Martial Arts Top 20'}</h2>
                                     </div>
-                                    <HorizontalSlider items={martialTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                    <HorizontalSlider items={martialTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
 
                                 {/* Slice of Life Top 20 */}
@@ -2594,7 +3371,17 @@
                                         <span className="text-xl">🌱</span>
                                         <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '일상 Top 20' : 'Slice of Life Top 20'}</h2>
                                     </div>
-                                    <HorizontalSlider items={sliceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                    <HorizontalSlider items={sliceTop} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
+                                </div>
+
+                                {/* Hidden Gems - 조회수 하위 10% & 별점 9.9+ */}
+                                <div>
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <span className="text-xl">💎</span>
+                                        <h2 className="text-xl font-bold text-white">{lang === 'ko' ? '숨겨진 명작 발굴' : 'Hidden Gems'}</h2>
+                                        <span className="text-[10px] font-bold bg-purple-500/10 text-purple-400 px-3 py-1 rounded-full uppercase">{lang === 'ko' ? '조회수↓ 별점↑' : 'Low Views High Score'}</span>
+                                    </div>
+                                    <HorizontalSlider items={hiddenGemsRandom} rankOffset={-1} t={t} toggleDislike={toggleDislike} toggleLike={toggleLike} excludeFromResult={excludeFromResult} onComment={openCommentModal} likedIds={likedIds} dislikedIds={dislikedIds} />
                                 </div>
                             </div>
                         )}
@@ -2783,6 +3570,12 @@
                                 </div>
                             )
                         }
+
+                        {view === 'board' && (
+                            <div className="animate-up">
+                                <BoardView user={user} lang={lang} t={t} supabase={supabaseInstance} />
+                            </div>
+                        )}
 
                         {
                             view === 'worldcup' && (
@@ -2997,6 +3790,10 @@
                             <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg>
                             검색
                         </button>
+                        <button onClick={() => setView('board')} className={`flex flex-col items-center gap-1 p-2 ${view === 'board' ? 'text-primary' : 'hover:text-white'}`}>
+                            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-none stroke-current stroke-2"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2z"></path><path d="M3 9h18"></path><path d="M9 21V9"></path></svg>
+                            게시판
+                        </button>
                     </div>
 
                     <ShareModal
@@ -3023,6 +3820,7 @@
                                 onClose={() => setShowWorldcupModal(false)}
                                 t={t}
                                 user={user}
+                                lang={lang}
                                 onSaveResult={(result) => setWorldcupHistory(prev => [result, ...prev])}
                             />
                         )
@@ -3270,6 +4068,17 @@
                         )
                     }
 
+                    {/* Comment Modal */}
+                    <CommentModal
+                        isOpen={showCommentModal}
+                        onClose={() => setShowCommentModal(false)}
+                        webtoonId={commentWebtoonId}
+                        webtoonTitle={commentWebtoonTitle}
+                        t={t}
+                        user={user}
+                        lang={lang}
+                    />
+
                     {/* Footer with Visitor Counter */}
                     <footer className="fixed bottom-[60px] md:bottom-0 left-0 right-0 bg-[#0B0F1A]/90 backdrop-blur-md border-t border-white/5 py-3 px-4 z-[900]">
                         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-3 md:gap-8">
@@ -3291,6 +4100,10 @@
                                     : "This is an 'UNOFFICIAL' fan site and is not affiliated with NAVER WEBTOON or the original creators. All copyrights belong to their respective owners."
                                 }
                             </p>
+                            <div className="hidden md:block w-px h-4 bg-white/10"></div>
+                            <a href="/privacy.html" target="_blank" className="text-[9px] md:text-[10px] text-gray-500 hover:text-primary font-bold transition-colors opacity-80 hover:opacity-100">
+                                {lang === 'ko' ? '개인정보 처리방침' : 'Privacy Policy'}
+                            </a>
                         </div>
                     </footer>
                 </div >
